@@ -89,10 +89,10 @@ export function formatDate(date: Date | string | null | undefined): string {
   if (typeof date === "string") {
     try {
       dateObj = new Date(date);
-    } catch (e) {
+    } catch (_e) {
       return "Invalid Date";
     }
-    if (isNaN(dateObj.getTime())) {
+    if (Number.isNaN(dateObj.getTime())) {
       return "Invalid Date";
     }
   } else {
