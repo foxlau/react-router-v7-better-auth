@@ -24,7 +24,6 @@ Install the dependencies:
 
 ```bash
 git clone https://github.com/foxlau/react-router-v7-better-auth.git
-
 npm install
 ```
 
@@ -35,6 +34,8 @@ Run an initial database migration:
 ```bash
 npm run db:apply
 ```
+
+If you modify the Drizzle ORM schema, please run `npm run db:generate` first. If you need to delete the generated SQL migrations, execute `npm run db:drop` and select the SQL migration you wish to remove.
 
 Start the development server with HMR:
 
