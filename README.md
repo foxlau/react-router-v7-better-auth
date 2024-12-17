@@ -23,6 +23,8 @@ This template features React Router v7, enhanced authentication, Drizzle ORM, an
 Install the dependencies:
 
 ```bash
+git clone https://github.com/foxlau/react-router-v7-better-auth.git
+
 npm install
 ```
 
@@ -32,10 +34,6 @@ Run an initial database migration:
 
 ```bash
 npm run db:apply
-
-# or for production
-
-npm run db:apply-prod
 ```
 
 Start the development server with HMR:
@@ -61,19 +59,20 @@ Deployment is done using the Wrangler CLI.
 To deploy directly to production:
 
 ```sh
-npm run deploy or npx wrangler deploy
+npm run db:apply-prod
+npm run deploy
 ```
 
 To deploy a preview URL:
 
 ```sh
-npx wrangler versions upload
+npm run deploy:version
 ```
 
 You can then promote a version to production after verification or roll it out progressively.
 
 ```sh
-npx wrangler versions deploy
+npm run deploy:promote
 ```
 
 ## Questions
