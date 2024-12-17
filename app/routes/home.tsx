@@ -31,13 +31,13 @@ export default function Home() {
             </div>
           </div>
           <p className="text-center text-base font-normal sm:w-[466px] sm:text-[18px] sm:leading-7">
-            This template features React Router v7, enhanced authentication,
-            Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
+            This is a template that can be deployed on Cloudflare Workers, built
+            with React Router v7 (Remix), Better Auth, Drizzle ORM, and D1.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button variant="outline" className="rounded-full" asChild>
               <Link
-                to="https://github.com/foxlau/react-router-template"
+                to="https://github.com/foxlau/react-router-v7-better-auth"
                 reloadDocument
               >
                 <GithubIcon />
