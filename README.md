@@ -9,7 +9,7 @@ This template features React Router v7, enhanced authentication, Drizzle ORM, an
 - 📦 Asset bundling and optimization
 - 🔄 Data loading and mutations
 - 🔒 TypeScript by default
-- 🎉 [TailwindCSS](https://tailwindcss.com/) for styling
+- 🎉 [TailwindCSS](https://tailwindcss.com/) and [Shadcn](https://ui.shadcn.com/) for UI styling
 - 🔑 [Better Auth](https://better-auth.com/) for authentication
 - 🌧️ [Drizzle ORM](https://orm.drizzle.team/) for database
 - 🛢️ Cloudflare D1 for database
