@@ -20,6 +20,11 @@ kv_namespaces = [
 [observability]
 enabled = true
 
+# Enable smart placement to optimize request latency and D1 database access
+# https://developers.cloudflare.com/workers/configuration/smart-placement/
+# [placement]
+# mode = "smart"
+
 # D1
 [[d1_databases]]
 binding = "DB"
