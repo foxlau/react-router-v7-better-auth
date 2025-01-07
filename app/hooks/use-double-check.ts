@@ -1,18 +1,31 @@
-/**
- * Implementation based on github.com/epicweb-dev/epic-stack
- */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { callAll } from "~/lib/utils";
 
 export function useDoubleCheck() {
   const [doubleCheck, setDoubleCheck] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (doubleCheck && buttonRef.current) {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          buttonRef.current &&
+          !buttonRef.current.contains(event.target as Node)
+        ) {
+          setDoubleCheck(false);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [doubleCheck]);
 
   function getButtonProps(
     props?: React.ButtonHTMLAttributes<HTMLButtonElement>,
   ) {
-    const onBlur: React.ButtonHTMLAttributes<HTMLButtonElement>["onBlur"] =
-      () => setDoubleCheck(false);
-
     const onClick: React.ButtonHTMLAttributes<HTMLButtonElement>["onClick"] =
       doubleCheck
         ? undefined
@@ -31,9 +44,9 @@ export function useDoubleCheck() {
 
     return {
       ...props,
-      onBlur: callAll(onBlur, props?.onBlur),
       onClick: callAll(onClick, props?.onClick),
       onKeyUp: callAll(onKeyUp, props?.onKeyUp),
+      ref: buttonRef,
     };
   }
 

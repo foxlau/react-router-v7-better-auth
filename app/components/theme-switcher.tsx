@@ -1,4 +1,35 @@
+/**
+ * Theme Switcher Components Usage Example:
+ *
+ * In root.tsx:
+ * ```tsx
+ * export default function Root() {
+ *   return (
+ *     <ThemeSwitcherSafeHTML lang="en" className="your-classes">
+ *       <head>
+ *         <ThemeSwitcherScript nonce={nonce} />
+ *         [other head elements]
+ *       </head>
+ *       <body>
+ *         [body content]
+ *       </body>
+ *     </ThemeSwitcherSafeHTML>
+ *   );
+ * }
+ * ```
+ *
+ * Note: ThemeSwitcherScript should be placed in <head> to prevent flash of unstyled content.
+ */
+
+import { useCallback, useState } from "react";
+
 type Theme = "light" | "dark" | "system";
+
+function validateTheme(theme: string | null): Theme {
+  return theme === "light" || theme === "dark" || theme === "system"
+    ? theme
+    : "system";
+}
 
 /**
  * This component is used to set the theme based on the value at hydration time.
@@ -39,9 +70,10 @@ export function ThemeSwitcherSafeHTML({
  * IMPORTANT: This script should be placed at the end of the <head> tag to
  * prevent a flash of unstyled content.
  */
-export function ThemeSwitcherScript() {
+export function ThemeSwitcherScript({ nonce }: { nonce?: string }) {
   return (
     <script
+      nonce={nonce}
       // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
       dangerouslySetInnerHTML={{
         __html: `(function(){function applyTheme(theme){document.documentElement.className=theme}var theme=localStorage.getItem("theme");var isDarkMode=window.matchMedia("(prefers-color-scheme: dark)").matches;var themeToApply=theme==="system"||!theme?(isDarkMode?"dark":"light"):theme;applyTheme(themeToApply);window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(event){var updatedTheme=event.matches?"dark":"light";if(!localStorage.getItem("theme")||localStorage.getItem("theme")==="system"){applyTheme(updatedTheme)}})})();`,
@@ -98,8 +130,13 @@ export function setTheme(theme: Theme | string) {
   document.documentElement.className = themeToSet;
 }
 
-function validateTheme(theme: string | null): Theme {
-  return theme === "light" || theme === "dark" || theme === "system"
-    ? theme
-    : "system";
+export function useTheme(): [Theme, (theme: Theme) => void] {
+  const [currentTheme, setCurrentTheme] = useState<Theme>(() => getTheme());
+
+  const updateTheme = useCallback((newTheme: Theme) => {
+    setTheme(newTheme);
+    setCurrentTheme(newTheme);
+  }, []);
+
+  return [currentTheme, updateTheme];
 }

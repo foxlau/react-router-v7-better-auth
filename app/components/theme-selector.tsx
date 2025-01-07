@@ -1,5 +1,4 @@
 import { LaptopIcon, MoonIcon, SunIcon } from "lucide-react";
-import { useCallback, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,17 +6,12 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useHydrated } from "~/hooks/use-hydrated";
-import { getTheme, setTheme as setSystemTheme } from "./theme-switcher";
+import { useTheme } from "./theme-switcher";
 import { Button } from "./ui/button";
 
 export function ThemeSelector() {
-  const [, rerender] = useState({});
+  const [theme, setTheme] = useTheme();
   const hydrated = useHydrated();
-  const theme = getTheme();
-  const setTheme = useCallback((theme: string) => {
-    setSystemTheme(theme);
-    rerender({});
-  }, []);
 
   return (
     <DropdownMenu>
