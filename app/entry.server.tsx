@@ -1,9 +1,11 @@
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
-import type { AppLoadContext, EntryContext } from "react-router";
+import type {
+  AppLoadContext,
+  EntryContext,
+  HandleErrorFunction,
+} from "react-router";
 import { ServerRouter } from "react-router";
-
-const ABORT_DELAY = 5_000;
 
 export default async function handleRequest(
   request: Request,
@@ -16,11 +18,7 @@ export default async function handleRequest(
   const userAgent = request.headers.get("user-agent");
 
   const body = await renderToReadableStream(
-    <ServerRouter
-      context={routerContext}
-      url={request.url}
-      abortDelay={ABORT_DELAY}
-    />,
+    <ServerRouter context={routerContext} url={request.url} />,
     {
       onError(error: unknown) {
         responseStatusCode = 500;
@@ -47,3 +45,17 @@ export default async function handleRequest(
     status: responseStatusCode,
   });
 }
+
+// Error Reporting
+// https://reactrouter.com/how-to/error-reporting
+export const handleError: HandleErrorFunction = (error, { request }) => {
+  if (request.signal.aborted) {
+    return;
+  }
+
+  if (error instanceof Error) {
+    console.error(error.stack);
+  } else {
+    console.error(error);
+  }
+};

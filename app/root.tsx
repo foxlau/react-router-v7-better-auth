@@ -14,6 +14,7 @@ import {
   ThemeSwitcherSafeHTML,
   ThemeSwitcherScript,
 } from "./components/theme-switcher";
+import { useNonce } from "./hooks/use-nonce";
 import stylesheet from "./styles/app.css?url";
 
 export const links: Route.LinksFunction = () => [
@@ -31,6 +32,8 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const nonce = useNonce();
+
   return (
     <ThemeSwitcherSafeHTML
       lang="en"
@@ -41,13 +44,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <ThemeSwitcherScript />
+        <ThemeSwitcherScript nonce={nonce} />
       </head>
       <body>
         <ProgressBar />
         {children}
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
         <Toaster position="top-center" />
       </body>
     </ThemeSwitcherSafeHTML>

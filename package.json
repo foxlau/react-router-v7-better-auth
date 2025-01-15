@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@cloudflare/workers-types": "^4.20241205.0",
+    "@cloudflare/workers-types": "^4.20241230.0",
     "@react-router/dev": "*",
     "@types/node": "^20.17.10",
     "@types/react": "^18.3.12",
@@ -58,6 +58,6 @@
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^3.95.0"
+    "wrangler": "^3.100.0"
   }
 }
