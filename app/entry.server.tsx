@@ -6,6 +6,7 @@ import type {
   HandleErrorFunction,
 } from "react-router";
 import { ServerRouter } from "react-router";
+import { NonceProvider } from "./hooks/use-nonce";
 
 export default async function handleRequest(
   request: Request,
@@ -17,8 +18,20 @@ export default async function handleRequest(
   let shellRendered = false;
   const userAgent = request.headers.get("user-agent");
 
+  // Set a random nonce for CSP.
+  const nonce = crypto.randomUUID() ?? undefined;
+
+  // Set CSP headers to prevent 'Prop nonce did not match' error
+  // Without this, browser security policy will clear the nonce attribute on the client side
+  responseHeaders.set(
+    "Content-Security-Policy",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'; object-src 'none'; base-uri 'none';`,
+  );
+
   const body = await renderToReadableStream(
-    <ServerRouter context={routerContext} url={request.url} />,
+    <NonceProvider value={nonce}>
+      <ServerRouter context={routerContext} url={request.url} nonce={nonce} />
+    </NonceProvider>,
     {
       onError(error: unknown) {
         responseStatusCode = 500;
@@ -29,6 +42,8 @@ export default async function handleRequest(
           console.error(error);
         }
       },
+      signal: request.signal,
+      nonce,
     },
   );
   shellRendered = true;

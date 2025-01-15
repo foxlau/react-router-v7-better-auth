@@ -1,5 +1,6 @@
 import { redirect } from "react-router";
 
+import { toast } from "sonner";
 import { authClient } from "~/auth/auth.client";
 import { serverAuth } from "~/auth/auth.server";
 import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
@@ -31,18 +32,23 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
-  const formData = await request.formData();
-  const intent = formData.get("intent");
+  try {
+    const formData = await request.formData();
+    const intent = formData.get("intent");
 
-  switch (intent) {
-    case "revokeOtherSessions":
-      return await authClient.revokeOtherSessions();
-    case "logout":
-      return await authClient.signOut();
-    case "deleteUser":
-      return await authClient.deleteUser();
-    default:
-      return null;
+    switch (intent) {
+      case "revokeOtherSessions":
+        return await authClient.revokeOtherSessions();
+      case "logout":
+        return await authClient.signOut();
+      case "deleteUser":
+        return await authClient.deleteUser();
+      default:
+        throw new Error(`Unknown intent: ${intent}`);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return toast.error(message);
   }
 }
 
