@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { authClient } from "~/auth/auth.client";
 import { serverAuth } from "~/auth/auth.server";
 import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
-import { Separator } from "~/components/separator";
 import { RevokeOtherSessions, SessionItem } from "~/components/session";
 import type { Route } from "./+types/dashboard";
 
@@ -65,7 +64,7 @@ export default function Dashboard({
         <p className="text-foreground/70">{authSession.user.email}</p>
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Connected Accounts */}
       <section className="space-y-4">
@@ -81,7 +80,7 @@ export default function Dashboard({
         </div>
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Recent Sessions */}
       <section className="space-y-4">
@@ -104,7 +103,7 @@ export default function Dashboard({
         {listSessions.length > 1 && <RevokeOtherSessions />}
       </section>
 
-      <Separator />
+      <hr />
 
       {/* Delete Account */}
       <DeleteAccount />

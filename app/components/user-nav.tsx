@@ -24,7 +24,7 @@ export function UserNav({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8 rounded-full">
-          <Avatar className="h-8 w-8">
+          <Avatar className="size-8">
             <AvatarImage
               src={
                 user?.image
@@ -43,7 +43,7 @@ export function UserNav({
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col">
             <strong className="font-medium">{user?.name}</strong>
-            <p className="truncate text-muted-foreground">{user?.email}</p>
+            <p className="text-muted-foreground truncate">{user?.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

@@ -35,12 +35,12 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
     <div
       aria-hidden={delayedPending ? undefined : true}
       aria-valuetext={delayedPending ? "Loading" : undefined}
-      className="fixed inset-x-0 left-0 top-0 z-[99999] h-1 animate-pulse"
+      className="fixed inset-x-0 top-0 left-0 z-[99999] h-0.5 animate-pulse"
     >
       <div
         ref={ref}
         className={cn(
-          "h-full w-0 bg-primary duration-500 ease-in-out",
+          "bg-primary h-full w-0 duration-500 ease-in-out",
           transition.state === "idle" &&
             (animationComplete
               ? "transition-none"
@@ -50,8 +50,8 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
         )}
       />
       {delayedPending && showSpinner && (
-        <div className="absolute right-2 top-2 flex items-center justify-center">
-          <Spinner className="h-4 w-4 text-primary" />
+        <div className="absolute top-2 right-2 flex items-center justify-center">
+          <Spinner className="text-primary size-4" />
         </div>
       )}
     </div>

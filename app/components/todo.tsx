@@ -51,31 +51,25 @@ export function DeleteTodo({ todoId }: { todoId: number }) {
   const isDeleting = fetcher.state !== "idle";
 
   return (
-    <fetcher.Form method="post">
-      <input type="hidden" name="todoId" value={todoId} />
-      <Button
-        type="submit"
-        name="intent"
-        value="delete"
-        variant="destructive"
-        size="icon"
-        className={cn(
-          "size-6 bg-destructive/15 text-destructive/80 hover:text-white",
-          { "bg-destructive text-white": doubleCheck },
-        )}
-        disabled={isDeleting}
-        {...getButtonProps()}
-      >
-        {doubleCheck ? (
-          isDeleting ? (
-            <Spinner className="size-2" />
-          ) : (
-            <CheckIcon className="size-2" />
-          )
-        ) : (
-          <XIcon className="size-2" />
-        )}
-      </Button>
-    </fetcher.Form>
+    <>
+      <fetcher.Form method="post">
+        <input type="hidden" name="todoId" value={todoId} />
+        <Button
+          type="submit"
+          name="intent"
+          value="delete"
+          variant="destructive"
+          size="icon"
+          className={cn(
+            "bg-destructive/15 text-destructive/80 size-6 hover:text-white",
+            { "bg-destructive text-white": doubleCheck },
+          )}
+          disabled={isDeleting}
+          {...getButtonProps()}
+        >
+          {doubleCheck ? isDeleting ? <Spinner /> : <CheckIcon /> : <XIcon />}
+        </Button>
+      </fetcher.Form>
+    </>
   );
 }

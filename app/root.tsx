@@ -15,7 +15,7 @@ import {
   ThemeSwitcherScript,
 } from "./components/theme-switcher";
 import { useNonce } from "./hooks/use-nonce";
-import stylesheet from "./styles/app.css?url";
+import "./styles/app.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -28,7 +28,6 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
-  { rel: "stylesheet", href: stylesheet },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -84,7 +83,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <p>{details}</p>
       </div>
       {stack && (
-        <pre className="w-full overflow-x-auto rounded-lg bg-destructive/5 p-4 text-sm text-destructive">
+        <pre className="bg-destructive/5 text-destructive w-full overflow-x-auto rounded-lg p-4 text-sm">
           <code>{stack}</code>
         </pre>
       )}

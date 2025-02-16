@@ -3,7 +3,6 @@ import { Form, useNavigation } from "react-router";
 import { toast } from "sonner";
 
 import { changePassword } from "~/auth/auth.client";
-import { Separator } from "~/components/separator";
 import { Spinner } from "~/components/spinner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -117,7 +116,7 @@ export default function ChangePassword({ actionData }: Route.ComponentProps) {
         </Button>
       </Form>
 
-      <Separator />
+      <hr />
 
       <section className="space-y-2">
         <h2 className="font-semibold">Note</h2>

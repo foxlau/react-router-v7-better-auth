@@ -27,26 +27,26 @@ export function SessionItem({
       <div className="flex items-start gap-3">
         <div className="mt-1">
           {isMobile ? (
-            <Smartphone className="h-4 w-4 text-muted-foreground" />
+            <Smartphone className="text-muted-foreground size-4" />
           ) : (
-            <Monitor className="h-4 w-4 text-muted-foreground" />
+            <Monitor className="text-muted-foreground size-4" />
           )}
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="font-mono">
               {system}
-              <small className="mx-1 text-muted-foreground">•</small>
+              <small className="text-muted-foreground mx-1">•</small>
               {browser}
             </span>
             {isCurrentSession && (
-              <span className="rounded-xl border px-1 text-xs text-primary">
+              <span className="text-primary rounded-xl border px-1 text-xs">
                 Current device
               </span>
             )}
           </div>
 
-          <div className="space-x-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground space-x-2 text-xs">
             <span>IP: {session.ipAddress || "unknown"}</span>
             {!hydrated ? null : (
               <span>Last active: {formatDate(session.createdAt)}</span>
