@@ -47,7 +47,7 @@
     "@types/node": "^20.17.10",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "drizzle-kit": "~0.28.1",
+    "drizzle-kit": "~0.30.4",
     "prettier": "^3.5.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
