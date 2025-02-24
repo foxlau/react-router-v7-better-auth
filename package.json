@@ -24,7 +24,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@react-router/cloudflare": "*",
-    "better-auth": "^1.1.19",
+    "better-auth": "^1.1.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "~0.36.4",
