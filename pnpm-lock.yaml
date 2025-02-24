@@ -27,8 +27,8 @@ importers:
         specifier: '*'
         version: 7.1.5(@cloudflare/workers-types@4.20250214.0)(react-router@7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(tsup@8.3.6(jiti@2.4.2)(postcss@8.5.2)(typescript@5.7.3))(typescript@5.7.3)
       better-auth:
-        specifier: ^1.1.19
-        version: 1.1.19
+        specifier: ^1.1.20
+        version: 1.1.20
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1950,8 +1950,8 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  better-auth@1.1.19:
-    resolution: {integrity: sha512-OYf2oysca2+ASJ9hpGVkoLsz8b7bo65hHsVGpnIs9H5ORUnHJ7rKc6Wur4ZDCxuewBGUJMJyTAtXuo/cdAirjA==}
+  better-auth@1.1.20:
+    resolution: {integrity: sha512-aAcBGVVQJepGe9FY0/QIPBPqWwXIjahPq8zMgFnWOTyee6/vaE8aCRVV8hOp2DEABhKypHSUSK5CUPEUgL9fdQ==}
 
   better-call@0.3.3:
     resolution: {integrity: sha512-N4lDVm0NGmFfDJ0XMQ4O83Zm/3dPlvIQdxvwvgSLSkjFX5PM4GUYSVAuxNzXN27QZMHDkrJTWUqxBrm4tPC3eA==}
@@ -4634,7 +4634,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  better-auth@1.1.19:
+  better-auth@1.1.20:
     dependencies:
       '@better-auth/utils': 0.2.3
       '@better-fetch/fetch': 1.1.12
