@@ -43,7 +43,7 @@
     "@biomejs/biome": "1.9.4",
     "@cloudflare/workers-types": "^4.20241230.0",
     "@react-router/dev": "*",
-    "@tailwindcss/vite": "^4.0.6",
+    "@tailwindcss/vite": "^4.0.8",
     "@types/node": "^20.17.10",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
