@@ -1,0 +1,50 @@
+{
+  "eslint.enable": false,
+  "prettier.enable": false,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.trimAutoWhitespace": true,
+  "editor.insertSpaces": false,
+  "editor.renderWhitespace": "all",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports": "never",
+    "source.organizeImports.biome": "always",
+    "quickfix.biome": "always"
+  },
+  "files.associations": {
+    "*.css": "css",
+    "*.js": "javascript",
+    "*.jsx": "javascriptreact",
+    "*.json": "json",
+    "*.ts": "typescript",
+    "*.tsx": "typescriptreact",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimTrailingWhitespaceInRegexAndStrings": true,
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  }
+}
