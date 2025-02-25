@@ -45,7 +45,7 @@
     "@react-router/dev": "*",
     "@tailwindcss/vite": "^4.0.6",
     "@types/node": "^20.17.10",
-    "@types/react": "^19.0.1",
+    "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.2",
     "drizzle-kit": "~0.30.4",
     "prettier": "^3.5.2",
