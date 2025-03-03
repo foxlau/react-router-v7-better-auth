@@ -14,6 +14,8 @@ on:
       - "*.js"
       - "*.ts"
       - "*.tsx"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
 jobs:
   lint:
