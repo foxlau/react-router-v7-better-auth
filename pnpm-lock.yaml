@@ -67,7 +67,7 @@ importers:
         version: 3.0.2
       tailwindcss-animate:
         specifier: ^1.0.6
-        version: 1.0.7(tailwindcss@4.0.6)
+        version: 1.0.7(tailwindcss@4.0.10)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -103,8 +103,8 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       tailwindcss:
-        specifier: ^4.0.6
-        version: 4.0.6
+        specifier: ^4.0.10
+        version: 4.0.10
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -3227,8 +3227,8 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
-  tailwindcss@4.0.6:
-    resolution: {integrity: sha512-mysewHYJKaXgNOW6pp5xon/emCsfAMnO8WMaGKZZ35fomnR/T5gYnRg2/yRTTrtXiEl1tiVkeRt0eMO6HxEZqw==}
+  tailwindcss@4.0.10:
+    resolution: {integrity: sha512-Z8U/6E2BWSdDkt3IWPiphoV+8V6aNzRmu2SriSbuhm6i3QIcY3TdUJzUP5NX8M8MZuIl+v4/77Rer8u4YSrSsg==}
 
   tailwindcss@4.0.8:
     resolution: {integrity: sha512-Me7N5CKR+D2A1xdWA5t5+kjjT7bwnxZOE6/yDI/ixJdJokszsn2n++mdU5yJwrsTpqFX2B9ZNMBJDwcqk9C9lw==}
@@ -6215,11 +6215,11 @@ snapshots:
 
   tailwind-merge@3.0.2: {}
 
-  tailwindcss-animate@1.0.7(tailwindcss@4.0.6):
+  tailwindcss-animate@1.0.7(tailwindcss@4.0.10):
     dependencies:
-      tailwindcss: 4.0.6
+      tailwindcss: 4.0.10
 
-  tailwindcss@4.0.6: {}
+  tailwindcss@4.0.10: {}
 
   tailwindcss@4.0.8: {}
 
