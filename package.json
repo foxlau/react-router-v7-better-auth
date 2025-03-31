@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@cloudflare/workers-types": "^4.20241230.0",
+    "@cloudflare/workers-types": "^4.20250327.0",
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.8.0",
     "@react-router/dev": "^7.2.0",
