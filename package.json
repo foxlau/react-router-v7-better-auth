@@ -36,7 +36,7 @@
     "session-context": "^0.0.6",
     "sonner": "^2.0.3",
     "spin-delay": "^2.0.1",
-    "tailwind-merge": "^3.0.2",
+    "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.6"
   },
   "devDependencies": {
