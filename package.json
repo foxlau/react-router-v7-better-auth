@@ -32,7 +32,7 @@
     "lucide-react": "^0.486.0",
     "react": "^19.1.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7.2.0",
+    "react-router": "^7.5.2",
     "session-context": "^0.0.6",
     "sonner": "^2.0.3",
     "spin-delay": "^2.0.1",
