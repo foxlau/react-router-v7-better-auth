@@ -19,7 +19,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const submission = parseWithZod(formData, { schema: signInSchema });
 
   if (submission.status !== "success") {
-    return toast.error("Invalid form data.");
+    return toast.error("Invalid form data");
   }
 
   switch (submission.value.provider) {
@@ -30,7 +30,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         password,
       });
       if (error) {
-        return toast.error(error.message || "Sign in failed.");
+        return toast.error(error.message || "Sign in failed");
       }
       break;
     }
@@ -43,13 +43,13 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         callbackURL: "/dashboard",
       });
       if (error) {
-        return toast.error(error.message || `${provider} sign in failed.`);
+        return toast.error(error.message || `${provider} sign in failed`);
       }
       break;
     }
 
     default:
-      return toast.error("Invalid login method.");
+      return toast.error("Invalid login method");
   }
 
   return redirect("/dashboard");
@@ -123,9 +123,8 @@ export default function SignIn() {
             </p>
           )}
         </div>
+        <input type="hidden" name="provider" value="sign-in" />
         <Button
-          name="provider"
-          value="sign-in"
           type="submit"
           className="w-full"
           disabled={isPending("sign-in")}
@@ -144,9 +143,8 @@ export default function SignIn() {
       <div className="grid gap-2">
         {/* GitHub */}
         <Form method="post">
+          <input type="hidden" name="provider" value="github" />
           <Button
-            name="provider"
-            value="github"
             variant="outline"
             className="w-full"
             disabled={isPending("github")}
@@ -158,9 +156,8 @@ export default function SignIn() {
 
         {/* Google */}
         <Form method="post">
+          <input type="hidden" name="provider" value="google" />
           <Button
-            name="provider"
-            value="google"
             variant="outline"
             className="w-full"
             disabled={isPending("google")}
