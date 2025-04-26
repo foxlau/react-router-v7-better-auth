@@ -45,9 +45,6 @@ export default function Home() {
               </Link>
             </Button>
             <Button className="rounded-full" asChild>
-              <Link to={href("/dashboard")}>Dashboard</Link>
-            </Button>
-            <Button className="rounded-full" asChild>
               <Link to={href("/auth/sign-in")}>
                 Get Started <ArrowRightIcon className="size-4" />
               </Link>

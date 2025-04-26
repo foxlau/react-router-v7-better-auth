@@ -1,104 +1,78 @@
-import { and, eq } from "drizzle-orm";
+import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { and, eq, sql } from "drizzle-orm";
 import { PlusIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
-import { Form, redirect, useNavigation } from "react-router";
+import { Form, data } from "react-router";
 
 import { Spinner } from "~/components/spinner";
 import { DeleteTodo, ToggleTodo } from "~/components/todo";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useIsPending } from "~/hooks/use-is-pending";
-import { serverAuth } from "~/lib/auth/auth.server";
+import { authSessionContext } from "~/lib/contexts";
 import { db } from "~/lib/database/db.server";
 import { todo } from "~/lib/database/schema";
+import { todoActionSchema } from "~/lib/validations/todo";
 import type { Route } from "./+types/todos";
 
 export const meta: Route.MetaFunction = () => [{ title: "Todos" }];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const auth = await serverAuth().api.getSession({
-    query: {
-      disableCookieCache: true,
-    },
-    headers: request.headers,
-  });
-
-  if (!auth) {
-    throw redirect("/auth/sign-in");
-  }
-
+export async function loader({ context }: Route.LoaderArgs) {
+  const authSession = context.get(authSessionContext);
   const todos = await db.query.todo.findMany({
-    where: (todo, { eq }) => eq(todo.userId, auth.user.id),
+    where: (todo, { eq }) => eq(todo.userId, authSession.user.id),
   });
-
   return { todos };
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const auth = await serverAuth().api.getSession({
-    query: {
-      disableCookieCache: true,
-    },
-    headers: request.headers,
-  });
+export async function action({ request, context }: Route.ActionArgs) {
+  const authSession = context.get(authSessionContext);
+  const formData = await request.formData();
+  const submission = parseWithZod(formData, { schema: todoActionSchema });
 
-  if (!auth) {
-    throw redirect("/auth/sign-in");
+  if (submission.status !== "success") {
+    return data(submission.reply(), { status: 400 });
   }
 
-  const formData = await request.clone().formData();
-  const intent = formData.get("intent") as string;
-  const title = formData.get("title") as string;
-  const todoId = formData.get("todoId") as string;
-  const id = Number.parseInt(todoId);
-
-  // Note that this is a crude implementation.
-  switch (intent) {
+  switch (submission.value.intent) {
     case "add":
-      if (title.length) {
-        await db.insert(todo).values({ title, userId: auth.user.id });
-      }
+      await db
+        .insert(todo)
+        .values({ title: submission.value.title, userId: authSession.user.id });
       break;
     case "delete":
-      if (id) {
-        await db.delete(todo).where(eq(todo.id, id));
-      }
+      await db.delete(todo).where(eq(todo.id, submission.value.todoId));
       break;
     case "complete":
-      if (id) {
-        const _todo = await db.query.todo.findFirst({
-          where: and(eq(todo.id, id), eq(todo.userId, auth.user.id)),
-          columns: { id: true, completed: true },
-        });
-        if (_todo) {
-          await db
-            .update(todo)
-            .set({ completed: _todo.completed ? 0 : 1 })
-            .where(and(eq(todo.id, id), eq(todo.userId, auth.user.id)));
-        }
-      }
+      await db
+        .update(todo)
+        .set({
+          completed: sql`CASE WHEN completed = 0 THEN 1 ELSE 0 END`,
+        })
+        .where(and(eq(todo.id, submission.value.todoId)));
       break;
   }
 
-  return null;
+  return submission.reply({ resetForm: true });
 }
 
 export default function Todos({
   loaderData: { todos },
   actionData,
 }: Route.ComponentProps) {
-  const form = useRef<HTMLFormElement>(null);
-  const navigation = useNavigation();
+  const [form, fields] = useForm({
+    onValidate({ formData }) {
+      return parseWithZod(formData, { schema: todoActionSchema });
+    },
+    constraint: getZodConstraint(todoActionSchema),
+    lastResult: actionData,
+    shouldRevalidate: "onInput",
+  });
+
   const isAdding = useIsPending({
     formAction: "/todos",
     formMethod: "POST",
   });
-
-  useEffect(() => {
-    if (navigation.state === "idle" && actionData === null) {
-      form.current?.reset();
-    }
-  }, [navigation.state, actionData]);
 
   return (
     <div className="space-y-10">
@@ -111,17 +85,27 @@ export default function Todos({
       </section>
 
       <section className="space-y-4">
-        <Form ref={form} method="post" className="flex items-center gap-2">
-          <Input
-            type="text"
-            name="title"
-            placeholder="Drift off into a reverie"
-            required
-          />
-          <Button type="submit" name="intent" value="add" disabled={isAdding}>
-            Add
-            {isAdding ? <Spinner /> : <PlusIcon />}
-          </Button>
+        <Form method="post" className="space-y-2" {...getFormProps(form)}>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add a todo"
+              {...getInputProps(fields.title, { type: "text" })}
+            />
+            <input type="hidden" name="intent" value="add" />
+            <Button type="submit" disabled={isAdding}>
+              Add
+              {isAdding ? <Spinner /> : <PlusIcon />}
+            </Button>
+          </div>
+          {fields.title.errors && (
+            <p
+              className="text-destructive text-xs"
+              role="alert"
+              aria-live="polite"
+            >
+              {fields.title.errors.join(", ")}
+            </p>
+          )}
         </Form>
 
         {todos?.length > 0 && (
