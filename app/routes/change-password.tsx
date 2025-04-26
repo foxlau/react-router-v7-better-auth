@@ -1,109 +1,111 @@
-import { useEffect, useRef } from "react";
-import { Form, useNavigation } from "react-router";
+import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { Form } from "react-router";
 import { toast } from "sonner";
 
-import { changePassword } from "~/auth/auth.client";
 import { Spinner } from "~/components/spinner";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { useIsPending } from "~/hooks/use-is-pending";
+import { authClient } from "~/lib/auth/auth.client";
+import { changePasswordSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/change-password";
 
 export const meta = () => [{ title: "Change Password" }];
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
-  const currentPassword = formData.get("currentPassword") as string;
-  const newPassword = formData.get("newPassword") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+  const submission = parseWithZod(formData, { schema: changePasswordSchema });
 
-  if (newPassword.length < 8) {
-    return toast.error("New password must be at least 8 characters long.");
+  if (submission.status !== "success") {
+    return submission.reply();
   }
 
-  if (newPassword.length > 32) {
-    return toast.error("New password must be at most 32 characters long.");
-  }
-
-  if (currentPassword === newPassword) {
-    return toast.error(
-      "New password cannot be the same as the current password.",
-    );
-  }
-
-  if (newPassword !== confirmPassword) {
-    return toast.error("New password and confirm password do not match.");
-  }
-
-  const { error } = await changePassword({
-    newPassword,
-    currentPassword,
+  const result = await authClient.changePassword({
+    newPassword: submission.value.newPassword,
+    currentPassword: submission.value.currentPassword,
     revokeOtherSessions: true,
   });
 
-  if (error) {
-    return toast.error(error.message);
+  if (result.error) {
+    return toast.error(result.error.message || "An unexpected error occurred.");
   }
 
   toast.success("Password changed successfully! Other sessions revoked.");
   return null;
 }
 
-export default function ChangePassword({ actionData }: Route.ComponentProps) {
-  const form = useRef<HTMLFormElement>(null);
-  const navigation = useNavigation();
+export default function ChangePassword(_: Route.ComponentProps) {
+  const [form, fields] = useForm({
+    onValidate({ formData }) {
+      return parseWithZod(formData, { schema: changePasswordSchema });
+    },
+    constraint: getZodConstraint(changePasswordSchema),
+    shouldRevalidate: "onInput",
+  });
+
   const isPending = useIsPending({
     formAction: "/change-password",
     formMethod: "POST",
   });
 
-  useEffect(() => {
-    if (navigation.state === "idle" && actionData === null) {
-      form.current?.reset();
-    }
-  }, [navigation.state, actionData]);
-
   return (
     <div className="space-y-10">
       <section className="space-y-2">
-        <h1 className="text-base font-semibold capitalize">Change Password</h1>
+        <h1 className="font-semibold text-base capitalize">Change Password</h1>
         <p className="text-foreground/70">
           New password minimum 8 characters long, maximum 32 characters long,
           and cannot be the same as the current password.
         </p>
       </section>
 
-      <Form ref={form} method="post" className="grid gap-4">
+      <Form method="post" className="grid gap-4" {...getFormProps(form)}>
         <div className="grid gap-2">
-          <Label htmlFor="currentPassword">Current Password</Label>
+          <Label htmlFor={fields.currentPassword.id}>Current Password</Label>
           <Input
-            id="currentPassword"
-            name="currentPassword"
-            type="password"
             autoComplete="current-password"
-            required
+            {...getInputProps(fields.currentPassword, { type: "password" })}
           />
+          {fields.currentPassword.errors && (
+            <p
+              className="text-destructive text-xs"
+              role="alert"
+              aria-live="polite"
+            >
+              {fields.currentPassword.errors.join(", ")}
+            </p>
+          )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="newPassword">New Password</Label>
-          <Input
-            id="newPassword"
-            name="newPassword"
-            type="password"
-            autoComplete="new-password"
-            required
-          />
+          <Label htmlFor={fields.newPassword.id}>New Password</Label>
+          <Input {...getInputProps(fields.newPassword, { type: "password" })} />
+          {fields.newPassword.errors && (
+            <p
+              className="text-destructive text-xs"
+              role="alert"
+              aria-live="polite"
+            >
+              {fields.newPassword.errors.join(", ")}
+            </p>
+          )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="confirmPassword">Confirm new password</Label>
+          <Label htmlFor={fields.confirmPassword.id}>
+            Confirm new password
+          </Label>
           <Input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            autoComplete="confirmPassword"
-            required
+            {...getInputProps(fields.confirmPassword, { type: "password" })}
           />
+          {fields.confirmPassword.errors && (
+            <p
+              className="text-destructive text-xs"
+              role="alert"
+              aria-live="polite"
+            >
+              {fields.confirmPassword.errors.join(", ")}
+            </p>
+          )}
         </div>
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? (

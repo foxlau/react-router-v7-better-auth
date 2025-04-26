@@ -1,25 +1,8 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export function isValidEmailFormat(email: string): boolean {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-}
-
-export function isValidTokenRegex(
-  token: string,
-  expectedLength: number,
-): boolean {
-  if (typeof token !== "string") {
-    return false;
-  }
-
-  const regex = new RegExp(`^[a-zA-Z0-9_]{${expectedLength}}$`);
-  return regex.test(token);
 }
 
 export function parseUserAgent(userAgent: string): {
@@ -80,34 +63,20 @@ export function parseUserAgent(userAgent: string): {
   return { system, browser, isMobile };
 }
 
-export function formatDate(date: Date | string | null | undefined): string {
-  if (!date) {
-    return "unknown";
-  }
+export function formatDateTime(
+  date: Date | string | number | null | undefined,
+): string {
+  if (!date) return "unknown";
 
   let dateObj: Date;
-  if (typeof date === "string") {
-    try {
-      dateObj = new Date(date);
-    } catch (_e) {
-      return "Invalid Date";
-    }
-    if (Number.isNaN(dateObj.getTime())) {
-      return "Invalid Date";
-    }
+  if (typeof date === "string" || typeof date === "number") {
+    dateObj = new Date(date);
+    if (Number.isNaN(dateObj.getTime())) return "Invalid Date";
   } else {
     dateObj = date;
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: true,
-  }).format(dateObj);
+  return dateObj.toISOString().replace("T", " ").substring(0, 19);
 }
 
 export function callAll<Args extends Array<unknown>>(

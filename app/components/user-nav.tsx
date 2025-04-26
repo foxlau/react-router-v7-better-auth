@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 export function UserNav({
   user,
 }: {
-  user: Awaited<ReturnType<typeof loader>>["authSession"]["user"];
+  user: Awaited<ReturnType<typeof loader>>["data"]["user"];
 }) {
   const navigate = useNavigate();
   const submit = useSubmit();
@@ -29,11 +29,11 @@ export function UserNav({
               src={
                 user?.image
                   ? user?.image
-                  : `https://avatar.vercel.sh/${user?.name}`
+                  : `https://avatar.vercel.sh/${user.name}`
               }
               alt={user?.name ?? "User avatar"}
             />
-            <AvatarFallback className="text-xs font-bold uppercase">
+            <AvatarFallback className="font-bold text-xs uppercase">
               {user?.name?.slice(0, 2)}
             </AvatarFallback>
           </Avatar>
@@ -42,8 +42,8 @@ export function UserNav({
       <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col">
-            <strong className="font-medium">{user?.name}</strong>
-            <p className="text-muted-foreground truncate">{user?.email}</p>
+            <strong className="font-medium">{user.name}</strong>
+            <p className="truncate text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

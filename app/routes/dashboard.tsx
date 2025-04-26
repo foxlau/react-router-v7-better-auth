@@ -1,33 +1,22 @@
-import { redirect } from "react-router";
-
 import { toast } from "sonner";
-import { authClient } from "~/auth/auth.client";
-import { serverAuth } from "~/auth/auth.server";
 import { ConnectedAccountItem, DeleteAccount } from "~/components/account";
 import { RevokeOtherSessions, SessionItem } from "~/components/session";
+import { useAuthUser } from "~/hooks/use-auth-user";
+import { authClient } from "~/lib/auth/auth.client";
+import { serverAuth } from "~/lib/auth/auth.server";
 import type { Route } from "./+types/dashboard";
 
 export const meta: Route.MetaFunction = () => [{ title: "Dashboard" }];
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const auth = serverAuth(context.cloudflare.env);
+export async function loader({ request }: Route.LoaderArgs) {
+  const auth = serverAuth();
 
-  const [authSession, accounts, listSessions] = await Promise.all([
-    auth.api.getSession({
-      query: {
-        disableCookieCache: true,
-      },
-      headers: request.headers,
-    }),
+  const [accounts, listSessions] = await Promise.all([
     auth.api.listUserAccounts({ headers: request.headers }),
     auth.api.listSessions({ headers: request.headers }),
   ]);
 
-  if (!authSession) {
-    throw redirect("/auth/sign-in");
-  }
-
-  return { authSession, accounts, listSessions };
+  return { accounts, listSessions };
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -52,16 +41,16 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function Dashboard({
-  loaderData: { authSession, accounts, listSessions },
+  loaderData: { accounts, listSessions },
 }: Route.ComponentProps) {
+  const { user, session } = useAuthUser();
+
   return (
     <div className="space-y-10">
       {/* User Info */}
       <section className="space-y-2">
-        <h1 className="text-base font-semibold capitalize">
-          {authSession.user.name}
-        </h1>
-        <p className="text-foreground/70">{authSession.user.email}</p>
+        <h1 className="font-semibold text-base capitalize">{user.name}</h1>
+        <p className="text-foreground/70">{user.email}</p>
       </section>
 
       <hr />
@@ -70,13 +59,15 @@ export default function Dashboard({
       <section className="space-y-4">
         <h2 className="font-semibold">Connected accounts</h2>
         <div className="space-y-4">
-          {accounts.map((account) => (
-            <ConnectedAccountItem
-              key={account.id}
-              account={account}
-              email={authSession.user.email}
-            />
-          ))}
+          {accounts
+            ? accounts.map((account) => (
+                <ConnectedAccountItem
+                  key={account.id}
+                  account={account}
+                  email={user?.email}
+                />
+              ))
+            : null}
         </div>
       </section>
 
@@ -92,11 +83,11 @@ export default function Dashboard({
           also update your password.
         </p>
         <div className="space-y-2">
-          {listSessions.map((session) => (
+          {listSessions.map((item) => (
             <SessionItem
-              key={session.token}
-              session={session}
-              currentSessionToken={authSession.session.token}
+              key={item.token}
+              session={item}
+              currentSessionToken={session.token}
             />
           ))}
         </div>

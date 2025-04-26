@@ -39,6 +39,7 @@ Run an initial database migration:
 
 ```bash
 cp .dev.vars.example .dev.vars
+cp wrangler.jsonc.example wrangler.jsonc
 npm run db:apply
 ```
 
@@ -68,7 +69,7 @@ Use the following commands to create the D1 database and KV cache for Better Aut
 
 ```bash
 npx wrangler d1 create rr7-better-auth
-npx wrangler kv namespace create AUTH_CACHE_KV
+npx wrangler kv namespace create APP_KV
 ```
 
 To deploy directly to production:

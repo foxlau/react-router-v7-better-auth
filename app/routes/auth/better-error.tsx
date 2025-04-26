@@ -1,13 +1,13 @@
 import { ArrowLeftIcon, ShieldAlert } from "lucide-react";
-import { Link, useSearchParams, type LoaderFunctionArgs } from "react-router";
+import { Link, type LoaderFunctionArgs, useSearchParams } from "react-router";
 
-import { serverAuth } from "~/auth/auth.server";
 import { Button } from "~/components/ui/button";
+import { serverAuth } from "~/lib/auth/auth.server";
 
 export const meta = () => [{ title: "Authentication Error" }];
 
-export async function loader({ request, context }: LoaderFunctionArgs) {
-  const auth = serverAuth(context.cloudflare.env);
+export async function loader({ request }: LoaderFunctionArgs) {
+  const auth = serverAuth();
   return auth.handler(request);
 }
 
@@ -22,11 +22,11 @@ export default function BetterError() {
           <ShieldAlert className="h-6 w-6" />
         </p>
 
-        <h1 className="mt-3 text-2xl font-semibold md:text-3xl">
+        <h1 className="mt-2 font-semibold text-xl md:text-2xl">
           Authentication Error
         </h1>
 
-        <p className="mt-4 text-muted-foreground">
+        <p className="mt-2 text-muted-foreground">
           We encountered an issue while processing your request. Please try
           again or contact the application owner if the problem persists.
         </p>
@@ -44,7 +44,7 @@ export default function BetterError() {
           </Button>
         </div>
 
-        <p className="mt-6 text-xs text-muted-foreground underline decoration-muted-foreground/30 decoration-wavy decoration-1 underline-offset-2">
+        <p className="mt-6 text-muted-foreground text-xs underline decoration-1 decoration-muted-foreground/30 decoration-wavy underline-offset-2">
           Error code: {error}
         </p>
       </div>
