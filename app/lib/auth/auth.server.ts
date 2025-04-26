@@ -1,13 +1,11 @@
+import { env } from "cloudflare:workers";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { drizzle } from "drizzle-orm/d1";
-import * as schema from "~/database/schema";
+import { db } from "~/lib/database/db.server";
 
 let _auth: ReturnType<typeof betterAuth>;
 
-export function serverAuth(env: Env) {
-  const db = drizzle(env.DB, { schema });
-
+export function serverAuth() {
   if (!_auth) {
     _auth = betterAuth({
       baseUrl: env.BETTER_AUTH_URL,
@@ -16,12 +14,12 @@ export function serverAuth(env: Env) {
         provider: "sqlite",
       }),
       secondaryStorage: {
-        get: async (key) => await env.AUTH_CACHE_KV.get(`_auth:${key}`, "json"),
+        get: async (key) => await env.APP_KV.get(`_auth:${key}`, "json"),
         set: async (key, value, ttl) =>
-          await env.AUTH_CACHE_KV.put(`_auth:${key}`, JSON.stringify(value), {
+          await env.APP_KV.put(`_auth:${key}`, JSON.stringify(value), {
             expirationTtl: ttl,
           }),
-        delete: async (key) => await env.AUTH_CACHE_KV.delete(`_auth:${key}`),
+        delete: async (key) => await env.APP_KV.delete(`_auth:${key}`),
       },
       emailAndPassword: {
         enabled: true,
@@ -29,7 +27,9 @@ export function serverAuth(env: Env) {
         sendResetPassword: async ({ user, url, token }) => {
           if (env.ENVIRONMENT === "development") {
             console.log("Send email to reset password");
-            console.log(user, url, token);
+            console.log("User", user);
+            console.log("URL", url);
+            console.log("Token", token);
           } else {
             // Send email to user ...
           }
@@ -67,6 +67,15 @@ export function serverAuth(env: Env) {
         storage: "secondary-storage",
         window: 60, // time window in seconds
         max: 10, // max requests in the window
+      },
+      advanced: {
+        ipAddress: {
+          ipAddressHeaders: [
+            "cf-connecting-ip",
+            "x-forwarded-for",
+            "x-real-ip",
+          ],
+        },
       },
     });
   }

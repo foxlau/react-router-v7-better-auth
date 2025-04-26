@@ -1,5 +1,5 @@
 import { ArrowRightIcon, XIcon } from "lucide-react";
-import { Link } from "react-router";
+import { Link, href } from "react-router";
 
 import {
   BetterAuthIcon,
@@ -14,7 +14,7 @@ export const meta = () => [{ title: "React Router(v7) x Better Auth" }];
 export default function Home() {
   return (
     <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-background">
-      <div className="absolute right-4 top-4 sm:right-6">
+      <div className="absolute top-4 right-4 sm:right-6">
         <ThemeSelector />
       </div>
       <main className="container mx-auto flex flex-1 flex-col items-center justify-center overflow-hidden px-8">
@@ -25,12 +25,12 @@ export default function Home() {
             <XIcon className="size-4 text-muted-foreground" />
             <BetterAuthIcon className="size-8" />
           </div>
-          <div className="text-center text-[clamp(40px,10vw,44px)] font-bold leading-[1.2] tracking-tighter sm:text-[60px]">
-            <div className="leading-10 text-primary sm:leading-[3.5rem]">
+          <div className="text-center font-bold text-[clamp(40px,10vw,44px)] leading-[1.2] tracking-tighter sm:text-[60px]">
+            <div className="text-primary leading-10 sm:leading-[3.5rem]">
               React Router v7 <br /> with Better auth.
             </div>
           </div>
-          <p className="text-center text-base font-normal sm:w-[466px] sm:text-[18px] sm:leading-7">
+          <p className="text-center font-normal text-base sm:w-[466px] sm:text-[18px] sm:leading-7">
             This is a template that can be deployed on Cloudflare Workers, built
             with React Router v7 (Remix), Better Auth, Drizzle ORM, and D1.
           </p>
@@ -45,7 +45,10 @@ export default function Home() {
               </Link>
             </Button>
             <Button className="rounded-full" asChild>
-              <Link to="/auth/sign-in">
+              <Link to={href("/dashboard")}>Dashboard</Link>
+            </Button>
+            <Button className="rounded-full" asChild>
+              <Link to={href("/auth/sign-in")}>
                 Get Started <ArrowRightIcon className="size-4" />
               </Link>
             </Button>

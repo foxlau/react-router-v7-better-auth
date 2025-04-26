@@ -40,7 +40,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
       <div
         ref={ref}
         className={cn(
-          "bg-primary h-full w-0 duration-500 ease-in-out",
+          "h-full w-0 bg-primary duration-500 ease-in-out",
           transition.state === "idle" &&
             (animationComplete
               ? "transition-none"
@@ -51,7 +51,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
       />
       {delayedPending && showSpinner && (
         <div className="absolute top-2 right-2 flex items-center justify-center">
-          <Spinner className="text-primary size-4" />
+          <Spinner className="size-4 text-primary" />
         </div>
       )}
     </div>

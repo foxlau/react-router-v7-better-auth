@@ -1,28 +1,20 @@
 import { HouseIcon, PlusIcon } from "lucide-react";
-import { Link, Outlet, redirect } from "react-router";
-
-import { serverAuth } from "~/auth/auth.server";
+import { Link, Outlet, data } from "react-router";
 import { ThemeSelector } from "~/components/theme-selector";
 import { Button } from "~/components/ui/button";
 import { UserNav } from "~/components/user-nav";
+import { authSessionContext } from "~/lib/contexts";
+import { authMiddleware } from "~/lib/middlewares/auth-guard.server";
 import type { Route } from "./+types/layout";
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const auth = serverAuth(context.cloudflare.env);
-  const authSession = await auth.api.getSession({
-    headers: request.headers,
-  });
+export const unstable_middleware = [authMiddleware];
 
-  if (!authSession) {
-    throw redirect("/auth/sign-in");
-  }
-
-  return { authSession };
+export async function loader({ context }: Route.LoaderArgs) {
+  const authSession = context.get(authSessionContext);
+  return data(authSession);
 }
 
-export default function Layout({
-  loaderData: { authSession },
-}: Route.ComponentProps) {
+export default function Layout({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <header className="relative flex w-full items-center justify-between px-4 py-4 sm:px-6">
@@ -33,7 +25,7 @@ export default function Layout({
             className="size-8 rounded-full"
             asChild
           >
-            <Link to="/dashboard">
+            <Link to="/">
               <HouseIcon />
             </Link>
           </Button>
@@ -50,7 +42,7 @@ export default function Layout({
             </Link>
           </Button>
           <ThemeSelector />
-          <UserNav user={authSession.user} />
+          <UserNav user={loaderData.user} />
         </div>
       </header>
       <main className="mx-auto max-w-xl px-6 pt-6 pb-36">

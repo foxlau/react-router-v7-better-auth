@@ -61,7 +61,7 @@ export function DeleteTodo({ todoId }: { todoId: number }) {
           variant="destructive"
           size="icon"
           className={cn(
-            "bg-destructive/15 text-destructive/80 size-6 hover:text-white",
+            "size-6 bg-destructive/15 text-destructive/80 hover:text-white",
             { "bg-destructive text-white": doubleCheck },
           )}
           disabled={isDeleting}

@@ -2,12 +2,11 @@ import { Monitor, Smartphone } from "lucide-react";
 import { useEffect } from "react";
 import { useFetcher } from "react-router";
 
-import type { authClient } from "~/auth/auth.client";
 import { Spinner } from "~/components/spinner";
 import { Button } from "~/components/ui/button";
 import { useDoubleCheck } from "~/hooks/use-double-check";
-import { useHydrated } from "~/hooks/use-hydrated";
-import { formatDate, parseUserAgent } from "~/lib/utils";
+import type { authClient } from "~/lib/auth/auth.client";
+import { formatDateTime, parseUserAgent } from "~/lib/utils";
 
 interface SessionItemProps {
   session: typeof authClient.$Infer.Session.session;
@@ -18,7 +17,6 @@ export function SessionItem({
   session,
   currentSessionToken,
 }: SessionItemProps) {
-  const hydrated = useHydrated();
   const { system, browser, isMobile } = parseUserAgent(session.userAgent || "");
   const isCurrentSession = session.token === currentSessionToken;
 
@@ -27,30 +25,29 @@ export function SessionItem({
       <div className="flex items-start gap-3">
         <div className="mt-1">
           {isMobile ? (
-            <Smartphone className="text-muted-foreground size-4" />
+            <Smartphone className="size-4 text-muted-foreground" />
           ) : (
-            <Monitor className="text-muted-foreground size-4" />
+            <Monitor className="size-4 text-muted-foreground" />
           )}
         </div>
         <div className="flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="font-mono">
               {system}
-              <small className="text-muted-foreground mx-1">•</small>
+              <small className="mx-1 text-muted-foreground">•</small>
               {browser}
             </span>
             {isCurrentSession && (
-              <span className="text-primary rounded-xl border px-1 text-xs">
+              <span className="rounded-xl border px-1 text-primary text-xs">
                 Current device
               </span>
             )}
           </div>
 
-          <div className="text-muted-foreground space-x-2 text-xs">
+          <div className="space-x-2 text-muted-foreground text-xs">
             <span>IP: {session.ipAddress || "unknown"}</span>
-            {!hydrated ? null : (
-              <span>Last active: {formatDate(session.createdAt)}</span>
-            )}
+
+            <span>Last active: {formatDateTime(session.createdAt)}</span>
           </div>
         </div>
       </div>

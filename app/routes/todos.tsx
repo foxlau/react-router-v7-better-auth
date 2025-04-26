@@ -3,20 +3,20 @@ import { PlusIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Form, redirect, useNavigation } from "react-router";
 
-import { serverAuth } from "~/auth/auth.server";
 import { Spinner } from "~/components/spinner";
 import { DeleteTodo, ToggleTodo } from "~/components/todo";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { db } from "~/database/db.server";
-import { todo } from "~/database/schema";
 import { useIsPending } from "~/hooks/use-is-pending";
+import { serverAuth } from "~/lib/auth/auth.server";
+import { db } from "~/lib/database/db.server";
+import { todo } from "~/lib/database/schema";
 import type { Route } from "./+types/todos";
 
 export const meta: Route.MetaFunction = () => [{ title: "Todos" }];
 
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const auth = await serverAuth(context.cloudflare.env).api.getSession({
+export async function loader({ request }: Route.LoaderArgs) {
+  const auth = await serverAuth().api.getSession({
     query: {
       disableCookieCache: true,
     },
@@ -34,8 +34,8 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   return { todos };
 }
 
-export async function action({ request, context }: Route.ActionArgs) {
-  const auth = await serverAuth(context.cloudflare.env).api.getSession({
+export async function action({ request }: Route.ActionArgs) {
+  const auth = await serverAuth().api.getSession({
     query: {
       disableCookieCache: true,
     },
@@ -103,7 +103,7 @@ export default function Todos({
   return (
     <div className="space-y-10">
       <section className="space-y-2">
-        <h1 className="text-base font-semibold capitalize">Todo List</h1>
+        <h1 className="font-semibold text-base capitalize">Todo List</h1>
         <p className="text-foreground/70">
           This is a practical case demonstrating the combined use of Cloudflare
           D1 and Drizzle ORM.

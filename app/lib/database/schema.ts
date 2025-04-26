@@ -15,11 +15,7 @@ export const user = sqliteTable(
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },
-  (table) => {
-    return {
-      emailIndex: index("user_email_idx").on(table.email),
-    };
-  },
+  (table) => [index("user_email_idx").on(table.email)],
 );
 
 export const session = sqliteTable(
@@ -36,12 +32,10 @@ export const session = sqliteTable(
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },
-  (table) => {
-    return {
-      userIdIndex: index("session_userId_idx").on(table.userId),
-      tokenIndex: index("session_token_idx").on(table.token),
-    };
-  },
+  (table) => [
+    index("session_userId_idx").on(table.userId),
+    index("session_token_idx").on(table.token),
+  ],
 );
 
 export const account = sqliteTable(
@@ -67,15 +61,13 @@ export const account = sqliteTable(
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },
-  (table) => {
-    return {
-      userIdIndex: index("account_userId_idx").on(table.userId),
-      providerIdAccountIdIndex: index("account_providerId_accountId_idx").on(
-        table.providerId,
-        table.accountId,
-      ),
-    };
-  },
+  (table) => [
+    index("account_userId_idx").on(table.userId),
+    index("account_providerId_accountId_idx").on(
+      table.providerId,
+      table.accountId,
+    ),
+  ],
 );
 
 export const verification = sqliteTable(
@@ -88,13 +80,7 @@ export const verification = sqliteTable(
     createdAt: integer("createdAt", { mode: "timestamp" }),
     updatedAt: integer("updatedAt", { mode: "timestamp" }),
   },
-  (table) => {
-    return {
-      identifierIndex: index("verification_identifier_idx").on(
-        table.identifier,
-      ),
-    };
-  },
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
 export const rateLimit = sqliteTable(
@@ -105,11 +91,7 @@ export const rateLimit = sqliteTable(
     count: integer("count"),
     lastRequest: integer("lastRequest"),
   },
-  (table) => {
-    return {
-      keyIndex: index("rateLimit_key_idx").on(table.key),
-    };
-  },
+  (table) => [index("rateLimit_key_idx").on(table.key)],
 );
 
 // Todo tables
@@ -126,9 +108,5 @@ export const todo = sqliteTable(
       .default(sql`(unixepoch())`)
       .notNull(),
   },
-  (table) => {
-    return {
-      userIdIndex: index("todo_userId_idx").on(table.userId),
-    };
-  },
+  (table) => [index("todo_userId_idx").on(table.userId)],
 );
