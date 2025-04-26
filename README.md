@@ -22,6 +22,16 @@ React Router v7 Authentication Demo Series:
 - [React Router v7 Cloudflare workers template](https://github.com/foxlau/react-router-v7-cloudflare-workers) - React Router v7 Cloudflare workers template.
 - [React Router v7 with Remix Auth](https://github.com/foxlau/react-router-v7-remix-auth) - Multi-strategy authentication demo using Remix Auth
 
+## Authentication Features
+
+This template implements a complete authentication system using Better Auth with the following features:
+
+- 📧 **Email and Password Authentication** - Secure login with email and password
+- 🔑 **Password Recovery** - Forgot password and reset password functionality
+- 🔄 **Social Login** - Sign in with Google and GitHub accounts
+- 👤 **Session Management** - Secure session handling with Cloudflare KV storage
+- 🗑️ **Account Management** - Including account deletion functionality
+
 ## Getting Started
 
 ### Installation
@@ -30,7 +40,7 @@ Install the dependencies:
 
 ```bash
 git clone https://github.com/foxlau/react-router-v7-better-auth.git
-npm install
+pnpm install
 ```
 
 ### Development
@@ -39,7 +49,6 @@ Run an initial database migration:
 
 ```bash
 cp .dev.vars.example .dev.vars
-cp wrangler.jsonc.example wrangler.jsonc
 npm run db:apply
 ```
 

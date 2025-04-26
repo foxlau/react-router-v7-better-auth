@@ -10,7 +10,7 @@
     "deploy:promote": "wrangler versions deploy",
     "start": "wrangler dev --test-scheduled",
     "typecheck": "tsc",
-    "typegen": "cp wrangler.jsonc.example wrangler.jsonc && wrangler types && react-router typegen",
+    "typegen": "wrangler types && react-router typegen",
     "check": "biome check .",
     "check:fix": "biome check --fix .",
     "format": "biome format --write .",
