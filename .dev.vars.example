@@ -2,9 +2,7 @@ ENVIRONMENT = "development" # development | production
 
 BETTER_AUTH_SECRET = "3ebc25b381e87193f29ffea6b6d380dd"
 BETTER_AUTH_URL = "http://localhost:8787"
-
 GITHUB_CLIENT_ID = "..."
 GITHUB_CLIENT_SECRET = "..."
-
 GOOGLE_CLIENT_ID = "..."
 GOOGLE_CLIENT_SECRET = "..."

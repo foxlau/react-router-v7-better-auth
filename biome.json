@@ -1,15 +1,38 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "ignore": [
+      "drizzle/**/*",
+      "migrations/**/*",
+      "**/node_modules/**/*",
+      "**/dist/**/*",
+      "**/build/**/*",
+      "**/.react-router/**/*",
+      "**/worker-configuration.d.ts"
+    ]
+  },
   "vcs": {
     "enabled": true,
     "clientKind": "git",
+    "defaultBranch": "main",
     "useIgnoreFile": true
   },
   "formatter": {
-    "enabled": false
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "formatWithErrors": true,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always"
+    }
   },
   "organizeImports": {
-    "enabled": false
+    "enabled": true
   },
   "linter": {
     "enabled": true,
@@ -24,6 +47,16 @@
         "noUnusedVariables": "warn",
         "noUnusedImports": "warn",
         "useExhaustiveDependencies": "warn"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {
+            "attributes": ["className"],
+            "functions": ["cx", "clsx", "cva", "cn"]
+          }
+        }
       }
     }
   }
