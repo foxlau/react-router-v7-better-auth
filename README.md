@@ -16,6 +16,17 @@ This template features React Router v7, Better auth, Drizzle ORM, and D1, design
 - 📁 Cloudflare KV for caching
 - 📖 [React Router docs](https://reactrouter.com/)
 
+## Demo
+
+Here's a preview of the app:
+
+<div style="display: flex;">
+  <img src="./.assets/login.jpeg" width="45%" />
+  <img src="./.assets/settings.jpeg" width="45%" />
+</div>
+
+For more demo images, check the **.assets** directory.
+
 ## Links
 
 React Router v7 Authentication Demo Series:
