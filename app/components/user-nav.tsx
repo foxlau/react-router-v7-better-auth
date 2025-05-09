@@ -23,15 +23,17 @@ export function UserNav() {
   const { user } = useAuthUser();
   const navigate = useNavigate();
   const submit = useSubmit();
-  const avatarUrl = getAvatarUrl(user.image, user.name);
+  const { avatarUrl, placeholderUrl } = getAvatarUrl(user.image, user.name);
   const initials = user?.name?.slice(0, 2);
+  const alt = user?.name ?? "User avatar";
+  const avatar = avatarUrl || placeholderUrl;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8 rounded-full">
           <Avatar className="size-8">
-            <AvatarImage src={avatarUrl} alt={user?.name ?? "User avatar"} />
+            <AvatarImage src={avatar} alt={alt} />
             <AvatarFallback className="font-bold text-xs uppercase">
               {initials}
             </AvatarFallback>
@@ -42,7 +44,7 @@ export function UserNav() {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={avatarUrl} alt={user?.name ?? "User avatar"} />
+              <AvatarImage src={avatar} alt={alt} />
               <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">

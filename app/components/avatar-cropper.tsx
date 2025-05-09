@@ -84,9 +84,9 @@ async function getCroppedImg(
 }
 
 export default function AvatarCropper({
-  currentAvatarUrl,
-  placeholderAvatarUrl,
-}: { currentAvatarUrl: string | null; placeholderAvatarUrl: string }) {
+  avatarUrl,
+  placeholderUrl,
+}: { avatarUrl: string | null; placeholderUrl: string }) {
   const [
     { files, isDragging, errors },
     {
@@ -106,9 +106,7 @@ export default function AvatarCropper({
   const previewUrl = files[0]?.preview || null;
   const fileId = files[0]?.id;
 
-  const [finalImageUrl, setFinalImageUrl] = useState<string | null>(
-    currentAvatarUrl,
-  );
+  const [finalImageUrl, setFinalImageUrl] = useState<string | null>(avatarUrl);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Ref to track the previous file ID to detect new uploads
@@ -240,7 +238,7 @@ export default function AvatarCropper({
         >
           <img
             className="size-full object-cover"
-            src={finalImageUrl || placeholderAvatarUrl}
+            src={finalImageUrl || placeholderUrl}
             alt={finalImageUrl ? "User avatar" : "Default avatar"}
             width={64}
             height={64}

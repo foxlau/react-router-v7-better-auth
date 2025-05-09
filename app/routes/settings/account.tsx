@@ -63,19 +63,19 @@ export async function action({ request, context }: Route.ActionArgs) {
         const image = submission.value.image;
         const fileExtension = image.type.split("/")[1];
         const objectName = `user-avatar/${user.id}.${fileExtension}`;
-
-        await cloudflare.env.R2.put(objectName, image, {
-          httpMetadata: { contentType: image.type },
-        });
-
         const timestamp = Date.now();
         const imagePath = `${objectName}?v=${timestamp}`; // add timestamp to avoid cache
 
-        await auth.api.updateUser({
-          body: { image: imagePath },
-          asResponse: true,
-          headers,
-        });
+        await Promise.all([
+          cloudflare.env.R2.put(objectName, image, {
+            httpMetadata: { contentType: image.type },
+          }),
+          auth.api.updateUser({
+            body: { image: imagePath },
+            asResponse: true,
+            headers,
+          }),
+        ]);
         message = "Avatar updated.";
         break;
       }
@@ -93,10 +93,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function AccountRoute() {
   const { user } = useAuthUser();
-  const currentAvatarUrlForCropper = user.image
-    ? getAvatarUrl(user.image, user.name)
-    : null;
-  const placeholderAvatarUrlForCropper = getAvatarUrl(null, user.name);
+  const { avatarUrl, placeholderUrl } = getAvatarUrl(user.image, user.name);
 
   return (
     <SettingsLayout title="Account">
@@ -105,8 +102,8 @@ export default function AccountRoute() {
         description="Click avatar to change profile picture."
         action={
           <AvatarCropper
-            currentAvatarUrl={currentAvatarUrlForCropper}
-            placeholderAvatarUrl={placeholderAvatarUrlForCropper}
+            avatarUrl={avatarUrl}
+            placeholderUrl={placeholderUrl}
           />
         }
       />

@@ -85,13 +85,17 @@ export function formatDate(
 export function getAvatarUrl(
   userImage: string | null | undefined,
   userName: string | null | undefined,
-): string {
-  if (userImage) {
-    if (userImage.startsWith("http://") || userImage.startsWith("https://")) {
-      return userImage;
-    }
-    return `/images/${userImage}`;
-  }
+) {
   const seed = userName || "defaultUser";
-  return `https://api.dicebear.com/9.x/glass/svg?seed=${seed}&backgroundType=gradientLinear,solid`;
+  const placeholderUrl = `https://api.dicebear.com/9.x/glass/svg?seed=${seed}&backgroundType=gradientLinear,solid`;
+  let avatarUrl = null;
+  if (userImage?.startsWith("http://") || userImage?.startsWith("https://")) {
+    avatarUrl = userImage;
+  } else if (userImage?.startsWith("user-avatar/")) {
+    avatarUrl = `/images/${userImage}`;
+  }
+  return {
+    avatarUrl,
+    placeholderUrl,
+  };
 }

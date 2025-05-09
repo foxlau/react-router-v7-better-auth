@@ -8,20 +8,14 @@ import {
 } from "~/lib/validations/settings";
 import { Spinner } from "./spinner";
 
-interface AvatarSelectorProps {
-  displayUrl: string; // This will be getAvatarUrl(user.image, user.name)
-  isUserImageSet: boolean; // True if user.image is not null
-}
-
 export function AvatarSelector({
-  displayUrl,
-  isUserImageSet,
-}: AvatarSelectorProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  avatarUrl,
+  placeholderUrl,
+}: { avatarUrl: string | null; placeholderUrl: string }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(avatarUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
   const isUploading = fetcher.state !== "idle";
-  const finalDisplayAvatarUrl = previewUrl || displayUrl;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,7 +73,7 @@ export function AvatarSelector({
   return (
     <div className="relative flex size-24 overflow-hidden rounded-full bg-muted">
       <img
-        src={finalDisplayAvatarUrl}
+        src={previewUrl || placeholderUrl}
         alt="Current avatar"
         className="size-full object-cover"
       />
@@ -103,7 +97,7 @@ export function AvatarSelector({
       ) : (
         <div className="absolute inset-0">
           <div className="grid size-full overflow-clip rounded-full bg-black/50 opacity-0 backdrop-blur-md transition-opacity duration-300 ease-out hover:opacity-100">
-            {isUserImageSet ? (
+            {previewUrl ? (
               <>
                 <button
                   type="button"

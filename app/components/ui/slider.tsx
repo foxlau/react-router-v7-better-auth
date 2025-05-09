@@ -118,14 +118,10 @@ function Slider({
           )}
         />
       </SliderPrimitive.Track>
-      {internalValues.map((value, index) => (
-        <React.Fragment
-          key={`thumb-${value}-${
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            index
-          }`}
-        >
-          {renderThumb(value)}
+      {Array.from({ length: internalValues.length }, (_, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        <React.Fragment key={index}>
+          {renderThumb(internalValues[index] ?? 0)}
         </React.Fragment>
       ))}
     </SliderPrimitive.Root>
