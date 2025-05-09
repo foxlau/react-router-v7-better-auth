@@ -5,19 +5,23 @@ import {
   Scripts,
   ScrollRestoration,
   data,
-  isRouteErrorResponse,
 } from "react-router";
-import { Toaster } from "sonner";
+import { getToast } from "remix-toast";
+import { Toaster, toast as notify } from "sonner";
 
 import { ProgressBar } from "./components/progress-bar";
-import {
-  ThemeSwitcherSafeHTML,
-  ThemeSwitcherScript,
-} from "./components/theme-switcher";
 import { useNonce } from "./hooks/use-nonce";
 import "./styles/app.css";
+import { useEffect } from "react";
 import type { Route } from "./+types/root";
+import { GeneralErrorBoundary } from "./components/error-boundary";
+import {
+  ColorSchemeScript,
+  useColorScheme,
+} from "./lib/color-scheme/components";
+import { parseColorScheme } from "./lib/color-scheme/server";
 import { getPublicEnv } from "./lib/env.server";
+import { requestMiddleware } from "./lib/http.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -36,39 +40,57 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader(_: Route.LoaderArgs) {
-  return data({ ENV: getPublicEnv() });
+export async function loader({ request }: Route.LoaderArgs) {
+  await requestMiddleware(request);
+  const colorScheme = await parseColorScheme(request);
+  const { toast, headers } = await getToast(request);
+
+  return data({ ENV: getPublicEnv(), colorScheme, toast }, { headers });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const nonce = useNonce();
+  const colorScheme = useColorScheme();
 
   return (
-    <ThemeSwitcherSafeHTML
+    <html
       lang="en"
-      className="touch-manipulation overflow-x-hidden"
+      className={`${colorScheme === "dark" ? "dark" : ""} touch-manipulation overflow-x-hidden`}
+      suppressHydrationWarning
     >
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <Meta />
         <Links />
-        <ThemeSwitcherScript nonce={nonce} />
+        <ColorSchemeScript nonce={nonce} />
       </head>
       <body>
         <ProgressBar />
         {children}
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
-        <Toaster position="top-center" />
+        <Toaster position="top-center" theme={colorScheme} />
       </body>
-    </ThemeSwitcherSafeHTML>
+    </html>
   );
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const { ENV } = loaderData;
+  const { ENV, toast } = loaderData;
   const nonce = useNonce();
+
+  useEffect(() => {
+    if (toast?.type === "error") {
+      notify.error(toast.message);
+    }
+    if (toast?.type === "success") {
+      notify.success(toast.message);
+    }
+  }, [toast]);
 
   return (
     <>
@@ -84,33 +106,6 @@ export default function App({ loaderData }: Route.ComponentProps) {
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
-
-  return (
-    <main className="container mx-auto space-y-4 p-4 pt-16">
-      <div className="space-y-2">
-        <h1 className="font-semibold text-2xl">{message}</h1>
-        <p>{details}</p>
-      </div>
-      {stack && (
-        <pre className="w-full overflow-x-auto rounded-lg bg-destructive/5 p-4 text-destructive text-sm">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
-  );
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />;
 }
