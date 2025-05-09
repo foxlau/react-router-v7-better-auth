@@ -1,6 +1,8 @@
-import { HouseIcon, PlusIcon } from "lucide-react";
-import { Link, Outlet, data } from "react-router";
-import { ThemeSelector } from "~/components/theme-selector";
+import { CircleFadingPlusIcon } from "lucide-react";
+import { Link, Outlet, data, href } from "react-router";
+
+import { AppLogo } from "~/components/app-logo";
+import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { Button } from "~/components/ui/button";
 import { UserNav } from "~/components/user-nav";
 import { authSessionContext } from "~/lib/contexts";
@@ -14,38 +16,26 @@ export async function loader({ context }: Route.LoaderArgs) {
   return data(authSession);
 }
 
-export default function Layout({ loaderData }: Route.ComponentProps) {
+export default function AuthenticatedLayout(_: Route.ComponentProps) {
   return (
     <>
-      <header className="relative flex w-full items-center justify-between px-4 py-4 sm:px-6">
-        <div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full"
-            asChild
-          >
-            <Link to="/">
-              <HouseIcon />
-            </Link>
-          </Button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 rounded-full"
-            asChild
-          >
-            <Link to="/todos">
-              <PlusIcon />
-            </Link>
-          </Button>
-          <ThemeSelector />
-          <UserNav user={loaderData.user} />
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md">
+        <div className="flex w-full items-center justify-between p-4 sm:px-10">
+          <Link to={href("/home")} className="flex items-center gap-2">
+            <AppLogo />
+          </Link>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/todos">
+                <CircleFadingPlusIcon />
+              </Link>
+            </Button>
+            <ColorSchemeToggle />
+            <UserNav />
+          </div>
         </div>
       </header>
-      <main className="mx-auto max-w-xl px-6 pt-6 pb-36">
+      <main className="mx-auto max-w-3xl p-4 sm:p-10">
         <Outlet />
       </main>
     </>

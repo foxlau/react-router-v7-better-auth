@@ -1,9 +1,28 @@
 import { env } from "cloudflare:workers";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+
 import { db } from "~/lib/database/db.server";
 
 let _auth: ReturnType<typeof betterAuth>;
+
+export async function deleteUserImageFromR2(imageUrl: string | null) {
+  if (!imageUrl) return;
+
+  const isExternalUrl =
+    imageUrl.startsWith("http://") || imageUrl.startsWith("https://");
+
+  if (!isExternalUrl) {
+    let r2ObjectKey = imageUrl;
+    const queryParamIndex = r2ObjectKey.indexOf("?"); // remove query params
+    if (queryParamIndex !== -1) {
+      r2ObjectKey = r2ObjectKey.substring(0, queryParamIndex);
+    }
+    if (r2ObjectKey) {
+      await env.R2.delete(r2ObjectKey);
+    }
+  }
+}
 
 export function serverAuth() {
   if (!_auth) {
@@ -57,9 +76,21 @@ export function serverAuth() {
           clientSecret: env.GOOGLE_CLIENT_SECRET || "",
         },
       },
+      account: {
+        accountLinking: {
+          enabled: true,
+          allowDifferentEmails: true,
+          trustedProviders: ["google", "github"],
+        },
+      },
       user: {
         deleteUser: {
           enabled: true,
+          afterDelete: async (user) => {
+            if (user.image) {
+              await deleteUserImageFromR2(user.image);
+            }
+          },
         },
       },
       rateLimit: {

@@ -1,19 +1,19 @@
+import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, Link } from "react-router";
 import { toast } from "sonner";
 
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
-import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Spinner } from "~/components/spinner";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
+import { AuthLayout } from "~/components/auth-layout";
+import { InputField, LoadingButton } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { authClient } from "~/lib/auth/auth.client";
+import { AppInfo } from "~/lib/config";
 import { forgetPasswordSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/forget-password";
 
-export const meta: Route.MetaFunction = () => [
-  { title: "Forgot your password?" },
-];
+export const meta: Route.MetaFunction = () => {
+  return [{ title: `Forgot your password? - ${AppInfo.name}` }];
+};
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
@@ -33,7 +33,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     : toast.success("Password reset link sent to your email!");
 }
 
-export default function ForgetPassword() {
+export default function ForgetPasswordRoute() {
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: forgetPasswordSchema });
@@ -47,39 +47,31 @@ export default function ForgetPassword() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-bold text-2xl">Forgot your password?</h1>
-        <p className="text-balance text-muted-foreground text-sm">
-          Enter your email address and we will send you a password reset link.
-        </p>
-      </div>
-
-      <Form method="post" className="grid gap-2" {...getFormProps(form)}>
-        <Input
-          placeholder="Enter your email"
-          autoComplete="email"
-          {...getInputProps(fields.email, { type: "email" })}
+    <AuthLayout
+      title="Forgot your password?"
+      description="Enter your email address and we will send you a password reset link."
+    >
+      <Form method="post" className="grid gap-4" {...getFormProps(form)}>
+        <InputField
+          inputProps={{
+            ...getInputProps(fields.email, { type: "email" }),
+            placeholder: "Enter your email",
+            autoComplete: "email",
+          }}
+          errors={fields.email.errors}
         />
-        {fields.email.errors && (
-          <p
-            className="text-destructive text-xs"
-            role="alert"
-            aria-live="polite"
-          >
-            {fields.email.errors.join(", ")}
-          </p>
-        )}
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending && <Spinner />} Send reset link
-        </Button>
+        <LoadingButton
+          buttonText="Send reset link"
+          loadingText="Sending reset link..."
+          isPending={isPending}
+        />
       </Form>
 
       <div className="text-center text-sm">
         <Link to="/auth/sign-in" className="text-primary hover:underline">
-          Back to sign in
+          ← Back to sign in
         </Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

@@ -3,16 +3,17 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, Link, data, redirect } from "react-router";
 import { toast } from "sonner";
 
-import { Spinner } from "~/components/spinner";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { AuthLayout } from "~/components/auth-layout";
+import { LoadingButton, PasswordField } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { authClient } from "~/lib/auth/auth.client";
+import { AppInfo } from "~/lib/config";
 import { resetPasswordSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/reset-password";
 
-export const meta: Route.MetaFunction = () => [{ title: "Password Reset" }];
+export const meta: Route.MetaFunction = () => {
+  return [{ title: `Password Reset - ${AppInfo.name}` }];
+};
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
@@ -42,7 +43,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   return redirect("/auth/sign-in");
 }
 
-export default function ResetPassword({
+export default function ResetPasswordRoute({
   loaderData: { token },
 }: Route.ComponentProps) {
   const [form, fields] = useForm({
@@ -58,60 +59,38 @@ export default function ResetPassword({
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-bold text-2xl">Reset your password</h1>
-        <p className="text-balance text-muted-foreground text-sm">
-          Enter your new password below, minimum 8 characters, maximum 32
-          characters.
-        </p>
-      </div>
-
+    <AuthLayout
+      title="Reset your password"
+      description="Enter your new password below, minimum 8 characters, maximum 32 characters."
+    >
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
         <input type="hidden" name="token" value={token} />
-        <div className="grid gap-2">
-          <Label htmlFor={fields.newPassword.id}>New Password</Label>
-          <Input
-            autoComplete="new-password"
-            {...getInputProps(fields.newPassword, { type: "password" })}
-          />
-          {fields.newPassword.errors && (
-            <p
-              className="text-destructive text-xs"
-              role="alert"
-              aria-live="polite"
-            >
-              {fields.newPassword.errors.join(", ")}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor={fields.confirmPassword.id}>
-            Confirm new password
-          </Label>
-          <Input
-            {...getInputProps(fields.confirmPassword, { type: "password" })}
-          />
-          {fields.confirmPassword.errors && (
-            <p
-              className="text-destructive text-xs"
-              role="alert"
-              aria-live="polite"
-            >
-              {fields.confirmPassword.errors.join(", ")}
-            </p>
-          )}
-        </div>
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending && <Spinner />} Reset Password
-        </Button>
+        <PasswordField
+          labelProps={{ children: "New Password" }}
+          inputProps={{
+            ...getInputProps(fields.newPassword, { type: "password" }),
+          }}
+          errors={fields.newPassword.errors}
+        />
+        <PasswordField
+          labelProps={{ children: "Confirm New Password" }}
+          inputProps={{
+            ...getInputProps(fields.confirmPassword, { type: "password" }),
+          }}
+          errors={fields.confirmPassword.errors}
+        />
+        <LoadingButton
+          buttonText="Reset Password"
+          loadingText="Resetting password..."
+          isPending={isPending}
+        />
       </Form>
 
       <div className="text-center text-sm">
         <Link to="/auth/sign-in" className="text-primary hover:underline">
-          Back to sign in
+          ← Back to sign in
         </Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

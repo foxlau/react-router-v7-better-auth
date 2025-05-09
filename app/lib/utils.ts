@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { format, parseISO } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -63,22 +64,6 @@ export function parseUserAgent(userAgent: string): {
   return { system, browser, isMobile };
 }
 
-export function formatDateTime(
-  date: Date | string | number | null | undefined,
-): string {
-  if (!date) return "unknown";
-
-  let dateObj: Date;
-  if (typeof date === "string" || typeof date === "number") {
-    dateObj = new Date(date);
-    if (Number.isNaN(dateObj.getTime())) return "Invalid Date";
-  } else {
-    dateObj = date;
-  }
-
-  return dateObj.toISOString().replace("T", " ").substring(0, 19);
-}
-
 export function callAll<Args extends Array<unknown>>(
   ...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
@@ -87,4 +72,26 @@ export function callAll<Args extends Array<unknown>>(
       fn?.(...args);
     }
   };
+}
+
+export function formatDate(
+  date: Date | string,
+  formatString = "yyyy-MM-dd",
+): string {
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
+  return format(dateObj, formatString);
+}
+
+export function getAvatarUrl(
+  userImage: string | null | undefined,
+  userName: string | null | undefined,
+): string {
+  if (userImage) {
+    if (userImage.startsWith("http://") || userImage.startsWith("https://")) {
+      return userImage;
+    }
+    return `/images/${userImage}`;
+  }
+  const seed = userName || "defaultUser";
+  return `https://api.dicebear.com/9.x/glass/svg?seed=${seed}&backgroundType=gradientLinear,solid`;
 }

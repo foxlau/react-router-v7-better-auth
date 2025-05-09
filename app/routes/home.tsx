@@ -1,57 +1,76 @@
-import { ArrowRightIcon, XIcon } from "lucide-react";
+import { ListTodoIcon, type LucideIcon, UserCogIcon } from "lucide-react";
 import { Link, href } from "react-router";
 
-import {
-  BetterAuthIcon,
-  GithubIcon,
-  ReactRouterIcon,
-} from "~/components/icons";
-import { ThemeSelector } from "~/components/theme-selector";
-import { Button } from "~/components/ui/button";
+import { useAuthUser } from "~/hooks/use-auth-user";
+import { AppInfo } from "~/lib/config";
+import type { Route } from "./+types/home";
 
-export const meta = () => [{ title: "React Router(v7) x Better Auth" }];
+type NavLink = {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+  description: string;
+};
 
-export default function Home() {
+export const meta: Route.MetaFunction = () => {
+  return [{ title: `Home - ${AppInfo.name}` }];
+};
+
+export default function HomeRoute(_: Route.ComponentProps) {
+  const { user } = useAuthUser();
+  const navLinks: NavLink[] = [
+    {
+      to: href("/todos"),
+      icon: ListTodoIcon,
+      label: "Todo List",
+      description: "Create and manage your todos",
+    },
+    {
+      to: href("/settings/account"),
+      icon: UserCogIcon,
+      label: "Account Settings",
+      description: "Manage your account settings",
+    },
+  ];
+
   return (
-    <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-background">
-      <div className="absolute top-4 right-4 sm:right-6">
-        <ThemeSelector />
-      </div>
-      <main className="container mx-auto flex flex-1 flex-col items-center justify-center overflow-hidden px-8">
-        <section className="z-20 flex flex-col items-center justify-center gap-[18px] sm:gap-6">
-          <div className="flex items-center gap-4">
-            <ReactRouterIcon theme="light" className="block w-10 dark:hidden" />
-            <ReactRouterIcon theme="dark" className="hidden w-10 dark:block" />
-            <XIcon className="size-4 text-muted-foreground" />
-            <BetterAuthIcon className="size-8" />
-          </div>
-          <div className="text-center font-bold text-[clamp(40px,10vw,44px)] leading-[1.2] tracking-tighter sm:text-[60px]">
-            <div className="text-primary leading-10 sm:leading-[3.5rem]">
-              React Router v7 <br /> with Better auth.
+    <>
+      <header className="space-y-2">
+        <h2 className="font-semibold text-base">
+          <span className="mr-2 text-xl">👋</span> Hi, {user.name}!
+        </h2>
+        <p className="text-muted-foreground">
+          Welcome to your dashboard. Here you can manage your todos and account
+          settings.
+        </p>
+      </header>
+
+      <NavLinks links={navLinks} />
+    </>
+  );
+}
+
+function NavLinks({ links }: { links: NavLink[] }) {
+  return (
+    <ul className="grid grid-cols-1 gap-4 py-6 sm:grid-cols-2 sm:gap-6">
+      {links.map((link) => (
+        <li key={link.to}>
+          <Link
+            to={link.to}
+            className="inline-flex w-full whitespace-nowrap rounded-lg border border-border bg-background px-5 py-4 shadow-xs hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:outline-ring/70"
+          >
+            <div className="flex flex-col gap-2">
+              <link.icon size={28} className="shrink-0 opacity-50" />
+              <div className="flex flex-col">
+                <h3 className="font-medium">{link.label}</h3>
+                <p className="text-muted-foreground text-sm">
+                  {link.description}
+                </p>
+              </div>
             </div>
-          </div>
-          <p className="text-center font-normal text-base sm:w-[466px] sm:text-[18px] sm:leading-7">
-            This is a template that can be deployed on Cloudflare Workers, built
-            with React Router v7 (Remix), Better Auth, Drizzle ORM, and D1.
-          </p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button variant="outline" className="rounded-full" asChild>
-              <Link
-                to="https://github.com/foxlau/react-router-v7-better-auth"
-                reloadDocument
-              >
-                <GithubIcon />
-                Star us on Github
-              </Link>
-            </Button>
-            <Button className="rounded-full" asChild>
-              <Link to={href("/auth/sign-in")}>
-                Get Started <ArrowRightIcon className="size-4" />
-              </Link>
-            </Button>
-          </div>
-        </section>
-      </main>
-    </div>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

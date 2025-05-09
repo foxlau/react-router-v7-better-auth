@@ -10,7 +10,6 @@ export async function getAuthSession(request: Request) {
       disableCookieCache: true,
     },
   });
-
   return authSession;
 }
 
@@ -36,7 +35,7 @@ export const noAuthMiddleware: unstable_MiddlewareFunction = async (
   const authSession = await getAuthSession(request);
 
   if (authSession) {
-    throw redirect("/dashboard");
+    throw redirect("/home");
   }
 
   return await next();

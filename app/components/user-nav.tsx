@@ -1,5 +1,11 @@
 import { useNavigate, useSubmit } from "react-router";
 
+import {
+  CircleGaugeIcon,
+  HomeIcon,
+  LogOutIcon,
+  UserCogIcon,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -9,67 +15,75 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import type { loader } from "~/routes/layout";
+import { useAuthUser } from "~/hooks/use-auth-user";
+import { getAvatarUrl } from "~/lib/utils";
 import { Button } from "./ui/button";
 
-export function UserNav({
-  user,
-}: {
-  user: Awaited<ReturnType<typeof loader>>["data"]["user"];
-}) {
+export function UserNav() {
+  const { user } = useAuthUser();
   const navigate = useNavigate();
   const submit = useSubmit();
+  const avatarUrl = getAvatarUrl(user.image, user.name);
+  const initials = user?.name?.slice(0, 2);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="size-8 rounded-full">
           <Avatar className="size-8">
-            <AvatarImage
-              src={
-                user?.image
-                  ? user?.image
-                  : `https://avatar.vercel.sh/${user.name}`
-              }
-              alt={user?.name ?? "User avatar"}
-            />
+            <AvatarImage src={avatarUrl} alt={user?.name ?? "User avatar"} />
             <AvatarFallback className="font-bold text-xs uppercase">
-              {user?.name?.slice(0, 2)}
+              {initials}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col">
-            <strong className="font-medium">{user.name}</strong>
-            <p className="truncate text-muted-foreground">{user.email}</p>
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarImage src={avatarUrl} alt={user?.name ?? "User avatar"} />
+              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">{user.name}</span>
+              <span className="truncate text-muted-foreground text-xs">
+                {user.email}
+              </span>
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            navigate("/todos");
+            navigate("/");
           }}
         >
-          My todo list
+          <HomeIcon />
+          Home Page
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
-            navigate("/change-password");
+            navigate("/settings/account");
           }}
         >
-          Change password
+          <UserCogIcon />
+          Account Settings
+        </DropdownMenuItem>
+        {/* Todo: coming soon */}
+        <DropdownMenuItem disabled>
+          <CircleGaugeIcon />
+          Admin Dashboard
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          className="text-destructive focus:bg-destructive/10 focus:text-destructive"
           onClick={() => {
             setTimeout(() => {
               submit(null, { method: "POST", action: "/auth/sign-out" });
             }, 100);
           }}
         >
+          <LogOutIcon />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

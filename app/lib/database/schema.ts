@@ -110,3 +110,7 @@ export const todo = sqliteTable(
   },
   (table) => [index("todo_userId_idx").on(table.userId)],
 );
+
+// Type
+export type SelectTodo = typeof todo.$inferSelect;
+export type InsertTodo = typeof todo.$inferInsert;

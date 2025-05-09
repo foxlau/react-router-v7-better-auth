@@ -35,7 +35,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
     <div
       aria-hidden={delayedPending ? undefined : true}
       aria-valuetext={delayedPending ? "Loading" : undefined}
-      className="fixed inset-x-0 top-0 left-0 z-[99999] h-0.5 animate-pulse"
+      className="fixed inset-x-0 top-0 left-0 z-[99999] h-[2.5px] animate-pulse"
     >
       <div
         ref={ref}

@@ -3,16 +3,17 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, Link, redirect } from "react-router";
 import { toast } from "sonner";
 
-import { Spinner } from "~/components/spinner";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { AuthLayout } from "~/components/auth-layout";
+import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { authClient } from "~/lib/auth/auth.client";
+import { AppInfo } from "~/lib/config";
 import { signUpSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/sign-up";
 
-export const meta: Route.MetaFunction = () => [{ title: "Sign Up" }];
+export const meta: Route.MetaFunction = () => {
+  return [{ title: `Sign Up - ${AppInfo.name}` }];
+};
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
@@ -23,7 +24,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }
 
   const { error } = await authClient.signUp.email({
-    callbackURL: "/dashboard",
+    callbackURL: "/home",
     ...submission.value,
   });
 
@@ -37,7 +38,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   return redirect("/auth/sign-in");
 }
 
-export default function SignUp() {
+export default function SignUpRoute() {
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: signUpSchema });
@@ -51,72 +52,45 @@ export default function SignUp() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Login title */}
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="font-bold text-2xl">Create your account</h1>
-        <p className="text-balance text-muted-foreground text-sm">
-          Welcome! Please fill in the details to get started.
-        </p>
-      </div>
-
+    <AuthLayout
+      title="Create your account"
+      description="Welcome! Please fill in the details to get started."
+    >
       {/* Sign up form */}
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
-        <div className="grid gap-2">
-          <Label htmlFor={fields.name.id}>Name</Label>
-          <Input
-            placeholder="John Doe"
-            autoComplete="name"
-            required
-            {...getInputProps(fields.name, { type: "text" })}
-          />
-          {fields.name.errors && (
-            <p
-              className="text-destructive text-xs"
-              role="alert"
-              aria-live="polite"
-            >
-              {fields.name.errors.join(", ")}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor={fields.email.id}>Email</Label>
-          <Input
-            placeholder="johndoe@example.com"
-            autoComplete="email"
-            {...getInputProps(fields.email, { type: "email" })}
-          />
-          {fields.email.errors && (
-            <p
-              className="text-destructive text-xs"
-              role="alert"
-              aria-live="polite"
-            >
-              {fields.email.errors.join(", ")}
-            </p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor={fields.password.id}>Password</Label>
-          <Input
-            placeholder="Enter a unique password"
-            autoComplete="current-password"
-            {...getInputProps(fields.password, { type: "password" })}
-          />
-          {fields.password.errors && (
-            <p
-              className="text-destructive text-xs"
-              role="alert"
-              aria-live="polite"
-            >
-              {fields.password.errors.join(", ")}
-            </p>
-          )}
-        </div>
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending && <Spinner />} Sign Up
-        </Button>
+        <InputField
+          labelProps={{ children: "Name" }}
+          inputProps={{
+            ...getInputProps(fields.name, { type: "text" }),
+            placeholder: "John Doe",
+            autoComplete: "name",
+            required: true,
+          }}
+          errors={fields.name.errors}
+        />
+        <InputField
+          labelProps={{ children: "Email" }}
+          inputProps={{
+            ...getInputProps(fields.email, { type: "email" }),
+            placeholder: "johndoe@example.com",
+            autoComplete: "email",
+          }}
+          errors={fields.email.errors}
+        />
+        <PasswordField
+          labelProps={{ children: "Password" }}
+          inputProps={{
+            ...getInputProps(fields.password, { type: "password" }),
+            placeholder: "Enter a unique password",
+            autoComplete: "new-password",
+          }}
+          errors={fields.password.errors}
+        />
+        <LoadingButton
+          buttonText="Sign Up"
+          loadingText="Signing up..."
+          isPending={isPending}
+        />
       </Form>
 
       {/* Terms of service */}
@@ -139,6 +113,6 @@ export default function SignUp() {
           Sign in
         </Link>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
