@@ -9,8 +9,8 @@
     "nodejs_compat_populate_process_env"
   ],
 
-	// Assets configuration.
-	"assets": {
+  // Assets configuration.
+  "assets": {
     "directory": "./build/client/"
   },
 
@@ -19,8 +19,8 @@
     "enabled": true
   },
 
-	// KV namespaces configuration.
-	"kv_namespaces": [
+  // KV namespaces configuration.
+  "kv_namespaces": [
     {
       "binding": "APP_KV",
       "id": "app_kv_id",
@@ -35,7 +35,15 @@
       "database_name": "rr7-better-auth",
       "database_id": "d1_db_id",
       "preview_database_id": "d1_db_preview_id",
-			"migrations_dir": "drizzle"
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  // R2 buckets configuration.
+  "r2_buckets": [
+    {
+      "bucket_name": "rr7-better-auth",
+      "binding": "R2"
     }
   ],
 
@@ -43,7 +51,7 @@
   "vars": {
     "ENVIRONMENT": "development",
 
-		// BetterAuth configuration
+    // BetterAuth configuration
     "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // https://generate-secret.vercel.app/32
     "BETTER_AUTH_URL": "http://localhost:5173",
     "GITHUB_CLIENT_ID": "...",

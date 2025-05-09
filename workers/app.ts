@@ -21,13 +21,18 @@ const requestHandler = createRequestHandler(
 
 export default {
   async fetch(request, env, ctx) {
-    const contextValue = {
-      cloudflare: {
-        env,
-        ctx,
-      },
-    };
-    const context = new Map([[adapterContext, contextValue]]);
-    return requestHandler(request, context);
+    try {
+      const contextValue = {
+        cloudflare: {
+          env,
+          ctx,
+        },
+      };
+      const context = new Map([[adapterContext, contextValue]]);
+      return requestHandler(request, context);
+    } catch (error) {
+      console.error(error);
+      return new Response("An unexpected error occurred", { status: 500 });
+    }
   },
 } satisfies ExportedHandler<Env>;
