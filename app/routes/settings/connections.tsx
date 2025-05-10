@@ -1,14 +1,10 @@
-import { parseWithZod } from "@conform-to/zod";
 import { data } from "react-router";
-import { toast } from "sonner";
 
 import { ConnectionItem } from "~/components/settings/connection-item";
 import { SettingsLayout } from "~/components/settings/settings-layout";
-import { authClient } from "~/lib/auth/auth.client";
 import { serverAuth } from "~/lib/auth/auth.server";
 import { AppInfo, SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
 import { formatDate } from "~/lib/utils";
-import { connectionSchema } from "~/lib/validations/settings";
 import type { Route } from "./+types/connections";
 
 export const meta: Route.MetaFunction = () => {
@@ -21,41 +17,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     headers: request.headers,
   });
   return data({ accounts });
-}
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-  const formData = await request.clone().formData();
-  const submission = parseWithZod(formData, { schema: connectionSchema });
-
-  if (submission.status !== "success") {
-    return toast.error("Invalid form data.");
-  }
-
-  const { intent, provider } = submission.value;
-
-  switch (intent) {
-    case "connect": {
-      const { error } = await authClient.linkSocial({
-        provider,
-        callbackURL: "/settings/connections",
-      });
-      return error
-        ? toast.error(error.message || `Failed to connect to ${provider}.`)
-        : null;
-    }
-
-    case "disconnect": {
-      const { error } = await authClient.unlinkAccount({
-        providerId: provider,
-      });
-      return error
-        ? toast.error(error.message || `Failed to disconnect ${provider}.`)
-        : null;
-    }
-
-    default:
-      return toast.error("Invalid intent.");
-  }
 }
 
 export default function ConnectionsRoute({

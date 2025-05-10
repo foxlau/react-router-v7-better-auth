@@ -1,8 +1,4 @@
 import { z } from "zod";
-import type { AuthProviderType } from "~/lib/auth/auth.client";
-import { ALLOWED_PROVIDERS } from "~/lib/config";
-
-const providerSchema = z.enum(ALLOWED_PROVIDERS) as z.ZodType<AuthProviderType>;
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -33,16 +29,5 @@ export const accountSchema = z.discriminatedUnion("intent", [
         (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
         "Only .jpg, .jpeg, .png and .webp formats are supported.",
       ),
-  }),
-]);
-
-export const connectionSchema = z.discriminatedUnion("intent", [
-  z.object({
-    intent: z.literal("connect"),
-    provider: providerSchema,
-  }),
-  z.object({
-    intent: z.literal("disconnect"),
-    provider: providerSchema,
   }),
 ]);
