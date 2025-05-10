@@ -14,12 +14,12 @@ export const todoSchema = z.discriminatedUnion("intent", [
   z.object({
     intent: z.literal("create"),
     title: z
-      .string({ message: "Todo title is required" })
+      .string({ message: "Todo title is required." })
       .min(10, {
-        message: "Todo title must be at least 10 characters long",
+        message: "Todo title must be at least 10 characters long.",
       })
       .max(255, {
-        message: "Todo title must be less than 255 characters long",
+        message: "Todo title must be less than 255 characters long.",
       }),
   }),
 ]);

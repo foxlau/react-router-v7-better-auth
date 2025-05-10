@@ -28,13 +28,13 @@ const customSignInErrorMap: z.ZodErrorMap = (issue, ctx) => {
 };
 
 export const emailSchema = z
-  .string({ message: "Email is required" })
-  .email({ message: "Invalid email address" })
+  .string({ message: "Email is required." })
+  .email({ message: "Invalid email address." })
   .toLowerCase()
   .trim();
 
 export const passwordSchema = z
-  .string({ message: "Password is required" })
+  .string({ message: "Password is required." })
   .min(8, "Password must be at least 8 characters long.")
   .max(32, "Password must be less than 32 characters long.");
 
@@ -62,7 +62,7 @@ export const signUpSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   name: z
-    .string({ message: "Name is required" })
+    .string({ message: "Name is required." })
     .min(3, "Name must be at least 3 characters long.")
     .trim(),
 });

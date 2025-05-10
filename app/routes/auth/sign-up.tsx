@@ -64,6 +64,7 @@ export default function SignUpRoute() {
             ...getInputProps(fields.name, { type: "text" }),
             placeholder: "John Doe",
             autoComplete: "name",
+            enterKeyHint: "next",
             required: true,
           }}
           errors={fields.name.errors}
@@ -74,6 +75,7 @@ export default function SignUpRoute() {
             ...getInputProps(fields.email, { type: "email" }),
             placeholder: "johndoe@example.com",
             autoComplete: "email",
+            enterKeyHint: "next",
           }}
           errors={fields.email.errors}
         />
@@ -82,7 +84,8 @@ export default function SignUpRoute() {
           inputProps={{
             ...getInputProps(fields.password, { type: "password" }),
             placeholder: "Enter a unique password",
-            autoComplete: "new-password",
+            autoComplete: "password",
+            enterKeyHint: "done",
           }}
           errors={fields.password.errors}
         />

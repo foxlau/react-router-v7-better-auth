@@ -62,6 +62,8 @@ export function ChangePassword() {
             labelProps={{ children: "Current Password" }}
             inputProps={{
               ...getInputProps(fields.currentPassword, { type: "password" }),
+              autoComplete: "current-password",
+              enterKeyHint: "next",
             }}
             errors={fields.currentPassword.errors}
           />
@@ -69,6 +71,8 @@ export function ChangePassword() {
             labelProps={{ children: "New Password" }}
             inputProps={{
               ...getInputProps(fields.newPassword, { type: "password" }),
+              autoComplete: "new-password",
+              enterKeyHint: "next",
             }}
             errors={fields.newPassword.errors}
           />
@@ -76,6 +80,8 @@ export function ChangePassword() {
             labelProps={{ children: "Confirm New Password" }}
             inputProps={{
               ...getInputProps(fields.confirmPassword, { type: "password" }),
+              autoComplete: "confirm-password",
+              enterKeyHint: "done",
             }}
             errors={fields.confirmPassword.errors}
           />

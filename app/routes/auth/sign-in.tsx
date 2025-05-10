@@ -21,7 +21,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   const submission = parseWithZod(formData, { schema: signInSchema });
 
   if (submission.status !== "success") {
-    return toast.error("Invalid form data");
+    return toast.error("Invalid form data.");
   }
 
   switch (submission.value.provider) {
@@ -32,7 +32,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         password,
       });
       if (error) {
-        return toast.error(error.message || "Sign in failed");
+        return toast.error(error.message || "Sign in failed.");
       }
       break;
     }
@@ -45,13 +45,13 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         callbackURL: "/home",
       });
       if (error) {
-        return toast.error(error.message || `${provider} sign in failed`);
+        return toast.error(error.message || `${provider} sign in failed.`);
       }
       break;
     }
 
     default:
-      return toast.error("Invalid login method");
+      return toast.error("Invalid login method.");
   }
 
   return redirect("/home");
@@ -85,6 +85,7 @@ export default function SignInRoute() {
             ...getInputProps(fields.email, { type: "email" }),
             placeholder: "john@doe.com",
             autoComplete: "email",
+            enterKeyHint: "next",
           }}
           errors={fields.email.errors}
         />
@@ -107,6 +108,7 @@ export default function SignInRoute() {
             ...getInputProps(fields.password, { type: "password" }),
             placeholder: "••••••••••",
             autoComplete: "current-password",
+            enterKeyHint: "done",
           }}
           errors={fields.password.errors}
         />
