@@ -9,3 +9,5 @@
 .mf
 .wrangler
 .dev.vars
+wrangler.toml
+worker-configuration.d.ts

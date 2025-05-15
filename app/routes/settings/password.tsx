@@ -2,12 +2,14 @@ import { parseWithZod } from "@conform-to/zod";
 import { Link, href } from "react-router";
 import { toast } from "sonner";
 
+import { useTranslation } from "react-i18next";
 import { ChangePassword } from "~/components/settings/password-action";
 import { SettingRow } from "~/components/settings/setting-row";
 import { SettingsLayout } from "~/components/settings/settings-layout";
 import { buttonVariants } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/auth.client";
 import { AppInfo } from "~/lib/config";
+import { filterLocale } from "~/lib/i18n";
 import { cn } from "~/lib/utils";
 import { changePasswordSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/password";
@@ -40,6 +42,8 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function ChangePasswordRoute() {
+  const { i18n } = useTranslation();
+
   return (
     <SettingsLayout title="Password">
       <SettingRow
@@ -53,7 +57,10 @@ export default function ChangePasswordRoute() {
         action={
           <Link
             target="_blank"
-            to={href("/auth/forget-password")}
+            to={href(
+              "/:lang?/auth/forget-password",
+              filterLocale(i18n.language),
+            )}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
           >
             Reset password ↗

@@ -1,0 +1,61 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rr7-better-auth",
+  "main": "./workers/app.ts",
+
+  "compatibility_date": "2025-04-04",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+
+  // Assets configuration.
+  "assets": {
+    "directory": "./build/client/"
+  },
+
+  // Configures automatic observability settings for telemetry data emitted from your Worker.
+  "observability": {
+    "enabled": true
+  },
+
+  // KV namespaces configuration.
+  "kv_namespaces": [
+    {
+      "binding": "APP_KV",
+      "id": "app_kv_id",
+      "preview_id": "app_kv_preview_id"
+    }
+  ],
+
+  // D1 databases configuration.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "rr7-better-auth",
+      "database_id": "d1_db_id",
+      "preview_database_id": "d1_db_preview_id",
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "<YOUR_BUCKET_NAME>"
+    }
+  ],
+
+  // Environment Variables.
+  "vars": {
+    "ENVIRONMENT": "development",
+
+    // BetterAuth configuration
+    "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // https://generate-secret.vercel.app/32
+    "BETTER_AUTH_URL": "http://localhost:5173",
+    "GITHUB_CLIENT_ID": "...",
+    "GITHUB_CLIENT_SECRET": "...",
+    "GOOGLE_CLIENT_ID": "...",
+    "GOOGLE_CLIENT_SECRET": "..."
+  }
+}

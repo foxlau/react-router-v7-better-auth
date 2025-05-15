@@ -1,8 +1,15 @@
 import { ArrowLeftIcon, ShieldAlert } from "lucide-react";
-import { Link, type LoaderFunctionArgs, useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
+import {
+  Link,
+  type LoaderFunctionArgs,
+  href,
+  useSearchParams,
+} from "react-router";
 
 import { Button } from "~/components/ui/button";
 import { serverAuth } from "~/lib/auth/auth.server";
+import { filterLocale } from "~/lib/i18n";
 
 export const meta = () => [{ title: "Authentication Error" }];
 
@@ -12,6 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function BetterError() {
+  const { i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const error = searchParams.get("error");
 
@@ -33,14 +41,18 @@ export default function BetterError() {
 
         <div className="mt-6 flex w-full shrink-0 items-center justify-center space-x-3">
           <Button variant="outline" asChild>
-            <Link to="/auth/sign-in">
+            <Link
+              to={href("/:lang?/auth/sign-in", filterLocale(i18n.language))}
+            >
               <ArrowLeftIcon className="size-4" />
               Go to sign in
             </Link>
           </Button>
 
           <Button asChild>
-            <Link to="/">Take me home</Link>
+            <Link to={href("/:lang?", filterLocale(i18n.language)) || "/"}>
+              Take me home
+            </Link>
           </Button>
         </div>
 

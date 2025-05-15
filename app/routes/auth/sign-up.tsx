@@ -1,13 +1,15 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link, redirect } from "react-router";
+import { Form, Link, href, redirect } from "react-router";
 import { toast } from "sonner";
 
+import { useTranslation } from "react-i18next";
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { authClient } from "~/lib/auth/auth.client";
 import { AppInfo } from "~/lib/config";
+import { filterLocale } from "~/lib/i18n";
 import { signUpSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/sign-up";
 
@@ -39,6 +41,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function SignUpRoute() {
+  const { i18n, t } = useTranslation();
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: signUpSchema });
@@ -53,7 +56,7 @@ export default function SignUpRoute() {
 
   return (
     <AuthLayout
-      title="Create your account"
+      title={t("auth.signUpTitle")}
       description="Welcome! Please fill in the details to get started."
     >
       {/* Sign up form */}
@@ -90,7 +93,7 @@ export default function SignUpRoute() {
           errors={fields.password.errors}
         />
         <LoadingButton
-          buttonText="Sign Up"
+          buttonText={t("auth.signUp")}
           loadingText="Signing up..."
           isPending={isPending}
         />
@@ -111,9 +114,12 @@ export default function SignUpRoute() {
 
       {/* Sign in */}
       <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/auth/sign-in" className="text-primary hover:underline">
-          Sign in
+        {t("auth.haveAccount")}{" "}
+        <Link
+          to={href("/:lang?/auth/sign-in", filterLocale(i18n.language))}
+          className="text-primary hover:underline"
+        >
+          {t("auth.signIn")}
         </Link>
       </div>
     </AuthLayout>
