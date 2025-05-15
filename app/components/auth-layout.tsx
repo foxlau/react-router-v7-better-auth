@@ -21,7 +21,7 @@ export function AuthLayout({
     <div className="flex h-screen w-full items-center justify-center px-4">
       <Button variant="ghost" size="sm" className="fixed top-4 left-4" asChild>
         <Link to={href("/:lang?", filterLocale(i18n.language)) || "/"}>
-          <ArrowLeftIcon className="size-4" /> {t("home")}
+          <ArrowLeftIcon className="size-4" /> {t("home.title")}
         </Link>
       </Button>
       <div className="fixed top-4 right-4 flex items-center gap-2 sm:right-10">
