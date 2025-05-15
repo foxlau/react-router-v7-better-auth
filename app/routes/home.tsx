@@ -1,8 +1,11 @@
 import { ListTodoIcon, type LucideIcon, UserCogIcon } from "lucide-react";
-import { Link, href } from "react-router";
+import { Link, href, useLoaderData } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { useAuthUser } from "~/hooks/use-auth-user";
 import { AppInfo } from "~/lib/config";
+import { filterLocale } from "~/lib/i18n";
+import { getInstance, getLocale } from "~/middlewares/i18next";
 import type { Route } from "./+types/home";
 
 type NavLink = {
@@ -16,17 +19,31 @@ export const meta: Route.MetaFunction = () => {
   return [{ title: `Home - ${AppInfo.name}` }];
 };
 
+export async function loader({ context }: Route.LoaderArgs) {
+  const locale = getLocale(context);
+  const { t } = getInstance(context);
+  const date = new Date().toLocaleDateString(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return { date, title: t("title"), description: t("description") };
+}
+
 export default function HomeRoute(_: Route.ComponentProps) {
   const { user } = useAuthUser();
+  const { date } = useLoaderData<typeof loader>();
+  const { i18n } = useTranslation();
+
   const navLinks: NavLink[] = [
     {
-      to: href("/todos"),
+      to: href("/:lang?/todos", filterLocale(i18n.language)),
       icon: ListTodoIcon,
       label: "Todo List",
       description: "Create and manage your todos",
     },
     {
-      to: href("/settings/account"),
+      to: href("/:lang?/settings/account", filterLocale(i18n.language)),
       icon: UserCogIcon,
       label: "Account Settings",
       description: "Manage your account settings",
@@ -41,7 +58,7 @@ export default function HomeRoute(_: Route.ComponentProps) {
         </h2>
         <p className="text-muted-foreground">
           Welcome to your dashboard. Here you can manage your todos and account
-          settings.
+          settings. {date}
         </p>
       </header>
 

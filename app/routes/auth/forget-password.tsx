@@ -1,13 +1,15 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link } from "react-router";
+import { Form, Link, href } from "react-router";
 import { toast } from "sonner";
 
+import { useTranslation } from "react-i18next";
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
 import { authClient } from "~/lib/auth/auth.client";
 import { AppInfo } from "~/lib/config";
+import { filterLocale } from "~/lib/i18n";
 import { forgetPasswordSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/forget-password";
 
@@ -34,6 +36,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function ForgetPasswordRoute() {
+  const { i18n } = useTranslation();
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: forgetPasswordSchema });
@@ -68,7 +71,10 @@ export default function ForgetPasswordRoute() {
       </Form>
 
       <div className="text-center text-sm">
-        <Link to="/auth/sign-in" className="text-primary hover:underline">
+        <Link
+          to={href("/:lang?/auth/sign-in", filterLocale(i18n.language))}
+          className="text-primary hover:underline"
+        >
           ← Back to sign in
         </Link>
       </div>

@@ -1,14 +1,16 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link, redirect, useNavigation } from "react-router";
+import { Form, Link, href, redirect, useNavigation } from "react-router";
 import { toast } from "sonner";
 
+import { Trans, useTranslation } from "react-i18next";
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { Button } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/auth.client";
 import { SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
 import { AppInfo } from "~/lib/config";
+import { filterLocale } from "~/lib/i18n";
 import { signInSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/sign-in";
 
@@ -58,6 +60,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function SignInRoute() {
+  const { i18n, t } = useTranslation();
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: signInSchema });
@@ -74,7 +77,7 @@ export default function SignInRoute() {
 
   return (
     <AuthLayout
-      title="Sign in to your account"
+      title={t("auth.signInTitle")}
       description="Welcome back! Please sign in to continue."
     >
       {/* Sign in form */}
@@ -96,10 +99,13 @@ export default function SignInRoute() {
               <>
                 <span>Password</span>
                 <Link
-                  to="/auth/forget-password"
+                  to={href(
+                    "/:lang?/auth/forget-password",
+                    filterLocale(i18n.language),
+                  )}
                   className="font-normal text-muted-foreground hover:underline"
                 >
-                  Forgot your password?
+                  {t("auth.forgotPassword")}
                 </Link>
               </>
             ),
@@ -114,7 +120,7 @@ export default function SignInRoute() {
         />
         <input type="hidden" name="provider" value="sign-in" />
         <LoadingButton
-          buttonText="Sign In"
+          buttonText={t("auth.signIn")}
           loadingText="Signing in..."
           isPending={isSignInPending}
         />
@@ -129,17 +135,21 @@ export default function SignInRoute() {
       {/* Social login */}
       {SOCIAL_PROVIDER_CONFIGS.length > 0 && (
         <div className="grid gap-2">
-          {SOCIAL_PROVIDER_CONFIGS.map((config) => (
-            <Form key={config.id} method="post">
-              <input type="hidden" name="provider" value={config.id} />
+          {SOCIAL_PROVIDER_CONFIGS.map(({ id, name, icon: Icon }) => (
+            <Form key={id} method="post">
+              <input type="hidden" name="provider" value={id} />
               <Button
                 variant="outline"
                 className="w-full"
-                disabled={isPending(config.id)}
+                disabled={isPending(id)}
               >
-                <config.icon className="size-4" />
+                <Icon className="size-4" />
                 <span>
-                  Login with <span className="capitalize">{config.name}</span>
+                  <Trans
+                    i18nKey="auth.signInWith"
+                    values={{ name }}
+                    components={[<span key={id} className="capitalize" />]}
+                  />
                 </span>
               </Button>
             </Form>
@@ -149,9 +159,12 @@ export default function SignInRoute() {
 
       {/* Sign up */}
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <Link to="/auth/sign-up" className="text-primary hover:underline">
-          Sign up
+        {t("auth.noAccount")}{" "}
+        <Link
+          to={href("/:lang?/auth/sign-up", filterLocale(i18n.language))}
+          className="text-primary hover:underline"
+        >
+          {t("auth.signUp")}
         </Link>
       </div>
     </AuthLayout>

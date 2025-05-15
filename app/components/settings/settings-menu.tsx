@@ -6,7 +6,9 @@ import {
   SunMoonIcon,
   UserIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { NavLink, href } from "react-router";
+import { filterLocale } from "~/lib/i18n";
 
 import { cn } from "~/lib/utils";
 
@@ -16,35 +18,40 @@ interface MenuItem {
   icon: LucideIcon;
 }
 
-const menuItems: MenuItem[] = [
-  {
-    title: "Account",
-    url: href("/settings/account"),
-    icon: UserIcon,
-  },
-  {
-    title: "Appearance",
-    url: href("/settings/appearance"),
-    icon: SunMoonIcon,
-  },
-  {
-    title: "Connections",
-    url: href("/settings/connections"),
-    icon: Link2Icon,
-  },
-  {
-    title: "Sessions",
-    url: href("/settings/sessions"),
-    icon: HardDriveIcon,
-  },
-  {
-    title: "Password",
-    url: href("/settings/password"),
-    icon: KeyIcon,
-  },
-];
+function getMenuItems(lang: string): MenuItem[] {
+  return [
+    {
+      title: "Account",
+      url: href("/:lang?/settings/account", filterLocale(lang)),
+      icon: UserIcon,
+    },
+    {
+      title: "Appearance",
+      url: href("/:lang?/settings/appearance", filterLocale(lang)),
+      icon: SunMoonIcon,
+    },
+    {
+      title: "Connections",
+      url: href("/:lang?/settings/connections", filterLocale(lang)),
+      icon: Link2Icon,
+    },
+    {
+      title: "Sessions",
+      url: href("/:lang?/settings/sessions", filterLocale(lang)),
+      icon: HardDriveIcon,
+    },
+    {
+      title: "Password",
+      url: href("/:lang?/settings/password", filterLocale(lang)),
+      icon: KeyIcon,
+    },
+  ];
+}
 
 export function Menu() {
+  const { i18n } = useTranslation();
+  const menuItems = getMenuItems(i18n.language);
+
   return (
     <div className="pb-12">
       <div className="relative flex gap-6 overflow-x-auto sm:gap-8">
