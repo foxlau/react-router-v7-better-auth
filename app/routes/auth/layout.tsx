@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { noAuthMiddleware } from "~/lib/middlewares/auth-guard.server";
+import { noAuthMiddleware } from "~/middlewares/auth-guard.server";
 
 export const unstable_middleware = [noAuthMiddleware];
 

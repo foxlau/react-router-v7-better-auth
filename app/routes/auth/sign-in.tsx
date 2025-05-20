@@ -1,14 +1,13 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { Trans, getI18n, useTranslation } from "react-i18next";
 import { Form, Link, redirect, useNavigation } from "react-router";
 import { toast } from "sonner";
-
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { Button } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/auth.client";
-import { SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
-import { AppInfo } from "~/lib/config";
+import { AppInfo, SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
 import { signInSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/sign-in";
 
@@ -17,11 +16,12 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
+  const { t } = getI18n();
   const formData = await request.clone().formData();
   const submission = parseWithZod(formData, { schema: signInSchema });
 
   if (submission.status !== "success") {
-    return toast.error("Invalid form data.");
+    return toast.error(t("errors.invalidData"));
   }
 
   switch (submission.value.provider) {
@@ -42,19 +42,21 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
       const { provider } = submission.value;
       const { error } = await authClient.signIn.social({
         provider,
-        callbackURL: "/home",
+        callbackURL: "/dashboard",
       });
       if (error) {
-        return toast.error(error.message || `${provider} sign in failed.`);
+        return toast.error(
+          error.message || t("errors.signInFailed", { provider }),
+        );
       }
       break;
     }
 
     default:
-      return toast.error("Invalid login method.");
+      return toast.error(t("errors.invalidLoginMethod"));
   }
 
-  return redirect("/home");
+  return redirect("/dashboard");
 }
 
 export default function SignInRoute() {
@@ -67,6 +69,7 @@ export default function SignInRoute() {
   });
 
   const navigation = useNavigation();
+  const { t } = useTranslation();
   const isPending = (provider: string) =>
     navigation.formData?.get("provider") === provider &&
     navigation.state !== "idle";
@@ -74,13 +77,13 @@ export default function SignInRoute() {
 
   return (
     <AuthLayout
-      title="Sign in to your account"
-      description="Welcome back! Please sign in to continue."
+      title={t("auth.signInTitle")}
+      description={t("auth.signInWelcome")}
     >
       {/* Sign in form */}
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
         <InputField
-          labelProps={{ children: "Email" }}
+          labelProps={{ children: t("user.email") }}
           inputProps={{
             ...getInputProps(fields.email, { type: "email" }),
             placeholder: "john@doe.com",
@@ -94,12 +97,12 @@ export default function SignInRoute() {
             className: "flex items-center justify-between",
             children: (
               <>
-                <span>Password</span>
+                <span>{t("user.password")}</span>
                 <Link
                   to="/auth/forget-password"
                   className="font-normal text-muted-foreground hover:underline"
                 >
-                  Forgot your password?
+                  {t("auth.forgotPasswordTitle")}
                 </Link>
               </>
             ),
@@ -114,32 +117,36 @@ export default function SignInRoute() {
         />
         <input type="hidden" name="provider" value="sign-in" />
         <LoadingButton
-          buttonText="Sign In"
-          loadingText="Signing in..."
+          buttonText={t("auth.signIn")}
+          loadingText={t("auth.signingIn")}
           isPending={isSignInPending}
         />
       </Form>
 
       <div className="relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">
-          Or continue with
+          {t("auth.signUpContinue")}
         </span>
       </div>
 
       {/* Social login */}
       {SOCIAL_PROVIDER_CONFIGS.length > 0 && (
         <div className="grid gap-2">
-          {SOCIAL_PROVIDER_CONFIGS.map((config) => (
-            <Form key={config.id} method="post">
-              <input type="hidden" name="provider" value={config.id} />
+          {SOCIAL_PROVIDER_CONFIGS.map(({ id, name, icon: Icon }) => (
+            <Form key={id} method="post">
+              <input type="hidden" name="provider" value={id} />
               <Button
                 variant="outline"
                 className="w-full"
-                disabled={isPending(config.id)}
+                disabled={isPending(id)}
               >
-                <config.icon className="size-4" />
+                <Icon className="size-4" />
                 <span>
-                  Login with <span className="capitalize">{config.name}</span>
+                  <Trans
+                    i18nKey="auth.signInWith"
+                    values={{ name }}
+                    components={[<span key={id} className="capitalize" />]}
+                  />
                 </span>
               </Button>
             </Form>
@@ -149,9 +156,9 @@ export default function SignInRoute() {
 
       {/* Sign up */}
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
+        {t("auth.noAccount")}{" "}
         <Link to="/auth/sign-up" className="text-primary hover:underline">
-          Sign up
+          {t("auth.signUp")}
         </Link>
       </div>
     </AuthLayout>

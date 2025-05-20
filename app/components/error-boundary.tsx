@@ -1,4 +1,5 @@
 import { MehIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { buttonVariants } from "./ui/button";
 
@@ -78,9 +79,10 @@ export function ProductionErrorDisplay({
 
 export function GeneralErrorBoundary() {
   const error = useRouteError();
+  const { t } = useTranslation();
 
-  const defaultMessage = "Oops! App Crashed 💥";
-  const defaultDetails = "Please reload the page. or try again later.";
+  const defaultMessage = t("errors.crashed.title");
+  const defaultDetails = t("errors.crashed.description");
 
   // Handle route errors, Example: 404, 500, 503
   if (isRouteErrorResponse(error)) {

@@ -3,9 +3,11 @@ import { useNavigate, useSubmit } from "react-router";
 import {
   CircleGaugeIcon,
   HomeIcon,
+  LayoutDashboardIcon,
   LogOutIcon,
   UserCogIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,6 +22,7 @@ import { getAvatarUrl } from "~/lib/utils";
 import { Button } from "./ui/button";
 
 export function UserNav() {
+  const { t } = useTranslation();
   const { user } = useAuthUser();
   const navigate = useNavigate();
   const submit = useSubmit();
@@ -62,7 +65,15 @@ export function UserNav() {
           }}
         >
           <HomeIcon />
-          Home Page
+          {t("home.title")}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            navigate("/dashboard");
+          }}
+        >
+          <LayoutDashboardIcon />
+          {t("dashboard.title")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -70,12 +81,12 @@ export function UserNav() {
           }}
         >
           <UserCogIcon />
-          Account Settings
+          {t("dashboard.account.label")}
         </DropdownMenuItem>
         {/* Todo: coming soon */}
         <DropdownMenuItem disabled>
           <CircleGaugeIcon />
-          Admin Dashboard
+          {t("dashboard.admin.label")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -86,7 +97,7 @@ export function UserNav() {
           }}
         >
           <LogOutIcon />
-          Log out
+          {t("auth.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

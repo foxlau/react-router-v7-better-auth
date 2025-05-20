@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -19,6 +20,7 @@ import type { clientAction } from "~/routes/settings/password";
 import { LoadingButton, PasswordField } from "../forms";
 
 export function ChangePassword() {
+  const { t } = useTranslation();
   const fetcher = useFetcher<typeof clientAction>({ key: "change-password" });
   const isPending = fetcher.state !== "idle";
   const [open, setOpen] = useState(false);
@@ -41,16 +43,13 @@ export function ChangePassword() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          Change Password
+          {t("password.change.title")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Change Password</DialogTitle>
-          <DialogDescription>
-            Make changes to your password here. You can change your password and
-            set a new password.
-          </DialogDescription>
+          <DialogTitle>{t("password.change.title")}</DialogTitle>
+          <DialogDescription>{t("password.change.action")}</DialogDescription>
         </DialogHeader>
         <fetcher.Form
           method="post"
@@ -59,7 +58,7 @@ export function ChangePassword() {
           {...getFormProps(form)}
         >
           <PasswordField
-            labelProps={{ children: "Current Password" }}
+            labelProps={{ children: t("user.currentPassword") }}
             inputProps={{
               ...getInputProps(fields.currentPassword, { type: "password" }),
               autoComplete: "current-password",
@@ -68,7 +67,7 @@ export function ChangePassword() {
             errors={fields.currentPassword.errors}
           />
           <PasswordField
-            labelProps={{ children: "New Password" }}
+            labelProps={{ children: t("user.newPassword") }}
             inputProps={{
               ...getInputProps(fields.newPassword, { type: "password" }),
               autoComplete: "new-password",
@@ -77,7 +76,7 @@ export function ChangePassword() {
             errors={fields.newPassword.errors}
           />
           <PasswordField
-            labelProps={{ children: "Confirm New Password" }}
+            labelProps={{ children: t("user.confirmPassword") }}
             inputProps={{
               ...getInputProps(fields.confirmPassword, { type: "password" }),
               autoComplete: "confirm-password",
@@ -88,12 +87,12 @@ export function ChangePassword() {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline" disabled={isPending}>
-                Cancel
+                {t("common.cancel")}
               </Button>
             </DialogClose>
             <LoadingButton
-              buttonText="Save changes"
-              loadingText="Saving..."
+              buttonText={t("common.save")}
+              loadingText={t("common.saving")}
               isPending={isPending}
             />
           </DialogFooter>

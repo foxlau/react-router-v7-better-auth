@@ -1,5 +1,6 @@
 import { data } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { ConnectionItem } from "~/components/settings/connection-item";
 import { SettingsLayout } from "~/components/settings/settings-layout";
 import { serverAuth } from "~/lib/auth/auth.server";
@@ -22,6 +23,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function ConnectionsRoute({
   loaderData: { accounts },
 }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const connections = SOCIAL_PROVIDER_CONFIGS.map((config) => {
     const account = accounts.find((acc) => acc.provider === config.id);
     return {
@@ -37,8 +39,8 @@ export default function ConnectionsRoute({
 
   return (
     <SettingsLayout
-      title="Connections"
-      description="You can connect your account to third-party services below."
+      title={t("connections.title")}
+      description={t("connections.description")}
     >
       <div className="py-4">
         <div className="divide-y overflow-hidden rounded-lg border shadow-xs">

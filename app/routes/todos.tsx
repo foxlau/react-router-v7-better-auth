@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { and, eq, sql } from "drizzle-orm";
 import { Form, data, useNavigation } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { LoadingButton } from "~/components/forms";
 import { TodoItem } from "~/components/todos/todo-item";
 import { Input } from "~/components/ui/input";
@@ -73,6 +74,7 @@ export default function TodosRoute({
   loaderData: { todos },
   actionData,
 }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const [form, fields] = useForm({
     onValidate({ formData }) {
       return parseWithZod(formData, { schema: todoSchema });
@@ -81,7 +83,6 @@ export default function TodosRoute({
     constraint: getZodConstraint(todoSchema),
     shouldRevalidate: "onInput",
   });
-
   const navigation = useNavigation();
   const isSubmitting =
     navigation.state !== "idle" &&
@@ -90,16 +91,16 @@ export default function TodosRoute({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold text-base">Todo List</h1>
+        <h1 className="font-semibold text-base">{t("todo.title")}</h1>
         <div className="font-mono text-muted-foreground text-sm">
-          Today is {formatDate(new Date(), "MMMM d, yyyy")}
+          {t("todo.today")} {formatDate(new Date(), "MMMM d, yyyy")}
         </div>
       </div>
 
       <Form method="POST" className="space-y-2" {...getFormProps(form)}>
         <div className="flex gap-2">
           <Input
-            placeholder="Add a todo"
+            placeholder={t("todo.add")}
             {...getInputProps(fields.title, { type: "text" })}
           />
           <input
@@ -107,8 +108,8 @@ export default function TodosRoute({
             {...getInputProps(fields.intent, { type: "hidden" })}
           />
           <LoadingButton
-            buttonText="Add"
-            loadingText="Adding..."
+            buttonText={t("common.add")}
+            loadingText={t("common.adding")}
             isPending={isSubmitting}
           />
         </div>
@@ -124,7 +125,7 @@ export default function TodosRoute({
       </Form>
 
       {todos.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No todos found</p>
+        <p className="text-muted-foreground text-sm">{t("todo.noFound")}</p>
       ) : (
         <ul className="divide-y overflow-hidden rounded-lg border shadow-xs">
           {todos.map((todo: SelectTodo) => (

@@ -2,6 +2,7 @@ import { CircleAlertIcon } from "lucide-react";
 import { useState } from "react";
 import { useFetcher } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ import { Input } from "~/components/ui/input";
 import { LoadingButton } from "../forms";
 
 export function DeleteAccount({ email }: { email: string }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState("");
   const fetcher = useFetcher({ key: "delete-account" });
   const isPending = fetcher.state !== "idle";
@@ -25,7 +27,7 @@ export function DeleteAccount({ email }: { email: string }) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="destructive" size="sm">
-          Delete
+          {t("common.delete")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">
@@ -38,11 +40,11 @@ export function DeleteAccount({ email }: { email: string }) {
           </div>
           <DialogHeader>
             <DialogTitle className="sm:text-center">
-              Final confirmation
+              {t("account.confirmation")}
             </DialogTitle>
             <DialogDescription className="sm:text-center">
-              This action cannot be undone. To confirm, please enter the email
-              address <span className="text-foreground">{email}</span>.
+              {t("account.confirmationWarn")}{" "}
+              <span className="text-foreground">{email}</span>.
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -61,12 +63,12 @@ export function DeleteAccount({ email }: { email: string }) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline" className="flex-1">
-                Cancel
+                {t("common.cancel")}
               </Button>
             </DialogClose>
             <LoadingButton
-              buttonText="Delete"
-              loadingText="Deleting..."
+              buttonText={t("common.delete")}
+              loadingText={t("common.deleting")}
               isPending={isPending}
               variant="destructive"
               className="flex-1"
@@ -80,13 +82,14 @@ export function DeleteAccount({ email }: { email: string }) {
 }
 
 export function SignOut() {
+  const { t } = useTranslation();
   const signOutFetcher = useFetcher();
   const signOutIsPending = signOutFetcher.state !== "idle";
 
   return (
     <LoadingButton
-      buttonText="Sign out"
-      loadingText="Signing out..."
+      buttonText={t("auth.signOut")}
+      loadingText={t("auth.signingOut")}
       isPending={signOutIsPending}
       variant="outline"
       size="sm"

@@ -46,5 +46,9 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
-  }
+  },
+  "i18n-ally.defaultNamespace": "translation",
+  "i18n-ally.localesPaths": ["app/lib/i18n/locales"],
+  "i18n-ally.keystyle": "nested",
+  "cSpell.words": ["unixepoch"]
 }

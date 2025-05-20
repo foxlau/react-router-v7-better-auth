@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "./zod-i18n";
 
 export const todoIdSchema = z.string().transform((val) => Number(val));
 

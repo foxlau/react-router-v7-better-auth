@@ -1,7 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
+import { getI18n, useTranslation } from "react-i18next";
 import { Link, href } from "react-router";
 import { toast } from "sonner";
-
 import { ChangePassword } from "~/components/settings/password-action";
 import { SettingRow } from "~/components/settings/setting-row";
 import { SettingsLayout } from "~/components/settings/settings-layout";
@@ -17,6 +17,8 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
+  const { t } = getI18n();
+
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: changePasswordSchema });
 
@@ -31,32 +33,34 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   });
 
   if (result.error) {
-    toast.error(result.error.message || "An unexpected error occurred.");
+    toast.error(result.error.message || t("errors.unexpected"));
     return { status: "error" };
   }
 
-  toast.success("Password changed successfully! Other sessions revoked.");
+  toast.success(t("password.change.success"));
   return { status: "success" };
 }
 
 export default function ChangePasswordRoute() {
+  const { t } = useTranslation();
+
   return (
-    <SettingsLayout title="Password">
+    <SettingsLayout title={t("password.title")}>
       <SettingRow
-        title="Change your password"
-        description="If you have already set your password, you can update it here. If you have forgotten your password, please reset it below."
+        title={t("password.change.title")}
+        description={t("password.change.description")}
         action={<ChangePassword />}
       />
       <SettingRow
-        title="Reset your password"
-        description="If you have forgotten your password, you can reset it here. Alternatively, if have signed up via Github / Google and more, you can set your password here too."
+        title={t("password.reset.title")}
+        description={t("password.reset.description")}
         action={
           <Link
             target="_blank"
             to={href("/auth/forget-password")}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
           >
-            Reset password ↗
+            {t("password.reset.title")} ↗
           </Link>
         }
       />

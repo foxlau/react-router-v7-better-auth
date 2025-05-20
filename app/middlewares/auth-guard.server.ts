@@ -35,7 +35,7 @@ export const noAuthMiddleware: unstable_MiddlewareFunction = async (
   const authSession = await getAuthSession(request);
 
   if (authSession) {
-    throw redirect("/home");
+    throw redirect("/dashboard");
   }
 
   return await next();

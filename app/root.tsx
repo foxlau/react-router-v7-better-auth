@@ -8,11 +8,11 @@ import {
 } from "react-router";
 import { getToast } from "remix-toast";
 import { Toaster, toast as notify } from "sonner";
-
 import { ProgressBar } from "./components/progress-bar";
 import { useNonce } from "./hooks/use-nonce";
 import "./styles/app.css";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { Route } from "./+types/root";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import {
@@ -22,6 +22,7 @@ import {
 import { parseColorScheme } from "./lib/color-scheme/server";
 import { getPublicEnv } from "./lib/env.server";
 import { requestMiddleware } from "./lib/http.server";
+import { getLocale, i18nextMiddleware } from "./middlewares/i18next";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -40,21 +41,32 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
+export const unstable_middleware = [i18nextMiddleware];
+
+export async function loader({ request, context }: Route.LoaderArgs) {
   await requestMiddleware(request);
   const colorScheme = await parseColorScheme(request);
   const { toast, headers } = await getToast(request);
-
-  return data({ ENV: getPublicEnv(), colorScheme, toast }, { headers });
+  // get locale and set
+  const locale = getLocale(context);
+  // use session
+  // const session = await localeSession.getSession(request.headers.get("Cookie"));
+  // session.set("lng", locale);
+  // headers.append("Set-Cookie", await localeSession.commitSession(session));
+  // use cookie
+  // headers.append("Set-Cookie", await localeCookie.serialize(locale));
+  return data({ locale, ENV: getPublicEnv(), colorScheme, toast }, { headers });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const nonce = useNonce();
   const colorScheme = useColorScheme();
+  const { i18n } = useTranslation();
 
   return (
     <html
-      lang="en"
+      lang={i18n.language}
+      dir={i18n.dir(i18n.language)}
       className={`${colorScheme === "dark" ? "dark" : ""} touch-manipulation overflow-x-hidden`}
       suppressHydrationWarning
     >
@@ -80,8 +92,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const { ENV, toast } = loaderData;
+  const { ENV, toast, locale } = loaderData;
   const nonce = useNonce();
+  const { i18n } = useTranslation();
+  // console.log(`App => locale = ${locale}, i18n.language = ${i18n.language}`);
+
+  useEffect(() => {
+    if (i18n.language !== locale) i18n.changeLanguage(locale);
+  }, [locale, i18n]);
 
   useEffect(() => {
     if (toast?.type === "error") {

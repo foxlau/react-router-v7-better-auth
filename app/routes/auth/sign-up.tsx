@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Form, Link, redirect } from "react-router";
 import { toast } from "sonner";
 
+import { Trans, getI18n, useTranslation } from "react-i18next";
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
@@ -16,6 +17,7 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
+  const { t } = getI18n();
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: signUpSchema });
 
@@ -24,17 +26,15 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   }
 
   const { error } = await authClient.signUp.email({
-    callbackURL: "/home",
+    callbackURL: "/dashboard",
     ...submission.value,
   });
 
   if (error) {
-    return toast.error(error.message || "An unexpected error occurred.");
+    return toast.error(error.message || t("errors.unexpected"));
   }
 
-  toast.success(
-    "Sign up successful! Please check your email for a verification link.",
-  );
+  toast.success(t("auth.signingUpSuccess"));
   return redirect("/auth/sign-in");
 }
 
@@ -47,19 +47,20 @@ export default function SignUpRoute() {
     shouldRevalidate: "onInput",
   });
 
+  const { t } = useTranslation();
   const isPending = useIsPending({
     formMethod: "POST",
   });
 
   return (
     <AuthLayout
-      title="Create your account"
-      description="Welcome! Please fill in the details to get started."
+      title={t("auth.signUpTitle")}
+      description={t("auth.signUpWelcome")}
     >
       {/* Sign up form */}
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
         <InputField
-          labelProps={{ children: "Name" }}
+          labelProps={{ children: t("user.name") }}
           inputProps={{
             ...getInputProps(fields.name, { type: "text" }),
             placeholder: "John Doe",
@@ -70,7 +71,7 @@ export default function SignUpRoute() {
           errors={fields.name.errors}
         />
         <InputField
-          labelProps={{ children: "Email" }}
+          labelProps={{ children: t("user.email") }}
           inputProps={{
             ...getInputProps(fields.email, { type: "email" }),
             placeholder: "johndoe@example.com",
@@ -80,40 +81,48 @@ export default function SignUpRoute() {
           errors={fields.email.errors}
         />
         <PasswordField
-          labelProps={{ children: "Password" }}
+          labelProps={{ children: t("user.password") }}
           inputProps={{
             ...getInputProps(fields.password, { type: "password" }),
-            placeholder: "Enter a unique password",
+            placeholder: t("auth.enterPassword"),
             autoComplete: "password",
             enterKeyHint: "done",
           }}
           errors={fields.password.errors}
         />
         <LoadingButton
-          buttonText="Sign Up"
-          loadingText="Signing up..."
+          buttonText={t("auth.signUp")}
+          loadingText={t("auth.signingUp")}
           isPending={isPending}
         />
       </Form>
 
       {/* Terms of service */}
       <div className="text-balance text-center text-muted-foreground text-xs">
-        By clicking continue, you agree to our{" "}
-        <a href="/" className="text-primary hover:underline">
-          Terms of Service
-        </a>
-        {" and "}
-        <a href="/" className="text-primary hover:underline">
-          Privacy Policy
-        </a>
-        .
+        <Trans
+          i18nKey="auth.serviceAndPolicy"
+          components={[
+            // biome-ignore lint/a11y/useAnchorContent: <explanation>
+            <a
+              key="termsOfService"
+              href="/"
+              className="text-primary hover:underline"
+            />,
+            // biome-ignore lint/a11y/useAnchorContent: <explanation>
+            <a
+              key="privacyPolicy"
+              href="/"
+              className="text-primary hover:underline"
+            />,
+          ]}
+        />
       </div>
 
       {/* Sign in */}
       <div className="text-center text-sm">
-        Already have an account?{" "}
+        {t("auth.haveAccount")}{" "}
         <Link to="/auth/sign-in" className="text-primary hover:underline">
-          Sign in
+          {t("auth.signIn")}
         </Link>
       </div>
     </AuthLayout>

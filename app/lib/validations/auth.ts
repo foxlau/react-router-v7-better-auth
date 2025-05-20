@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z, zodT } from "./zod-i18n";
 
 type passwordSchemaType = z.infer<typeof passwordSchema>;
 
@@ -15,7 +15,8 @@ const passwordConfirmationRefinement = (
     ctx.addIssue({
       path: ["confirmPassword"],
       code: z.ZodIssueCode.custom,
-      message: "New password and confirm password do not match.",
+      // message: "New password and confirm password do not match.",
+      params: { i18n: "custom.passwordNotMatch" },
     });
   }
 };
@@ -24,21 +25,33 @@ const customSignInErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_union_discriminator) {
     return { message: "Invalid sign-in provider specified." };
   }
+  if (issue.code === z.ZodIssueCode.invalid_type) {
+    if (
+      issue.expected === "string" &&
+      ["undefined", "null"].includes(issue.received)
+    ) {
+      return {
+        message: zodT("custom.isRequired", {
+          field: zodT(`custom.${issue.path[0]}`),
+        }),
+      };
+    }
+  }
   return { message: ctx.defaultError };
 };
 
 export const emailSchema = z
-  .string({ message: "Email is required." })
-  .email({ message: "Invalid email address." })
+  .string({ errorMap: customSignInErrorMap })
+  .email()
   .toLowerCase()
   .trim();
 
 export const passwordSchema = z
-  .string({ message: "Password is required." })
-  .min(8, "Password must be at least 8 characters long.")
-  .max(32, "Password must be less than 32 characters long.");
+  .string({ errorMap: customSignInErrorMap })
+  .min(8)
+  .max(32);
 
-export const tokenSchema = z.string().min(1, "Token is required.");
+export const tokenSchema = z.string().min(1);
 
 export const signInSchema = z.discriminatedUnion(
   "provider",
@@ -61,10 +74,7 @@ export const signInSchema = z.discriminatedUnion(
 export const signUpSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  name: z
-    .string({ message: "Name is required." })
-    .min(3, "Name must be at least 3 characters long.")
-    .trim(),
+  name: z.string().min(3).trim(),
 });
 
 export const forgetPasswordSchema = z.object({
@@ -77,6 +87,7 @@ export const resetPasswordSchema = z
     newPassword: passwordSchema,
     confirmPassword: passwordSchema,
   })
+  // .refine(() => false, { params: { i18n: "test_custom_key" } });
   .superRefine(passwordConfirmationRefinement);
 
 export const changePasswordSchema = z

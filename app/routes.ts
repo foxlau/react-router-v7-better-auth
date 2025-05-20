@@ -11,7 +11,7 @@ export default [
 
   // User routes
   layout("routes/layout.tsx", [
-    route("home", "routes/home.tsx"),
+    route("dashboard", "routes/dashboard.tsx"),
     route("todos", "routes/todos.tsx"),
 
     ...prefix("settings", [
@@ -43,6 +43,7 @@ export default [
   ...prefix("api", [
     route("auth/error", "routes/api/better-error.tsx"),
     route("auth/*", "routes/api/better.tsx"),
+    route("locale", "routes/api/locale.ts"),
     route("color-scheme", "routes/api/color-scheme.ts"),
   ]),
 

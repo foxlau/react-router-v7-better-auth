@@ -1,9 +1,11 @@
 import { ArrowRightIcon } from "lucide-react";
 import { Link, href } from "react-router";
 
+import { Trans, useTranslation } from "react-i18next";
 import { AppLogo } from "~/components/app-logo";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { GithubIcon } from "~/components/icons";
+import { LangSwitcher } from "~/components/lang/lang-switcher";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { AppInfo } from "~/lib/config";
 import { cn } from "~/lib/utils";
@@ -13,10 +15,13 @@ export const meta: Route.MetaFunction = () => {
   return [{ title: AppInfo.name }];
 };
 
-export default function HomeRoute() {
+export default function DashboardRoute() {
+  const { t } = useTranslation();
+
   return (
     <div className="relative flex h-dvh w-full flex-col bg-background">
-      <div className="absolute top-4 right-4 sm:right-10">
+      <div className="absolute top-4 right-4 flex items-center gap-4 sm:right-10">
+        <LangSwitcher />
         <ColorSchemeToggle />
       </div>
       <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center px-6 sm:px-10">
@@ -24,11 +29,11 @@ export default function HomeRoute() {
           <AppLogo />
 
           <div className="font-extrabold text-4xl text-primary leading-8 tracking-tight sm:text-5xl sm:leading-10">
-            React Router v7 <br /> with Better auth.
+            <Trans i18nKey="title" components={[<br key="homeBr" />]} />
           </div>
 
           <p className="text-center font-normal text-base opacity-80">
-            {AppInfo.description}
+            {t("description")}
           </p>
 
           <div className="flex items-center gap-4">
@@ -38,14 +43,14 @@ export default function HomeRoute() {
                 reloadDocument
               >
                 <GithubIcon />
-                Star on Github
+                {t("home.star")}
               </Link>
             </Button>
             <Link
               to={href("/auth/sign-in")}
               className={cn(buttonVariants({ variant: "outline" }))}
             >
-              Get Started <ArrowRightIcon className="size-4" />
+              {t("home.start")} <ArrowRightIcon className="size-4" />
             </Link>
           </div>
         </section>

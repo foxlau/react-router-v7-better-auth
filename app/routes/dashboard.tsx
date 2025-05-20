@@ -1,9 +1,11 @@
 import { ListTodoIcon, type LucideIcon, UserCogIcon } from "lucide-react";
-import { Link, href } from "react-router";
+import { Link, href, useLoaderData } from "react-router";
 
+import { useTranslation } from "react-i18next";
 import { useAuthUser } from "~/hooks/use-auth-user";
 import { AppInfo } from "~/lib/config";
-import type { Route } from "./+types/home";
+import { getInstance, getLocale } from "~/middlewares/i18next";
+import type { Route } from "./+types/dashboard";
 
 type NavLink = {
   to: string;
@@ -16,20 +18,34 @@ export const meta: Route.MetaFunction = () => {
   return [{ title: `Home - ${AppInfo.name}` }];
 };
 
-export default function HomeRoute(_: Route.ComponentProps) {
+export async function loader({ context }: Route.LoaderArgs) {
+  const { t } = getInstance(context);
+  const locale = getLocale(context);
+  const date = new Date().toLocaleDateString(locale, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return { date, title: t("title"), description: t("description") };
+}
+
+export default function DashboardRoute(_: Route.ComponentProps) {
   const { user } = useAuthUser();
+  const { date } = useLoaderData<typeof loader>();
+  const { t } = useTranslation();
+
   const navLinks: NavLink[] = [
     {
       to: href("/todos"),
       icon: ListTodoIcon,
-      label: "Todo List",
-      description: "Create and manage your todos",
+      label: t("dashboard.todo.label"),
+      description: t("dashboard.todo.description"),
     },
     {
       to: href("/settings/account"),
       icon: UserCogIcon,
-      label: "Account Settings",
-      description: "Manage your account settings",
+      label: t("dashboard.account.label"),
+      description: t("dashboard.account.description"),
     },
   ];
 
@@ -40,8 +56,7 @@ export default function HomeRoute(_: Route.ComponentProps) {
           <span className="mr-2 text-xl">👋</span> Hi, {user.name}!
         </h2>
         <p className="text-muted-foreground">
-          Welcome to your dashboard. Here you can manage your todos and account
-          settings.
+          {t("dashboard.welcome")} {date}
         </p>
       </header>
 
