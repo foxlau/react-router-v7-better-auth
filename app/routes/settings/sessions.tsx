@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Await, data, useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import { getI18n, useTranslation } from "react-i18next";
 import { SignOutOfOtherSessions } from "~/components/settings/session-action";
 import { SessionItem } from "~/components/settings/session-item";
 import { SettingsLayout } from "~/components/settings/settings-layout";
@@ -24,25 +25,27 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function clientAction(_: Route.ClientActionArgs) {
-  const { error } = await authClient.revokeOtherSessions();
+  const { t } = getI18n();
 
+  const { error } = await authClient.revokeOtherSessions();
   if (error) {
-    toast.error(error.message || "An unexpected error occurred.");
+    toast.error(error.message || t("errors.unexpected"));
     return { status: "error" };
   }
 
-  toast.success("Other sessions signed out successfully.");
+  toast.success(t("sessions.otherSignedOut"));
   return { status: "success" };
 }
 
 export default function SessionsRoute({ loaderData }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const { session } = useAuthUser();
   const navigate = useNavigate();
 
   return (
     <SettingsLayout
-      title="Sessions"
-      description="If necessary, you can sign out of all other browser sessions. Some of your recent sessions are listed below, but this list may not be complete. If you think your account has been compromised, you should also update your password."
+      title={t("sessions.title")}
+      description={t("sessions.description")}
     >
       <div className="py-4">
         <Suspense
@@ -63,15 +66,15 @@ export default function SessionsRoute({ loaderData }: Route.ComponentProps) {
             resolve={loaderData.listSessions}
             errorElement={
               <div className="flex items-center justify-between rounded-lg border px-4 py-3 shadow-xs">
-                <p>Error loading sessions.</p>
+                <p>{t("errors.loadingSessions")}</p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    navigate(".");
+                    navigate(0);
                   }}
                 >
-                  Refresh
+                  {t("common.refresh")}
                 </Button>
               </div>
             }
@@ -80,7 +83,7 @@ export default function SessionsRoute({ loaderData }: Route.ComponentProps) {
               <div className="space-y-4">
                 <div className="divide-y rounded-lg border shadow-xs">
                   {resolvedSessions.length === 0 ? (
-                    <div className="px-4 py-3">No sessions found.</div>
+                    <div className="px-4 py-3">{t("sessions.noSessions")}</div>
                   ) : (
                     resolvedSessions.map((item) => (
                       <SessionItem

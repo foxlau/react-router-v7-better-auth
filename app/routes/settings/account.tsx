@@ -1,6 +1,7 @@
 import { parseWithZod } from "@conform-to/zod";
 import { dataWithError, dataWithSuccess } from "remix-toast";
 
+import { useTranslation } from "react-i18next";
 import AvatarCropper from "~/components/avatar-cropper";
 import { DeleteAccount, SignOut } from "~/components/settings/account-action";
 import { SettingRow } from "~/components/settings/setting-row";
@@ -11,6 +12,7 @@ import { AppInfo } from "~/lib/config";
 import { adapterContext, authSessionContext } from "~/lib/contexts";
 import { getAvatarUrl } from "~/lib/utils";
 import { accountSchema } from "~/lib/validations/settings";
+import { getInstance } from "~/middlewares/i18next";
 import type { Route } from "./+types/account";
 
 export const meta: Route.MetaFunction = () => {
@@ -18,12 +20,13 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function action({ request, context }: Route.ActionArgs) {
+  const { t } = getInstance(context);
   try {
     const formData = await request.clone().formData();
     const submission = parseWithZod(formData, { schema: accountSchema });
 
     if (submission.status !== "success") {
-      return dataWithError(null, "Invalid form data.");
+      return dataWithError(null, t("errors.invalidData"));
     }
 
     const auth = serverAuth();
@@ -39,23 +42,23 @@ export async function action({ request, context }: Route.ActionArgs) {
           auth.api.revokeSessions({ headers }),
           auth.api.deleteUser({ body: {}, asResponse: false, headers }),
         ]);
-        message = "Account deleted.";
+        message = t("account.deleted");
         break;
 
       case "delete-avatar": {
         if (!user.image) {
-          return dataWithError(null, "No avatar to delete.");
+          return dataWithError(null, t("account.noAvatar"));
         }
 
         await Promise.all([
           deleteUserImageFromR2(user.image),
           auth.api.updateUser({
-            body: { image: null },
+            body: { image: undefined },
             asResponse: false,
             headers,
           }),
         ]);
-        message = "Avatar deleted.";
+        message = t("account.avatarDeleted");
         break;
       }
 
@@ -76,30 +79,31 @@ export async function action({ request, context }: Route.ActionArgs) {
             headers,
           }),
         ]);
-        message = "Avatar updated.";
+        message = t("account.avatarUpdated");
         break;
       }
 
       default:
-        return dataWithError(null, "Invalid intent.");
+        return dataWithError(null, t("errors.invalidIntent"));
     }
 
     return dataWithSuccess(null, message);
   } catch (error) {
     console.error("Account action error:", error);
-    return dataWithError(null, "An unexpected error occurred.");
+    return dataWithError(null, t("errors.unexpected"));
   }
 }
 
 export default function AccountRoute() {
+  const { t } = useTranslation();
   const { user } = useAuthUser();
   const { avatarUrl, placeholderUrl } = getAvatarUrl(user.image, user.name);
 
   return (
-    <SettingsLayout title="Account">
+    <SettingsLayout title={t("account.title")}>
       <SettingRow
-        title="Avatar"
-        description="Click avatar to change profile picture."
+        title={t("account.avatar")}
+        description={t("account.description")}
         action={
           <AvatarCropper
             avatarUrl={avatarUrl}
@@ -108,17 +112,17 @@ export default function AccountRoute() {
         }
       />
       <SettingRow
-        title="Name & Email address"
+        title={t("account.nameEmail")}
         description={`${user.name}, ${user.email}`}
       />
       <SettingRow
-        title="Current sign in"
-        description={`You are signed in as ${user.email}`}
+        title={t("account.currentSignIn")}
+        description={`${t("account.signInAs")} ${user.email}`}
         action={<SignOut />}
       />
       <SettingRow
-        title="Delete account"
-        description="Permanently delete your account."
+        title={t("account.deleteAccount")}
+        description={t("account.permanentlyDeleteAccount")}
         action={<DeleteAccount email={user.email} />}
       />
     </SettingsLayout>

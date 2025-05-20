@@ -1,8 +1,8 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { getI18n, useTranslation } from "react-i18next";
 import { Form, Link } from "react-router";
 import { toast } from "sonner";
-
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton } from "~/components/forms";
 import { useIsPending } from "~/hooks/use-is-pending";
@@ -16,6 +16,7 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
+  const { t } = getI18n();
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: forgetPasswordSchema });
 
@@ -29,8 +30,8 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   });
 
   return error
-    ? toast.error(error.message || "An unexpected error occurred.")
-    : toast.success("Password reset link sent to your email!");
+    ? toast.error(error.message || t("errors.unexpected"))
+    : toast.success(t("auth.sentLinkSuccess"));
 }
 
 export default function ForgetPasswordRoute() {
@@ -42,34 +43,35 @@ export default function ForgetPasswordRoute() {
     shouldRevalidate: "onInput",
   });
 
+  const { t } = useTranslation();
   const isPending = useIsPending({
     formMethod: "POST",
   });
 
   return (
     <AuthLayout
-      title="Forgot your password?"
-      description="Enter your email address and we will send you a password reset link."
+      title={t("auth.forgotPasswordTitle")}
+      description={t("auth.forgotPasswordDescription")}
     >
       <Form method="post" className="grid gap-4" {...getFormProps(form)}>
         <InputField
           inputProps={{
             ...getInputProps(fields.email, { type: "email" }),
-            placeholder: "Enter your email",
+            placeholder: t("auth.enterEmail"),
             autoComplete: "email",
           }}
           errors={fields.email.errors}
         />
         <LoadingButton
-          buttonText="Send reset link"
-          loadingText="Sending reset link..."
+          buttonText={t("auth.sendResetLink")}
+          loadingText={t("auth.sendingResetLink")}
           isPending={isPending}
         />
       </Form>
 
       <div className="text-center text-sm">
         <Link to="/auth/sign-in" className="text-primary hover:underline">
-          ← Back to sign in
+          ← {t("auth.backSignIn")}
         </Link>
       </div>
     </AuthLayout>

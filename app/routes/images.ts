@@ -3,8 +3,8 @@ import type { Route } from "./+types/images";
 
 export const loader = async ({ params, context }: Route.LoaderArgs) => {
   const key = params["*"];
-  const _context = context.get(adapterContext);
-  const object = await _context.cloudflare.env.R2.get(key);
+  const { cloudflare } = context.get(adapterContext);
+  const object = await cloudflare.env.R2.get(key);
   if (!object) {
     return new Response(null, { status: 404 });
   }

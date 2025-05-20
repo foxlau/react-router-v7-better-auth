@@ -1,18 +1,22 @@
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { I18nextProvider } from "react-i18next";
 import type {
   AppLoadContext,
   EntryContext,
   HandleErrorFunction,
+  unstable_RouterContextProvider,
 } from "react-router";
 import { ServerRouter } from "react-router";
 import { NonceProvider } from "./hooks/use-nonce";
+import { getInstance } from "./middlewares/i18next";
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  routerContext: EntryContext,
+  entryContext: EntryContext,
+  routerContext: unstable_RouterContextProvider,
   _loadContext: AppLoadContext,
 ) {
   let shellRendered = false;
@@ -30,7 +34,9 @@ export default async function handleRequest(
 
   const body = await renderToReadableStream(
     <NonceProvider value={nonce}>
-      <ServerRouter context={routerContext} url={request.url} nonce={nonce} />
+      <I18nextProvider i18n={getInstance(routerContext)}>
+        <ServerRouter context={entryContext} url={request.url} nonce={nonce} />
+      </I18nextProvider>
     </NonceProvider>,
     {
       onError(error: unknown) {
@@ -50,7 +56,7 @@ export default async function handleRequest(
 
   // Ensure requests from bots and SPA Mode renders wait for all content to load before responding
   // https://react.dev/reference/react-dom/server/renderToPipeableStream#waiting-for-all-content-to-load-for-crawlers-and-static-generation
-  if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
+  if ((userAgent && isbot(userAgent)) || entryContext.isSpaMode) {
     await body.allReady;
   }
 

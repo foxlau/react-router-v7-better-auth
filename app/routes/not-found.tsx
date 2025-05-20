@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ProductionErrorDisplay } from "~/components/error-boundary";
 import { AppInfo } from "~/lib/config";
 import type { Route } from "./+types/not-found";
@@ -15,10 +16,12 @@ export default function NotFound() {
 }
 
 export function ErrorBoundary() {
+  const { t } = useTranslation();
+
   return (
     <ProductionErrorDisplay
-      message="Oops! Page Not Found."
-      details="It seems like the page you're looking for does not exist or might have been removed."
+      message={t("errors.notFound.title")}
+      details={t("errors.notFound.description")}
     />
   );
 }

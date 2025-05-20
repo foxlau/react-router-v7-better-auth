@@ -1,5 +1,6 @@
 import { CheckIcon, MinusIcon } from "lucide-react";
 
+import { useTranslation } from "react-i18next";
 import { SettingsLayout } from "~/components/settings/settings-layout";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import {
@@ -27,11 +28,12 @@ export const meta: Route.MetaFunction = () => {
 export default function AppearanceRoute() {
   const setColorScheme = useSetColorScheme();
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   return (
     <SettingsLayout
-      title="Appearance"
-      description="Customize the appearance of the app. Automatically switch between day and night themes."
+      title={t("appearance.title")}
+      description={t("appearance.description")}
     >
       <RadioGroup
         className="grid grid-cols-3 gap-4 py-4 sm:gap-6"

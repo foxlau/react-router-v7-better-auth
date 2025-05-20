@@ -1,3 +1,4 @@
+import type { i18n } from "i18next";
 import {
   HardDriveIcon,
   KeyIcon,
@@ -6,6 +7,7 @@ import {
   SunMoonIcon,
   UserIcon,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { NavLink, href } from "react-router";
 
 import { cn } from "~/lib/utils";
@@ -16,35 +18,41 @@ interface MenuItem {
   icon: LucideIcon;
 }
 
-const menuItems: MenuItem[] = [
-  {
-    title: "Account",
-    url: href("/settings/account"),
-    icon: UserIcon,
-  },
-  {
-    title: "Appearance",
-    url: href("/settings/appearance"),
-    icon: SunMoonIcon,
-  },
-  {
-    title: "Connections",
-    url: href("/settings/connections"),
-    icon: Link2Icon,
-  },
-  {
-    title: "Sessions",
-    url: href("/settings/sessions"),
-    icon: HardDriveIcon,
-  },
-  {
-    title: "Password",
-    url: href("/settings/password"),
-    icon: KeyIcon,
-  },
-];
+function getMenuItems(i18n: i18n): MenuItem[] {
+  const { t } = i18n;
+  return [
+    {
+      title: t("account.title"),
+      url: href("/settings/account"),
+      icon: UserIcon,
+    },
+    {
+      title: t("appearance.title"),
+      url: href("/settings/appearance"),
+      icon: SunMoonIcon,
+    },
+    {
+      title: t("connections.title"),
+      url: href("/settings/connections"),
+      icon: Link2Icon,
+    },
+    {
+      title: t("sessions.title"),
+      url: href("/settings/sessions"),
+      icon: HardDriveIcon,
+    },
+    {
+      title: t("user.password"),
+      url: href("/settings/password"),
+      icon: KeyIcon,
+    },
+  ];
+}
 
 export function Menu() {
+  const { i18n } = useTranslation();
+  const menuItems = getMenuItems(i18n);
+
   return (
     <div className="pb-12">
       <div className="relative flex gap-6 overflow-x-auto sm:gap-8">

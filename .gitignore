@@ -9,3 +9,5 @@
 .mf
 .wrangler
 .dev.vars
+wrangler.json*
+wrangler.toml

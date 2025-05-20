@@ -1,5 +1,5 @@
 import { env as cloudflareEnv } from "cloudflare:workers";
-import { z } from "zod";
+import { z } from "~/lib/validations/zod-i18n";
 
 /**
  * Server environment schema definition with validation rules

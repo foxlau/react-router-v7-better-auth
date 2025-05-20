@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "./zod-i18n";
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 

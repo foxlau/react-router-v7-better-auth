@@ -16,7 +16,7 @@ import {
   useRouteLoaderData,
   useSubmit,
 } from "react-router";
-import { z } from "zod";
+import { z } from "~/lib/validations/zod-i18n";
 import type { loader as rootLoader } from "~/root";
 
 export const ColorSchemeSchema = z.object({
