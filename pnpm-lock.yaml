@@ -13,7 +13,7 @@ importers:
         version: 1.5.0(react@19.1.0)
       '@conform-to/zod':
         specifier: ^1.5.0
-        version: 1.5.0(zod@3.24.4)
+        version: 1.5.0(zod@3.25.7)
       '@origin-space/image-cropper':
         specifier: ^0.1.9
         version: 0.1.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -99,8 +99,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.5)
       zod:
-        specifier: ^3.24.4
-        version: 3.24.4
+        specifier: ^3.25.7
+        version: 3.25.7
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -3321,8 +3321,8 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@3.24.4:
-    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
+  zod@3.25.7:
+    resolution: {integrity: sha512-YGdT1cVRmKkOg6Sq7vY7IkxdphySKnXhaUmFI4r4FcuFVNgpCb9tZfNwXbT6BPjD5oz0nubFsoo9pIqKrDcCvg==}
 
 snapshots:
 
@@ -3725,10 +3725,10 @@ snapshots:
       '@conform-to/dom': 1.5.0
       react: 19.1.0
 
-  '@conform-to/zod@1.5.0(zod@3.24.4)':
+  '@conform-to/zod@1.5.0(zod@3.25.7)':
     dependencies:
       '@conform-to/dom': 1.5.0
-      zod: 3.24.4
+      zod: 3.25.7
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -4942,7 +4942,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.27.6
       nanostores: 0.11.4
-      zod: 3.24.4
+      zod: 3.25.7
 
   better-call@1.0.9:
     dependencies:
@@ -5730,7 +5730,7 @@ snapshots:
   remix-toast@3.1.0(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)):
     dependencies:
       react-router: 7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 3.24.4
+      zod: 3.25.7
 
   require-directory@2.1.1: {}
 
@@ -6213,4 +6213,4 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@3.24.4: {}
+  zod@3.25.7: {}
