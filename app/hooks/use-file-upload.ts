@@ -139,7 +139,6 @@ export const useFileUpload = (
   const clearFiles = useCallback(() => {
     setState((prev) => {
       // Clean up object URLs
-      // biome-ignore lint/complexity/noForEach: <explanation>
       prev.files.forEach((file) => {
         if (
           file.preview &&
@@ -165,7 +164,7 @@ export const useFileUpload = (
     });
   }, [onFilesChange]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: false positive
   const addFiles = useCallback(
     (newFiles: FileList | File[]) => {
       if (!newFiles || newFiles.length === 0) return;
@@ -194,7 +193,6 @@ export const useFileUpload = (
 
       const validFiles: FileWithPreview[] = [];
 
-      // biome-ignore lint/complexity/noForEach: <explanation>
       newFilesArray.forEach((file) => {
         // Only check for duplicates if multiple files are allowed
         if (multiple) {

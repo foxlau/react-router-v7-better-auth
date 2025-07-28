@@ -1,5 +1,5 @@
 import { CircleFadingPlusIcon } from "lucide-react";
-import { Link, Outlet, data, href } from "react-router";
+import { data, href, Link, Outlet } from "react-router";
 
 import { AppLogo } from "~/components/app-logo";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";

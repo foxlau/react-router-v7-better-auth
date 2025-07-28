@@ -50,7 +50,7 @@ export async function action({ request, context }: Route.ActionArgs) {
         await Promise.all([
           deleteUserImageFromR2(user.image),
           auth.api.updateUser({
-            body: { image: null },
+            body: { image: undefined },
             asResponse: false,
             headers,
           }),

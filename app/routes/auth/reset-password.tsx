@@ -1,6 +1,6 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link, data, redirect } from "react-router";
+import { data, Form, Link, redirect } from "react-router";
 import { toast } from "sonner";
 
 import { AuthLayout } from "~/components/auth-layout";

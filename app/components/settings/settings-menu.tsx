@@ -6,7 +6,7 @@ import {
   SunMoonIcon,
   UserIcon,
 } from "lucide-react";
-import { NavLink, href } from "react-router";
+import { href, NavLink } from "react-router";
 
 import { cn } from "~/lib/utils";
 

@@ -119,7 +119,7 @@ function Slider({
         />
       </SliderPrimitive.Track>
       {Array.from({ length: internalValues.length }, (_, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+        // biome-ignore lint/suspicious/noArrayIndexKey: false positive
         <React.Fragment key={index}>
           {renderThumb(internalValues[index] ?? 0)}
         </React.Fragment>

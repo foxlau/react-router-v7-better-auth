@@ -1,5 +1,5 @@
 import { parseWithZod } from "@conform-to/zod";
-import { Link, href } from "react-router";
+import { href, Link } from "react-router";
 import { toast } from "sonner";
 
 import { ChangePassword } from "~/components/settings/password-action";

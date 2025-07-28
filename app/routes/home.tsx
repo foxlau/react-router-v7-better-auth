@@ -1,5 +1,5 @@
 import { ListTodoIcon, type LucideIcon, UserCogIcon } from "lucide-react";
-import { Link, href } from "react-router";
+import { href, Link } from "react-router";
 
 import { useAuthUser } from "~/hooks/use-auth-user";
 import { AppInfo } from "~/lib/config";

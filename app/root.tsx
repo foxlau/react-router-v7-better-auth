@@ -1,13 +1,13 @@
 import {
+  data,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  data,
 } from "react-router";
 import { getToast } from "remix-toast";
-import { Toaster, toast as notify } from "sonner";
+import { toast as notify, Toaster } from "sonner";
 
 import { ProgressBar } from "./components/progress-bar";
 import { useNonce } from "./hooks/use-nonce";
@@ -97,7 +97,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
       <Outlet />
       <script
         nonce={nonce}
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: false positive
         dangerouslySetInnerHTML={{
           __html: `window.ENV = ${JSON.stringify(ENV)}`,
         }}

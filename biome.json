@@ -1,16 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "files": {
-    "ignore": [
-      "drizzle/**/*",
-      "migrations/**/*",
-      "**/node_modules/**/*",
-      "**/dist/**/*",
-      "**/build/**/*",
-      "**/.react-router/**/*",
-      "**/worker-configuration.d.ts"
-    ]
-  },
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -31,8 +20,12 @@
       "semicolons": "always"
     }
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
@@ -40,7 +33,16 @@
       "recommended": true,
       "style": {
         "useImportType": "warn",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "correctness": {
         "noEmptyPattern": "off",
@@ -59,5 +61,21 @@
         }
       }
     }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/drizzle/**/*",
+      "!**/.react-router/**/*",
+      "!**/worker-configuration.d.ts"
+    ]
   }
 }

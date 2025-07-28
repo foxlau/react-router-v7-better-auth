@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from "lucide-react";
-import { Link, href } from "react-router";
+import { href, Link } from "react-router";
 
 import { AppLogo } from "~/components/app-logo";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";

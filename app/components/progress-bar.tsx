@@ -32,6 +32,7 @@ function ProgressBar({ showSpinner = false }: ProgressBarProps) {
   }, [delayedPending]);
 
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: false positive
     <div
       aria-hidden={delayedPending ? undefined : true}
       aria-valuetext={delayedPending ? "Loading" : undefined}

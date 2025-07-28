@@ -3,8 +3,8 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useId, useState } from "react";
 
 import { Spinner } from "~/components/spinner";
-import { Button } from "~/components/ui/button";
 import type { buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
@@ -81,7 +81,7 @@ export function PasswordField({
   const fallbackId = useId();
   const id = inputProps.id || fallbackId;
   const errorId = errors?.length ? `${id}-error` : undefined;
-  const { type, ...restInputProps } = inputProps;
+  const { type: _type, ...restInputProps } = inputProps;
 
   return (
     <div className={cn(className, "flex flex-col gap-2")}>

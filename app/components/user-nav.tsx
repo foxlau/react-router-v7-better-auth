@@ -1,11 +1,10 @@
-import { useNavigate, useSubmit } from "react-router";
-
 import {
   CircleGaugeIcon,
   HomeIcon,
   LogOutIcon,
   UserCogIcon,
 } from "lucide-react";
+import { useNavigate, useSubmit } from "react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,

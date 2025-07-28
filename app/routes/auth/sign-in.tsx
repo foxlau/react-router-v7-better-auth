@@ -7,8 +7,7 @@ import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { Button } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/auth.client";
-import { SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
-import { AppInfo } from "~/lib/config";
+import { AppInfo, SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
 import { signInSchema } from "~/lib/validations/auth";
 import type { Route } from "./+types/sign-in";
 

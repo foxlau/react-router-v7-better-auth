@@ -86,7 +86,10 @@ async function getCroppedImg(
 export default function AvatarCropper({
   avatarUrl,
   placeholderUrl,
-}: { avatarUrl: string | null; placeholderUrl: string }) {
+}: {
+  avatarUrl: string | null;
+  placeholderUrl: string;
+}) {
   const [
     { files, isDragging, errors },
     {

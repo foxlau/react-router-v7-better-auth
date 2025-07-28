@@ -73,7 +73,7 @@ export function useSetColorScheme() {
 export function ColorSchemeScript({ nonce }: { nonce: string }) {
   const colorScheme = useColorScheme();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: false positive
   const script = useMemo(
     () =>
       `let colorScheme = ${JSON.stringify(colorScheme)}; if (colorScheme === "system") { let media = window.matchMedia("(prefers-color-scheme: dark)"); if (media.matches) document.documentElement.classList.add("dark"); }`,
@@ -82,6 +82,7 @@ export function ColorSchemeScript({ nonce }: { nonce: string }) {
   );
 
   if (typeof document !== "undefined") {
+    // biome-ignore lint/correctness/useHookAtTopLevel: false positive
     useLayoutEffect(() => {
       if (colorScheme === "light") {
         document.documentElement.classList.remove("dark");
@@ -121,7 +122,7 @@ export function ColorSchemeScript({ nonce }: { nonce: string }) {
       />
       <script
         nonce={nonce}
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: false positive
         dangerouslySetInnerHTML={{
           __html: script,
         }}

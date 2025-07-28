@@ -11,7 +11,10 @@ import { Spinner } from "./spinner";
 export function AvatarSelector({
   avatarUrl,
   placeholderUrl,
-}: { avatarUrl: string | null; placeholderUrl: string }) {
+}: {
+  avatarUrl: string | null;
+  placeholderUrl: string;
+}) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(avatarUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
