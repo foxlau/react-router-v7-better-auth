@@ -26,7 +26,6 @@ export async function action({ request, context }: Route.ActionArgs) {
       return dataWithError(null, "Invalid form data.");
     }
 
-    const auth = serverAuth();
     const headers = request.headers;
     const { cloudflare } = context.get(adapterContext);
     const { user } = context.get(authSessionContext);
@@ -36,8 +35,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     switch (intent) {
       case "delete-account":
         await Promise.all([
-          auth.api.revokeSessions({ headers }),
-          auth.api.deleteUser({ body: {}, asResponse: false, headers }),
+          serverAuth.api.revokeSessions({ headers }),
+          serverAuth.api.deleteUser({ body: {}, asResponse: false, headers }),
         ]);
         message = "Account deleted.";
         break;
@@ -49,7 +48,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
         await Promise.all([
           deleteUserImageFromR2(user.image),
-          auth.api.updateUser({
+          serverAuth.api.updateUser({
             body: { image: undefined },
             asResponse: false,
             headers,
@@ -70,7 +69,7 @@ export async function action({ request, context }: Route.ActionArgs) {
           cloudflare.env.R2.put(objectName, image, {
             httpMetadata: { contentType: image.type },
           }),
-          auth.api.updateUser({
+          serverAuth.api.updateUser({
             body: { image: imagePath },
             asResponse: true,
             headers,

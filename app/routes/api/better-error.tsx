@@ -7,8 +7,7 @@ import { serverAuth } from "~/lib/auth/auth.server";
 export const meta = () => [{ title: "Authentication Error" }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const auth = serverAuth();
-  return auth.handler(request);
+  return serverAuth.handler(request);
 }
 
 export default function BetterError() {

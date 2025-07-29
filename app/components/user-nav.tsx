@@ -71,11 +71,16 @@ export function UserNav() {
           <UserCogIcon />
           Account Settings
         </DropdownMenuItem>
-        {/* Todo: coming soon */}
-        <DropdownMenuItem disabled>
-          <CircleGaugeIcon />
-          Admin Dashboard
-        </DropdownMenuItem>
+        {user.role === "admin" && (
+          <DropdownMenuItem
+            onClick={() => {
+              navigate("/admin");
+            }}
+          >
+            <CircleGaugeIcon />
+            Admin Panel
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {

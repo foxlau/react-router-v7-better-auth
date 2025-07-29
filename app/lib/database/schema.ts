@@ -12,6 +12,12 @@ export const user = sqliteTable(
     email: text("email").notNull().unique(),
     emailVerified: integer("emailVerified", { mode: "boolean" }).notNull(),
     image: text("image"),
+    role: text("role", { enum: ["user", "admin"] })
+      .notNull()
+      .default("user"),
+    banned: integer("banned", { mode: "boolean" }).notNull().default(false),
+    banReason: text("banReason"),
+    banExpires: integer("banExpires", { mode: "timestamp" }),
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },
@@ -29,6 +35,7 @@ export const session = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => user.id),
+    impersonatedBy: text("impersonatedBy"),
     createdAt: integer("createdAt", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updatedAt", { mode: "timestamp" }).notNull(),
   },

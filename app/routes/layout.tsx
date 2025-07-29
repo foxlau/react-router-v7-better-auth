@@ -6,7 +6,7 @@ import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { Button } from "~/components/ui/button";
 import { UserNav } from "~/components/user-nav";
 import { authSessionContext } from "~/lib/contexts";
-import { authMiddleware } from "~/lib/middlewares/auth-guard.server";
+import { authMiddleware } from "~/middlewares/auth-guard.server";
 import type { Route } from "./+types/layout";
 
 export const unstable_middleware = [authMiddleware];

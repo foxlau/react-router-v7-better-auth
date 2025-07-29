@@ -12,8 +12,7 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const auth = serverAuth();
-  const accounts = await auth.api.listUserAccounts({
+  const accounts = await serverAuth.api.listUserAccounts({
     headers: request.headers,
   });
   return data({ accounts });

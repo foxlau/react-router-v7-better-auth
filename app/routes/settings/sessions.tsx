@@ -18,8 +18,9 @@ export const meta: Route.MetaFunction = () => {
 };
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const auth = serverAuth();
-  const listSessions = auth.api.listSessions({ headers: request.headers });
+  const listSessions = serverAuth.api.listSessions({
+    headers: request.headers,
+  });
   return data({ listSessions });
 }
 
