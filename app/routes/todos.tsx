@@ -18,8 +18,10 @@ export const meta: Route.MetaFunction = () => {
   return [{ title: `Todo List - ${AppInfo.name}` }];
 };
 
-export async function loader(_: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
+  const { user } = context.get(authSessionContext);
   const todos = await db.query.todo.findMany({
+    where: eq(todo.userId, user.id),
     orderBy: (todo, { desc }) => [desc(todo.createdAt)],
   });
   return data({ todos });
