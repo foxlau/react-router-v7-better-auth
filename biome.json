@@ -75,7 +75,8 @@
       "**",
       "!**/drizzle/**/*",
       "!**/.react-router/**/*",
-      "!**/worker-configuration.d.ts"
+      "!**/worker-configuration.d.ts",
+      "!**/components/ui/**/*"
     ]
   }
 }
