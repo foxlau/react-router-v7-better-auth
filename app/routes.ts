@@ -36,6 +36,14 @@ export default [
     route("reset-password", "routes/auth/reset-password.tsx"),
   ]),
 
+  // Admin routes
+  ...prefix("admin", [
+    layout("routes/admin/layout.tsx", [
+      index("routes/admin/dashboard.tsx"),
+      route("users", "routes/admin/users/index.tsx"),
+    ]),
+  ]),
+
   // Image routes
   route("images/*", "routes/images.ts"),
 
