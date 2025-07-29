@@ -2,7 +2,18 @@
 
 This template features React Router v7, Better auth, Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
 
-## Features
+## 🔐 Authentication Features
+
+This template implements a complete authentication system using Better Auth with the following features:
+
+- 📧 **Email and Password Authentication** - Secure login with email and password
+- 🔑 **Password Recovery** - Forgot password and reset password functionality
+- 🔄 **Social Login** - Sign in with Google and GitHub accounts
+- 👤 **Session Management** - Secure session handling with Cloudflare KV storage
+- 🗑️ **Account Management** - Including account deletion functionality
+- 👑 **Admin Panel** - Complete admin dashboard with user management, role-based access control
+
+## ⭐ Core Features
 
 - 🚀 Server-side rendering
 - ⚡️ Hot Module Replacement (HMR)
@@ -33,16 +44,6 @@ React Router v7 Authentication Demo Series:
 - [React Router v7 Cloudflare workers template](https://github.com/foxlau/react-router-v7-cloudflare-workers) - React Router v7 Cloudflare workers template.
 - [React Router v7 with Remix Auth](https://github.com/foxlau/react-router-v7-remix-auth) - Multi-strategy authentication demo using Remix Auth
 
-## Authentication Features
-
-This template implements a complete authentication system using Better Auth with the following features:
-
-- 📧 **Email and Password Authentication** - Secure login with email and password
-- 🔑 **Password Recovery** - Forgot password and reset password functionality
-- 🔄 **Social Login** - Sign in with Google and GitHub accounts
-- 👤 **Session Management** - Secure session handling with Cloudflare KV storage
-- 🗑️ **Account Management** - Including account deletion functionality
-
 ## Getting Started
 
 ### Installation
@@ -60,25 +61,40 @@ Run an initial database migration:
 
 ```bash
 cp .dev.vars.example .dev.vars
-npm run db:apply
+cp wrangler.jsonc.example wrangler.jsonc
+pnpm db:apply
+pnpm db:seed
 ```
 
-If you modify the Drizzle ORM schema, please run `npm run db:generate` first. If you need to delete the generated SQL migrations, execute `npm run db:drop` and select the SQL migration you wish to remove.
+If you modify the Drizzle ORM schema, please run `pnpm db:generate` first. If you need to delete the generated SQL migrations, execute `pnpm db:drop` and select the SQL migration you wish to remove.
 
 Start the development server with HMR:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+### Database Commands
+
+- `pnpm db:generate` - Generate new database migration files
+- `pnpm db:apply` - Apply migrations to local database
+- `pnpm db:apply-prod` - Apply migrations to production database
+- `pnpm db:drop` - Remove generated SQL migrations (interactive)
+- `pnpm db:seed` - Seed local database with initial data from `app/lib/database/seed.sql`
+- `pnpm db:seed-prod` - Seed production database with initial data from `app/lib/database/seed.sql`
+
+#### Default Users (from seed.sql)
+- **Regular User**: `john@example.com` / `user@9900`
+- **Admin User**: `admin@example.com` / `admin@8899`
 
 ## Building for Production
 
 Create a production build:
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ## Deployment
@@ -95,20 +111,20 @@ npx wrangler kv namespace create APP_KV
 To deploy directly to production:
 
 ```sh
-npm run db:apply-prod
-npm run deploy
+pnpm db:apply-prod
+pnpm deploy
 ```
 
 To deploy a preview URL:
 
 ```sh
-npm run deploy:version
+pnpm deploy:version
 ```
 
 You can then promote a version to production after verification or roll it out progressively.
 
 ```sh
-npm run deploy:promote
+pnpm deploy:promote
 ```
 
 ## Questions
