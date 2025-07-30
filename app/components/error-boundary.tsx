@@ -1,110 +1,116 @@
 import { MehIcon } from "lucide-react";
-import { isRouteErrorResponse, useRouteError } from "react-router";
+import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 import { buttonVariants } from "./ui/button";
 
 type ErrorDisplayProps = {
   message: string;
-  details: string;
-  stack?: string;
+  detail: string;
 };
 
-const ERROR_STATUS_MAP: Record<
-  number,
-  { message: string; defaultDetails: string }
-> = {
+const HTTP_ERROR_CONFIG: Record<number, ErrorDisplayProps> = {
   400: {
     message: "400 Bad Request",
-    defaultDetails: "The request was invalid.",
+    detail: "The request was invalid.",
   },
   401: {
     message: "401 Unauthorized Access",
-    defaultDetails:
+    detail:
       "Please log in with the appropriate credentials to access this resource.",
   },
   403: {
     message: "403 Access Forbidden",
-    defaultDetails:
-      "You don't have necessary permission to view this resource.",
+    detail: "You don't have necessary permission to view this resource.",
+  },
+  404: {
+    message: "404 Not Found",
+    detail: "The resource you are looking for does not exist.",
   },
   500: {
-    message: "Oops! Something went wrong :')",
-    defaultDetails:
-      "We apologize for the inconvenience. Please try again later.",
+    message: "500 Internal Server Error",
+    detail: "We apologize for the inconvenience. Please try again later.",
   },
   503: {
     message: "503 Website is under maintenance!",
-    defaultDetails:
+    detail:
       "The site is not available at the moment. We'll be back online shortly.",
   },
 };
 
-function DevErrorDisplay({ message, details, stack }: ErrorDisplayProps) {
+const DEFAULT_ERROR = {
+  message: "Oops, something went wrong.",
+  detail:
+    "Unexpected error. Refresh to try again or contact support if the issue persists.",
+};
+
+function DevErrorDisplay({
+  message,
+  detail,
+  stack,
+}: ErrorDisplayProps & { stack?: string }) {
   return (
     <main className="container mx-auto space-y-4 p-4 pt-16">
-      <div className="space-y-2">
-        <h1 className="font-semibold text-2xl">{message}</h1>
-        <p className="text-balance text-base">{details}</p>
+      <div className="space-y-1">
+        <h1 className="font-semibold text-lg">{message}</h1>
+        <p className="text-base text-muted-foreground">{detail}</p>
       </div>
-      <pre className="w-full overflow-x-auto rounded-lg bg-destructive/10 p-4 text-destructive text-sm">
-        <code>{stack}</code>
-      </pre>
+      {stack && (
+        <pre className="w-full overflow-x-auto rounded-lg bg-destructive/10 p-4 text-destructive text-sm">
+          <code>{stack}</code>
+        </pre>
+      )}
     </main>
   );
 }
 
-export function ProductionErrorDisplay({
-  message,
-  details,
-}: ErrorDisplayProps) {
+export function ProductionErrorDisplay({ message, detail }: ErrorDisplayProps) {
   return (
-    <main className="flex min-h-screen items-center px-6 py-12">
-      <div className="mx-auto flex max-w-sm flex-col items-center gap-6 text-center">
+    <main className="flex h-screen items-center justify-center p-6">
+      <div className="mx-auto flex max-w-sm flex-col items-center gap-4 text-center">
         <div className="rounded-full bg-muted p-3">
           <MehIcon className="size-6" />
         </div>
 
-        <div className="space-y-2">
-          <h1 className="font-semibold text-xl md:text-2xl">{message}</h1>
-          <p className="text-base text-muted-foreground">{details}</p>
+        <div className="space-y-1">
+          <h1 className="font-semibold text-lg">{message}</h1>
+          <p className="text-base text-muted-foreground">{detail}</p>
         </div>
 
-        <a href="/" className={buttonVariants()}>
+        <Link to="/" className={buttonVariants()}>
           Back to home
-        </a>
+        </Link>
       </div>
     </main>
   );
+}
+
+function getErrorInfo(error: unknown): ErrorDisplayProps {
+  if (!isRouteErrorResponse(error)) {
+    return DEFAULT_ERROR;
+  }
+
+  const httpError = HTTP_ERROR_CONFIG[error.status];
+
+  return {
+    message: error.data?.message ?? httpError?.message ?? DEFAULT_ERROR.message,
+    detail: error.data?.detail ?? httpError?.detail ?? DEFAULT_ERROR.detail,
+  };
 }
 
 export function GeneralErrorBoundary() {
   const error = useRouteError();
 
-  const defaultMessage = "Oops! App Crashed 💥";
-  const defaultDetails = "Please reload the page. or try again later.";
-
-  // Handle route errors, Example: 404, 500, 503
-  if (isRouteErrorResponse(error)) {
-    const errorConfig = ERROR_STATUS_MAP[error.status];
-    const message = errorConfig?.message ?? defaultMessage;
-    const details =
-      error.statusText || errorConfig?.defaultDetails || defaultDetails;
-    return <ProductionErrorDisplay message={message} details={details} />;
-  }
-
-  // Handle development errors
-  if (import.meta.env.DEV && error && error instanceof Error) {
+  if (import.meta.env.DEV && error instanceof Error) {
     console.log("🔴 error on dev", error);
     return (
       <DevErrorDisplay
-        message={defaultMessage}
-        details={error.message}
+        message="Application Error"
+        detail={error.message}
         stack={error.stack}
       />
     );
   }
 
-  // Handle other errors
-  return (
-    <ProductionErrorDisplay message={defaultMessage} details={defaultDetails} />
-  );
+  const { message, detail } = getErrorInfo(error);
+
+  return <ProductionErrorDisplay message={message} detail={detail} />;
 }

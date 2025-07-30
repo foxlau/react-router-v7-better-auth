@@ -18,7 +18,7 @@ export function ErrorBoundary() {
   return (
     <ProductionErrorDisplay
       message="Oops! Page Not Found."
-      details="It seems like the page you're looking for does not exist or might have been removed."
+      detail="It seems like the page you're looking for does not exist or might have been removed."
     />
   );
 }
