@@ -47,7 +47,7 @@
     "date-fns": "^4.1.0",
     "drizzle-orm": "~0.44.3",
     "isbot": "^5.1.28",
-    "lucide-react": "^0.526.0",
+    "lucide-react": "^0.536.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router": "^7.7.1",
