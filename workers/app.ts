@@ -1,4 +1,7 @@
-import { createRequestHandler } from "react-router";
+import {
+  createRequestHandler,
+  unstable_RouterContextProvider,
+} from "react-router";
 import { adapterContext } from "~/lib/contexts";
 
 declare module "react-router" {
@@ -28,8 +31,9 @@ export default {
           ctx,
         },
       };
-      const context = new Map([[adapterContext, contextValue]]);
-      return requestHandler(request, context);
+      const provider = new unstable_RouterContextProvider();
+      provider.set(adapterContext, contextValue);
+      return requestHandler(request, provider);
     } catch (error) {
       console.error(error);
       return new Response("An unexpected error occurred", { status: 500 });
