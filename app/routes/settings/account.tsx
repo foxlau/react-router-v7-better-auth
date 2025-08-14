@@ -34,6 +34,10 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     switch (intent) {
       case "delete-account":
+        if (user.role === "admin") {
+          return dataWithError(null, "Admin account cannot be deleted.");
+        }
+
         await Promise.all([
           serverAuth.api.revokeSessions({ headers }),
           serverAuth.api.deleteUser({ body: {}, asResponse: false, headers }),

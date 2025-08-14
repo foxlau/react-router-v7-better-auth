@@ -16,4 +16,17 @@ export default defineConfig({
   build: {
     minify: true,
   },
+  optimizeDeps: {
+    exclude: [
+      "cloudflare:email",
+      "cloudflare:sockets",
+      "cloudflare:workers",
+      "cloudflare:workflows",
+    ],
+  },
+  ssr: {
+    resolve: {
+      externalConditions: ["workerd", "worker"],
+    },
+  },
 });

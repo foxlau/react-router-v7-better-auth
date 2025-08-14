@@ -11,10 +11,6 @@ declare module "react-router" {
       ctx: ExecutionContext;
     };
   }
-  export interface Future {
-    unstable_viteEnvironmentApi: true;
-    unstable_middleware: true;
-  }
 }
 
 const requestHandler = createRequestHandler(

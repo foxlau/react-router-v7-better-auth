@@ -92,19 +92,6 @@ const options = {
   },
 } satisfies BetterAuthOptions;
 
-/* let _serverAuth: ReturnType<typeof betterAuth>;
-
-export const serverAuth = () => {
-  if (!_serverAuth) {
-    _serverAuth = betterAuth({
-      ...options,
-      plugins: [...(options.plugins ?? [])],
-    });
-  }
-
-  return _serverAuth;
-}; */
-
 export const serverAuth = betterAuth({
   ...options,
   plugins: [...(options.plugins ?? [])],
