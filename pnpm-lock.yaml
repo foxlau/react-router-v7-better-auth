@@ -66,8 +66,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       better-auth:
-        specifier: ^1.3.4
-        version: 1.3.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: ^1.3.6
+        version: 1.3.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(zod@3.25.76)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -79,7 +79,7 @@ importers:
         version: 4.1.0
       drizzle-orm:
         specifier: ~0.44.4
-        version: 0.44.4(@cloudflare/workers-types@4.20250810.0)(gel@2.1.0)(kysely@0.28.4)
+        version: 0.44.4(@cloudflare/workers-types@4.20250810.0)(gel@2.1.0)(kysely@0.28.5)
       isbot:
         specifier: ^5.1.29
         version: 5.1.29
@@ -313,8 +313,8 @@ packages:
     resolution: {integrity: sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==}
     engines: {node: '>=6.9.0'}
 
-  '@better-auth/utils@0.2.5':
-    resolution: {integrity: sha512-uI2+/8h/zVsH8RrYdG8eUErbuGBk16rZKQfz8CjxQOyCE6v7BqFYEbFwvOkvl1KbUdxhqOnXp78+uE5h8qVEgQ==}
+  '@better-auth/utils@0.2.6':
+    resolution: {integrity: sha512-3y/vaL5Ox33dBwgJ6ub3OPkVqr6B5xL2kgxNHG8eHZuryLyG/4JSPGqjbdRSgjuy9kALUZYDFl+ORIAxlWMSuA==}
 
   '@better-fetch/fetch@1.1.18':
     resolution: {integrity: sha512-rEFOE1MYIsBmoMJtQbl32PGHHXuG2hDxvEd7rUHE0vCBoFQVSDqaVs9hkZEtHCxRoY+CljXKFCOuJ8uxqw1LcA==}
@@ -2005,11 +2005,12 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  better-auth@1.3.4:
-    resolution: {integrity: sha512-JbZYam6Cs3Eu5CSoMK120zSshfaKvrCftSo/+v7524H1RvhryQ7UtMbzagBcXj0Digjj8hZtVkkR4tTZD/wK2g==}
+  better-auth@1.3.6:
+    resolution: {integrity: sha512-zjwbz9GpgGt3LuvJ8ZXfQeowSRpzdGojVvkhxvXjhCLwGOaOrZmFiNdEVyIKWTraN4oBtgNimcxUIQTGs6OKYg==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
+      zod: ^3.25.0 || ^4.0.0
     peerDependenciesMeta:
       react:
         optional: true
@@ -2511,8 +2512,8 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
-  kysely@0.28.4:
-    resolution: {integrity: sha512-pfQj8/Bo3KSzC1HIZB5MeeYRWcDmx1ZZv8H25LsyeygqXE+gfsbUAgPT1GSYZFctB1cdOVlv+OifuCls2mQSnw==}
+  kysely@0.28.5:
+    resolution: {integrity: sha512-rlB0I/c6FBDWPcQoDtkxi9zIvpmnV5xoIalfCMSMCa7nuA6VGA3F54TW9mEgX4DVf10sXAWCF5fDbamI/5ZpKA==}
     engines: {node: '>=20.0.0'}
 
   lefthook-darwin-arm64@1.12.2:
@@ -3308,9 +3309,6 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.15:
-    resolution: {integrity: sha512-2IVHb9h4Mt6+UXkyMs0XbfICUh1eUrlJJAOupBHUhLRnKkruawyDddYRCs0Eizt900ntIMk9/4RksYl+FgSpcQ==}
-
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -3514,9 +3512,8 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@better-auth/utils@0.2.5':
+  '@better-auth/utils@0.2.6':
     dependencies:
-      typescript: 5.9.2
       uncrypto: 0.1.3
 
   '@better-fetch/fetch@1.1.18': {}
@@ -5016,9 +5013,9 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  better-auth@1.3.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  better-auth@1.3.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(zod@3.25.76):
     dependencies:
-      '@better-auth/utils': 0.2.5
+      '@better-auth/utils': 0.2.6
       '@better-fetch/fetch': 1.1.18
       '@noble/ciphers': 0.6.0
       '@noble/hashes': 1.8.0
@@ -5027,9 +5024,9 @@ snapshots:
       better-call: 1.0.13
       defu: 6.1.4
       jose: 5.10.0
-      kysely: 0.28.4
+      kysely: 0.28.5
       nanostores: 0.11.4
-      zod: 4.0.15
+      zod: 3.25.76
     optionalDependencies:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -5175,11 +5172,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250810.0)(gel@2.1.0)(kysely@0.28.4):
+  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250810.0)(gel@2.1.0)(kysely@0.28.5):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250810.0
       gel: 2.1.0
-      kysely: 0.28.4
+      kysely: 0.28.5
 
   eastasianwidth@0.2.0: {}
 
@@ -5457,7 +5454,7 @@ snapshots:
 
   kleur@4.1.5: {}
 
-  kysely@0.28.4: {}
+  kysely@0.28.5: {}
 
   lefthook-darwin-arm64@1.12.2:
     optional: true
@@ -6165,5 +6162,3 @@ snapshots:
   zod@3.22.3: {}
 
   zod@3.25.76: {}
-
-  zod@4.0.15: {}
