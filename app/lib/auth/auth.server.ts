@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin } from "better-auth/plugins";
+import { cache } from "react";
 import { db } from "~/lib/database/db.server";
 
 const options = {
@@ -97,12 +98,12 @@ export const serverAuth = betterAuth({
   plugins: [...(options.plugins ?? [])],
 });
 
-export const getServerSession = async (request: Request) => {
+export const getServerSession = cache(async (request: Request) => {
   const session = await serverAuth.api.getSession({
     headers: request.headers,
   });
   return session;
-};
+});
 
 export const deleteUserImageFromR2 = async (imageUrl: string | null) => {
   if (!imageUrl) return;
