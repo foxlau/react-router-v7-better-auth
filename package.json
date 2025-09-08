@@ -70,7 +70,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "drizzle-kit": "~0.31.4",
-    "lefthook": "^1.12.2",
+    "lefthook": "^1.12.4",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2",
     "vite": "^7.1.1",
