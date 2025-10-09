@@ -1,20 +1,17 @@
 import { ProductionErrorDisplay } from "~/components/error-boundary";
-import { AppInfo } from "~/lib/config";
 import type { Route } from "./+types/not-found";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: `Not Found - ${AppInfo.name}` }];
-};
+export const meta: Route.MetaFunction = () => [{ title: "Not Found" }];
 
 export async function loader() {
   throw new Response("Not found", { status: 404 });
 }
 
-export default function NotFound() {
-  return <ErrorBoundary />;
+export async function action() {
+  throw new Response("Not found", { status: 404 });
 }
 
-export function ErrorBoundary() {
+export default function NotFound() {
   return (
     <ProductionErrorDisplay
       message="Oops! Page Not Found."

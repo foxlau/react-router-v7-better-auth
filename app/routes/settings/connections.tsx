@@ -22,7 +22,7 @@ export default function ConnectionsRoute({
   loaderData: { accounts },
 }: Route.ComponentProps) {
   const connections = SOCIAL_PROVIDER_CONFIGS.map((config) => {
-    const account = accounts.find((acc) => acc.provider === config.id);
+    const account = accounts.find((acc) => acc.providerId === config.id);
     return {
       provider: config.id,
       displayName: config.name,

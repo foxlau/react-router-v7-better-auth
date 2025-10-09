@@ -1,9 +1,9 @@
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
 import type {
-  AppLoadContext,
   EntryContext,
   HandleErrorFunction,
+  RouterContextProvider,
 } from "react-router";
 import { ServerRouter } from "react-router";
 import { NonceProvider } from "./hooks/use-nonce";
@@ -13,7 +13,7 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  _loadContext: AppLoadContext,
+  _loadContext: RouterContextProvider,
 ) {
   let shellRendered = false;
   const userAgent = request.headers.get("user-agent");

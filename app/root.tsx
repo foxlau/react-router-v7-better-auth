@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   data,
   Links,
@@ -8,13 +9,10 @@ import {
 } from "react-router";
 import { getToast } from "remix-toast";
 import { toast as notify, Toaster } from "sonner";
-
-import { ProgressBar } from "./components/progress-bar";
-import { useNonce } from "./hooks/use-nonce";
-import "./styles/app.css";
-import { useEffect } from "react";
 import type { Route } from "./+types/root";
 import { GeneralErrorBoundary } from "./components/error-boundary";
+import { ProgressBar } from "./components/progress-bar";
+import { useNonce } from "./hooks/use-nonce";
 import {
   ColorSchemeScript,
   useColorScheme,
@@ -22,6 +20,7 @@ import {
 import { parseColorScheme } from "./lib/color-scheme/server";
 import { getPublicEnv } from "./lib/env.server";
 import { requestMiddleware } from "./lib/http.server";
+import stylesheet from "./styles/app.css?url";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -67,6 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         <ColorSchemeScript nonce={nonce} />
+        <link rel="stylesheet" href={stylesheet} precedence="high" />
       </head>
       <body>
         <ProgressBar />

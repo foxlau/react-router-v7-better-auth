@@ -1,11 +1,7 @@
-import {
-  createRequestHandler,
-  unstable_RouterContextProvider,
-} from "react-router";
-import { adapterContext } from "~/lib/contexts";
+import { createRequestHandler, RouterContextProvider } from "react-router";
 
 declare module "react-router" {
-  export interface AppLoadContext {
+  export interface RouterContextProvider {
     cloudflare: {
       env: Env;
       ctx: ExecutionContext;
@@ -21,15 +17,13 @@ const requestHandler = createRequestHandler(
 export default {
   async fetch(request, env, ctx) {
     try {
-      const contextValue = {
-        cloudflare: {
-          env,
-          ctx,
-        },
-      };
-      const provider = new unstable_RouterContextProvider();
-      provider.set(adapterContext, contextValue);
-      return requestHandler(request, provider);
+      const context = new RouterContextProvider();
+      return await requestHandler(
+        request,
+        Object.assign(context, {
+          cloudflare: { env, ctx },
+        }),
+      );
     } catch (error) {
       console.error(error);
       return new Response("An unexpected error occurred", { status: 500 });

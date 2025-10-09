@@ -10,8 +10,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports": "never",
-    "source.organizeImports.biome": "always",
-    "quickfix.biome": "always"
+    "source.organizeImports.biome": "always"
   },
   "files.associations": {
     "*.css": "css",

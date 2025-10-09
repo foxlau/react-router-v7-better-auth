@@ -1,16 +1,16 @@
-import { data, Outlet } from "react-router";
+import { data, href, Outlet, redirect } from "react-router";
 import { AppHeader } from "~/components/admin/layout/header";
 import { AppSidebar } from "~/components/admin/layout/sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
-import { authSessionContext } from "~/lib/contexts";
-import { authMiddleware } from "~/middlewares/auth-guard.server";
+import { requireAuth, requireUser } from "~/middlewares/auth-guard";
 import type { Route } from "./+types/layout";
 
-export const unstable_middleware = [authMiddleware];
+export const middleware = [requireAuth];
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const authSession = context.get(authSessionContext);
-  return data(authSession);
+export async function loader(_: Route.LoaderArgs) {
+  const user = requireUser();
+  if (user.user.role !== "admin") throw redirect(href("/home"));
+  return data(user);
 }
 
 export default function AuthenticatedLayout(_: Route.ComponentProps) {

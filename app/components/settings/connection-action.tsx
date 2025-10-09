@@ -27,7 +27,6 @@ export function ConnectionAction({
     if (error) {
       toast.error(error.message || "Failed to connect.");
     }
-    setIsConnecting(false);
   };
 
   const handleUnlinkSocial = async () => {

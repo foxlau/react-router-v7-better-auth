@@ -7,19 +7,19 @@ import { LoadingButton } from "~/components/forms";
 import { TodoItem } from "~/components/todos/todo-item";
 import { Input } from "~/components/ui/input";
 import { AppInfo } from "~/lib/config";
-import { authSessionContext } from "~/lib/contexts";
 import { db } from "~/lib/database/db.server";
 import { type SelectTodo, todo } from "~/lib/database/schema";
 import { formatDate } from "~/lib/utils";
 import { todoSchema } from "~/lib/validations/todo";
+import { requireUser } from "~/middlewares/auth-guard";
 import type { Route } from "./+types/todos";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: `Todo List - ${AppInfo.name}` }];
 };
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const { user } = context.get(authSessionContext);
+export async function loader(_: Route.LoaderArgs) {
+  const { user } = requireUser();
   const todos = await db.query.todo.findMany({
     where: eq(todo.userId, user.id),
     orderBy: (todo, { desc }) => [desc(todo.createdAt)],
@@ -27,8 +27,8 @@ export async function loader({ context }: Route.LoaderArgs) {
   return data({ todos });
 }
 
-export async function action({ request, context }: Route.ActionArgs) {
-  const authSession = context.get(authSessionContext);
+export async function action({ request }: Route.ActionArgs) {
+  const { user } = requireUser();
   const formData = await request.formData();
   const submission = parseWithZod(formData, { schema: todoSchema });
 
@@ -40,7 +40,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     case "create":
       await db.insert(todo).values({
         title: submission.value.title,
-        userId: authSession.user.id,
+        userId: user.id,
       });
       break;
     case "delete":
@@ -49,7 +49,7 @@ export async function action({ request, context }: Route.ActionArgs) {
         .where(
           and(
             eq(todo.id, Number(submission.value.id)),
-            eq(todo.userId, authSession.user.id),
+            eq(todo.userId, user.id),
           ),
         );
       break;
@@ -62,7 +62,7 @@ export async function action({ request, context }: Route.ActionArgs) {
         .where(
           and(
             eq(todo.id, Number(submission.value.id)),
-            eq(todo.userId, authSession.user.id),
+            eq(todo.userId, user.id),
           ),
         );
       break;

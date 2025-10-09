@@ -1,9 +1,14 @@
-import { Outlet } from "react-router";
-import { noAuthMiddleware } from "~/middlewares/auth-guard.server";
+import { href, Outlet, redirect } from "react-router";
+import { getServerSession } from "~/lib/auth/auth.server";
+import type { Route } from "./+types/layout";
 
-export const unstable_middleware = [noAuthMiddleware];
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getServerSession(request);
 
-export async function loader() {
+  if (session) {
+    throw redirect(href("/home"));
+  }
+
   return null;
 }
 

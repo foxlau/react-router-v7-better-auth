@@ -1,19 +1,16 @@
 import { CircleFadingPlusIcon } from "lucide-react";
-import { data, href, Link, Outlet } from "react-router";
-
+import { href, Link, Outlet } from "react-router";
 import { AppLogo } from "~/components/app-logo";
 import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { Button } from "~/components/ui/button";
 import { UserNav } from "~/components/user-nav";
-import { authSessionContext } from "~/lib/contexts";
-import { authMiddleware } from "~/middlewares/auth-guard.server";
+import { requireAuth, requireUser } from "~/middlewares/auth-guard";
 import type { Route } from "./+types/layout";
 
-export const unstable_middleware = [authMiddleware];
+export const middleware = [requireAuth];
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const authSession = context.get(authSessionContext);
-  return data(authSession);
+export async function loader(_: Route.LoaderArgs) {
+  return requireUser();
 }
 
 export default function AuthenticatedLayout(_: Route.ComponentProps) {

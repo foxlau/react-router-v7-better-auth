@@ -13,6 +13,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function BetterError() {
   const [searchParams] = useSearchParams();
   const error = searchParams.get("error");
+  const error_description = searchParams.get("error_description");
 
   return (
     <div className="container mx-auto flex min-h-screen items-center px-6 py-12">
@@ -26,8 +27,10 @@ export default function BetterError() {
         </h1>
 
         <p className="mt-2 text-muted-foreground">
-          We encountered an issue while processing your request. Please try
-          again or contact the application owner if the problem persists.
+          {error_description
+            ? error_description
+            : "We encountered an issue while processing your request. Please try\
+						again or contact the application owner if the problem persists."}
         </p>
 
         <div className="mt-6 flex w-full shrink-0 items-center justify-center space-x-3">

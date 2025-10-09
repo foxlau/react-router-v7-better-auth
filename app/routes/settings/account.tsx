@@ -8,9 +8,9 @@ import { SettingsLayout } from "~/components/settings/settings-layout";
 import { useAuthUser } from "~/hooks/use-auth-user";
 import { deleteUserImageFromR2, serverAuth } from "~/lib/auth/auth.server";
 import { AppInfo } from "~/lib/config";
-import { adapterContext, authSessionContext } from "~/lib/contexts";
 import { getAvatarUrl } from "~/lib/utils";
 import { accountSchema } from "~/lib/validations/settings";
+import { requireUser } from "~/middlewares/auth-guard";
 import type { Route } from "./+types/account";
 
 export const meta: Route.MetaFunction = () => {
@@ -27,8 +27,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     }
 
     const headers = request.headers;
-    const { cloudflare } = context.get(adapterContext);
-    const { user } = context.get(authSessionContext);
+    const { cloudflare } = context;
+    const { user } = requireUser();
     const { intent } = submission.value;
     let message = "";
 
@@ -53,7 +53,8 @@ export async function action({ request, context }: Route.ActionArgs) {
         await Promise.all([
           deleteUserImageFromR2(user.image),
           serverAuth.api.updateUser({
-            body: { image: undefined },
+            // @ts-expect-error - null is valid for image
+            body: { image: null },
             asResponse: false,
             headers,
           }),

@@ -21,10 +21,8 @@ const options = {
   }),
   secondaryStorage: {
     get: async (key) => await env.APP_KV.get(`_auth:${key}`, "json"),
-    set: async (key, value, ttl) =>
-      await env.APP_KV.put(`_auth:${key}`, JSON.stringify(value), {
-        expirationTtl: ttl,
-      }),
+    set: async (key, value) =>
+      await env.APP_KV.put(`_auth:${key}`, JSON.stringify(value)),
     delete: async (key) => await env.APP_KV.delete(`_auth:${key}`),
   },
   emailAndPassword: {
@@ -122,3 +120,7 @@ export const deleteUserImageFromR2 = async (imageUrl: string | null) => {
     }
   }
 };
+
+export type AuthServerSession = Awaited<
+  ReturnType<typeof serverAuth.api.getSession>
+>;
