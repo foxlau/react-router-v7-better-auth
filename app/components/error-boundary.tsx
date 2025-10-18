@@ -12,7 +12,7 @@ function DevErrorDisplay({
   stack?: string;
 }) {
   return (
-    <main className="container mx-auto space-y-4 p-4 pt-16">
+    <main className="space-y-4 p-4 sm:p-8">
       <div className="space-y-1">
         <h1 className="font-semibold text-lg">{message}</h1>
         <p className="break-words text-base text-muted-foreground">{detail}</p>
@@ -26,7 +26,7 @@ function DevErrorDisplay({
   );
 }
 
-export function ProductionErrorDisplay({
+export function ErrorDisplay({
   message,
   detail,
 }: {
@@ -55,6 +55,7 @@ export function ProductionErrorDisplay({
 
 export function GeneralErrorBoundary() {
   const error = useRouteError();
+  const isDev = import.meta.env.DEV;
   let message = "Oops! Application Error.";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
@@ -65,14 +66,14 @@ export function GeneralErrorBoundary() {
       error.status === 404
         ? "The requested page could not be found."
         : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
+  } else if (isDev && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
   }
 
-  if (import.meta.env.DEV && stack) {
+  if (isDev && stack) {
     return <DevErrorDisplay message={message} detail={details} stack={stack} />;
   }
 
-  return <ProductionErrorDisplay message={message} detail={details} />;
+  return <ErrorDisplay message={message} detail={details} />;
 }

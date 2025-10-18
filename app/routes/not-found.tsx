@@ -1,4 +1,4 @@
-import { ProductionErrorDisplay } from "~/components/error-boundary";
+import { ErrorDisplay } from "~/components/error-boundary";
 import type { Route } from "./+types/not-found";
 
 export const meta: Route.MetaFunction = () => [{ title: "Not Found" }];
@@ -12,8 +12,12 @@ export async function action() {
 }
 
 export default function NotFound() {
+  return <ErrorBoundary />;
+}
+
+export function ErrorBoundary() {
   return (
-    <ProductionErrorDisplay
+    <ErrorDisplay
       message="Oops! Page Not Found."
       detail="It seems like the page you're looking for does not exist or might have been removed."
     />
