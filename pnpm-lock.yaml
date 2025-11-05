@@ -13,7 +13,7 @@ importers:
         version: 1.12.0(react@19.2.0)
       '@conform-to/zod':
         specifier: ^1.12.0
-        version: 1.12.0(zod@3.25.76)
+        version: 1.12.0(zod@4.1.12)
       '@origin-space/image-cropper':
         specifier: ^0.1.9
         version: 0.1.9(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -111,8 +111,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.16)
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.5
@@ -3720,10 +3720,10 @@ snapshots:
       '@conform-to/dom': 1.12.0
       react: 19.2.0
 
-  '@conform-to/zod@1.12.0(zod@3.25.76)':
+  '@conform-to/zod@1.12.0(zod@4.1.12)':
     dependencies:
       '@conform-to/dom': 1.12.0
-      zod: 3.25.76
+      zod: 4.1.12
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
