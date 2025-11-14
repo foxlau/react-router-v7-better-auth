@@ -1,21 +1,13 @@
 import { env } from "cloudflare:workers";
-import { type BetterAuthOptions, betterAuth } from "better-auth";
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin } from "better-auth/plugins";
+import { admin, lastLoginMethod } from "better-auth/plugins";
 import { cache } from "react";
 import { db } from "~/lib/database/db.server";
 
-const options = {
+export const serverAuth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   trustedOrigins: [env.BETTER_AUTH_URL],
-  plugins: [
-    admin({
-      defaultRole: "user",
-      adminRoles: ["admin"],
-      adminUserIds: ["F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS"],
-      impersonationSessionDuration: 60 * 60 * 24, // 1 day
-    }),
-  ],
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
@@ -89,11 +81,15 @@ const options = {
       ipAddressHeaders: ["cf-connecting-ip", "x-forwarded-for", "x-real-ip"],
     },
   },
-} satisfies BetterAuthOptions;
-
-export const serverAuth = betterAuth({
-  ...options,
-  plugins: [...(options.plugins ?? [])],
+  plugins: [
+    admin({
+      defaultRole: "user",
+      adminRoles: ["admin"],
+      adminUserIds: ["F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS"],
+      impersonationSessionDuration: 60 * 60 * 24, // 1 day
+    }),
+    lastLoginMethod(),
+  ],
 });
 
 export const getServerSession = cache(async (request: Request) => {

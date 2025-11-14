@@ -1,8 +1,8 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
+import { useEffect, useState } from "react";
 import { Form, Link, redirect, useNavigation } from "react-router";
 import { toast } from "sonner";
-
 import { AuthLayout } from "~/components/auth-layout";
 import { InputField, LoadingButton, PasswordField } from "~/components/forms";
 import { Button } from "~/components/ui/button";
@@ -66,10 +66,16 @@ export default function SignInRoute() {
   });
 
   const navigation = useNavigation();
+  const [lastMethod, setLastMethod] = useState<string | null>(null);
   const isPending = (provider: string) =>
     navigation.formData?.get("provider") === provider &&
     navigation.state !== "idle";
   const isSignInPending = isPending("sign-in");
+
+  useEffect(() => {
+    const lastMethod = authClient.getLastUsedLoginMethod();
+    setLastMethod(lastMethod);
+  }, []);
 
   return (
     <AuthLayout
@@ -112,11 +118,19 @@ export default function SignInRoute() {
           errors={fields.password.errors}
         />
         <input type="hidden" name="provider" value="sign-in" />
-        <LoadingButton
-          buttonText="Sign In"
-          loadingText="Signing in..."
-          isPending={isSignInPending}
-        />
+        <div className="relative overflow-hidden rounded-lg">
+          <LoadingButton
+            className="w-full"
+            buttonText="Sign In"
+            loadingText="Signing in..."
+            isPending={isSignInPending}
+          />
+          {lastMethod === "email" && (
+            <span className="absolute top-0 right-0 rounded-bl-md bg-blue-400 px-2 py-0.5 text-[10px] text-white capitalize">
+              Last used
+            </span>
+          )}
+        </div>
       </Form>
 
       <div className="relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
@@ -133,13 +147,18 @@ export default function SignInRoute() {
               <input type="hidden" name="provider" value={config.id} />
               <Button
                 variant="outline"
-                className="w-full"
+                className="relative w-full overflow-hidden"
                 disabled={isPending(config.id)}
               >
                 <config.icon className="size-4" />
                 <span>
                   Login with <span className="capitalize">{config.name}</span>
                 </span>
+                {lastMethod === config.id && (
+                  <span className="absolute top-0 right-0 rounded-bl-md bg-blue-50 px-2 py-0.5 text-[10px] text-blue-500 capitalize dark:bg-muted dark:text-white">
+                    Last used
+                  </span>
+                )}
               </Button>
             </Form>
           ))}

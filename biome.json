@@ -68,6 +68,9 @@
     },
     "linter": {
       "enabled": false
+    },
+    "parser": {
+      "tailwindDirectives": true
     }
   },
   "files": {
