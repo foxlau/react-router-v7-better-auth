@@ -23,7 +23,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     return submission.reply();
   }
 
-  const { error } = await authClient.forgetPassword({
+  const { error } = await authClient.requestPasswordReset({
     email: submission.value.email,
     redirectTo: "/auth/reset-password",
   });
