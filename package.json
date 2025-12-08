@@ -73,7 +73,7 @@
     "lefthook": "^2.0.4",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
-    "vite": "^7.2.4",
+    "vite": "^7.2.7",
     "vite-tsconfig-paths": "^5.1.4",
     "wrangler": "^4.51.0"
   }
