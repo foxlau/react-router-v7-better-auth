@@ -53,7 +53,6 @@ export async function action({ request, context }: Route.ActionArgs) {
         await Promise.all([
           deleteUserImageFromR2(user.image),
           serverAuth.api.updateUser({
-            // @ts-expect-error - null is valid for image
             body: { image: null },
             asResponse: false,
             headers,

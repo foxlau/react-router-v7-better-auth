@@ -6,6 +6,6 @@ export default {
   ssr: true,
   future: {
     v8_middleware: true,
-    unstable_viteEnvironmentApi: true,
+    v8_viteEnvironmentApi: true,
   },
 } satisfies Config;

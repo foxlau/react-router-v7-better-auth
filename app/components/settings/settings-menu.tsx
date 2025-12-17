@@ -66,7 +66,7 @@ export function Menu() {
             <span>{item.title}</span>
           </NavLink>
         ))}
-        <div className="-z-10 absolute inset-x-0 bottom-0 h-0.5 bg-muted" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-0.5 bg-muted" />
       </div>
     </div>
   );

@@ -260,7 +260,7 @@ export default function AvatarCropper({
           <Button
             onClick={handleRemoveFinalImage}
             size="icon"
-            className="-top-0.5 -right-0.5 absolute size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background"
+            className="absolute -top-0.5 -right-0.5 size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background"
             aria-label="Remove image"
             disabled={isUploading}
           >

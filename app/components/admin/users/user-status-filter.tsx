@@ -95,7 +95,7 @@ export function UserStatusFilter({ table }: UserStatusFilterProps) {
           />
           Filter
           {totalActiveFilters > 0 && (
-            <span className="-me-1 ms-3 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
+            <span className="ms-3 -me-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
               {totalActiveFilters}
             </span>
           )}

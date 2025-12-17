@@ -84,7 +84,7 @@ export function UsersTableToolbar({
                   aria-hidden="true"
                 />
                 Delete
-                <span className="-me-1 ms-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
+                <span className="ms-1 -me-1 inline-flex h-5 max-h-full items-center rounded border border-border bg-background px-1 font-[inherit] font-medium text-[0.625rem] text-muted-foreground/70">
                   {table.getSelectedRowModel().rows.length}
                 </span>
               </Button>
