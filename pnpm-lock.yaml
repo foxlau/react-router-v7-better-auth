@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@conform-to/react':
-        specifier: ^1.15.0
-        version: 1.15.0(react@19.2.3)
+        specifier: ^1.15.1
+        version: 1.15.1(react@19.2.3)
       '@conform-to/zod':
         specifier: ^1.15.0
         version: 1.15.0(zod@3.25.76)
@@ -495,8 +495,11 @@ packages:
   '@conform-to/dom@1.15.0':
     resolution: {integrity: sha512-v7sUaObBAgEnWi1AyMJBtfr8FAJ7cjhF9/t0QD0BUhN8JCd7KbZdv/r8TEdvODjEMXpuk2gX2QHV9qniZZLVTw==}
 
-  '@conform-to/react@1.15.0':
-    resolution: {integrity: sha512-ZdUtpwXGwVpAn1hfsNIgxezzjBT0zJn4paaBEvVT9OYcrAlCvyXG1bKco2b2iZbCn7V93g+8IEXUFFLOdF5FmQ==}
+  '@conform-to/dom@1.15.1':
+    resolution: {integrity: sha512-iqx7Ftp26zygHJq62eXK2Sibc8LVIW28bt7c1uAEsGaa7IsEzjCbNgrWblXcFHohf7vFMDisgF2kv8oS5c9Dmg==}
+
+  '@conform-to/react@1.15.1':
+    resolution: {integrity: sha512-cKH5K6MOiuIUPr9b4Z6UU5KYNv3rUmB35OEiY5F0cHvac8uCGFIh7Qjvm2bUrSloh+asAvpK5cZjxTsgYI93yg==}
     peerDependencies:
       react: '>=18'
 
@@ -3659,9 +3662,11 @@ snapshots:
 
   '@conform-to/dom@1.15.0': {}
 
-  '@conform-to/react@1.15.0(react@19.2.3)':
+  '@conform-to/dom@1.15.1': {}
+
+  '@conform-to/react@1.15.1(react@19.2.3)':
     dependencies:
-      '@conform-to/dom': 1.15.0
+      '@conform-to/dom': 1.15.1
       react: 19.2.3
 
   '@conform-to/zod@1.15.0(zod@3.25.76)':
