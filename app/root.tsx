@@ -1,111 +1,126 @@
-import { useEffect } from "react";
+import { FormOptionsProvider } from "@conform-to/react/future";
 import {
-  data,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
+	data,
+	Links,
+	Meta,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
 } from "react-router";
-import { getToast } from "remix-toast";
-import { toast as notify, Toaster } from "sonner";
+import { Toaster } from "sonner";
+
 import type { Route } from "./+types/root";
 import { GeneralErrorBoundary } from "./components/error-boundary";
 import { ProgressBar } from "./components/progress-bar";
 import { useNonce } from "./hooks/use-nonce";
+import { useToast } from "./hooks/use-toast";
 import {
-  ColorSchemeScript,
-  useColorScheme,
-} from "./lib/color-scheme/components";
-import { parseColorScheme } from "./lib/color-scheme/server";
-import { getPublicEnv } from "./lib/env.server";
-import { requestMiddleware } from "./lib/http.server";
+	ClientHintCheck,
+	getHints,
+	useOptionalTheme,
+} from "./lib/client-hints";
+import { defineCustomMetadata } from "./lib/define-custom-metadata";
+import { combineHeaders, getPageTitle } from "./lib/utils";
+import {
+	authMiddleware,
+	logger,
+	optionalAuthContext,
+	trimTrailingSlash,
+} from "./middlewares";
+import { getClientEnv } from "./services/env.server";
+import { getTheme } from "./services/theme.server";
+import { getToast } from "./services/toast.server";
 import stylesheet from "./styles/app.css?url";
 
+export const middleware = [trimTrailingSlash, authMiddleware, logger];
+
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap",
-  },
+	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+	{
+		rel: "preconnect",
+		href: "https://fonts.gstatic.com",
+		crossOrigin: "anonymous",
+	},
+	{
+		rel: "stylesheet",
+		href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap",
+	},
 ];
 
-export async function loader({ request }: Route.LoaderArgs) {
-  await requestMiddleware(request);
-  const colorScheme = await parseColorScheme(request);
-  const { toast, headers } = await getToast(request);
+export const meta: Route.MetaFunction = ({ error }) => [
+	{ title: getPageTitle(error ? "Oops! " : "") },
+];
 
-  return data({ ENV: getPublicEnv(), colorScheme, toast }, { headers });
+export async function loader({ request, context }: Route.LoaderArgs) {
+	const clientEnv = getClientEnv();
+	const authSession = context.get(optionalAuthContext);
+	const { toast, headers: toastHeaders } = await getToast(request);
+
+	return data(
+		{
+			user: authSession?.user ?? null,
+			toast,
+			requestInfo: {
+				clientEnv,
+				hints: getHints(request),
+				userPrefs: { theme: getTheme(request) },
+			},
+		},
+		{ headers: combineHeaders(toastHeaders) },
+	);
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const nonce = useNonce();
-  const colorScheme = useColorScheme();
+	const nonce = useNonce();
+	const theme = useOptionalTheme();
 
-  return (
-    <html
-      lang="en"
-      className={`${colorScheme === "dark" ? "dark" : ""} touch-manipulation overflow-x-hidden`}
-      suppressHydrationWarning
-    >
-      <head>
-        <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-        <Meta />
-        <Links />
-        <ColorSchemeScript nonce={nonce} />
-        <link rel="stylesheet" href={stylesheet} precedence="high" />
-      </head>
-      <body>
-        <ProgressBar />
-        {children}
-        <ScrollRestoration nonce={nonce} />
-        <Scripts nonce={nonce} />
-        <Toaster position="top-center" theme={colorScheme} />
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" className={`${theme}`}>
+			<head>
+				<meta charSet="utf-8" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+				/>
+				<Meta />
+				<Links />
+				<link rel="stylesheet" href={stylesheet} precedence="high" />
+				<ClientHintCheck nonce={nonce} />
+			</head>
+			<body>
+				<ProgressBar />
+				{children}
+				<ScrollRestoration nonce={nonce} />
+				<Scripts nonce={nonce} />
+				<Toaster position="top-center" theme={theme} />
+			</body>
+		</html>
+	);
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
-  const { ENV, toast } = loaderData;
-  const nonce = useNonce();
+	const nonce = useNonce();
+	useToast(loaderData.toast);
 
-  useEffect(() => {
-    if (toast?.type === "error") {
-      notify.error(toast.message);
-    }
-    if (toast?.type === "success") {
-      notify.success(toast.message);
-    }
-  }, [toast]);
-
-  return (
-    <>
-      <Outlet />
-      <script
-        nonce={nonce}
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: false positive
-        dangerouslySetInnerHTML={{
-          __html: `window.ENV = ${JSON.stringify(ENV)}`,
-        }}
-      />
-    </>
-  );
+	return (
+		<FormOptionsProvider
+			// TODO: onBlur can cause dialog focusing issues. (https://github.com/edmundhung/conform/issues/783)
+			// shouldValidate="onBlur"
+			shouldRevalidate="onInput"
+			defineCustomMetadata={defineCustomMetadata}
+		>
+			<Outlet />
+			<script
+				nonce={nonce}
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: false positive
+				dangerouslySetInnerHTML={{
+					__html: `window.ENV = ${JSON.stringify(loaderData.requestInfo.clientEnv)}`,
+				}}
+			/>
+		</FormOptionsProvider>
+	);
 }
 
 export function ErrorBoundary() {
-  return <GeneralErrorBoundary />;
+	return <GeneralErrorBoundary />;
 }
