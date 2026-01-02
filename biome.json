@@ -1,85 +1,71 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "defaultBranch": "main",
-    "useIgnoreFile": true
-  },
-  "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineWidth": 80,
-    "formatWithErrors": true,
-    "lineEnding": "lf"
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "semicolons": "always"
-    }
-  },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "useImportType": "warn",
-        "noParameterAssign": "off",
-        "useAsConstAssertion": "error",
-        "useDefaultParameterLast": "error",
-        "useEnumInitializers": "error",
-        "useSelfClosingElements": "error",
-        "useSingleVarDeclarator": "error",
-        "noUnusedTemplateLiteral": "error",
-        "useNumberNamespace": "error",
-        "noInferrableTypes": "error",
-        "noUselessElse": "error"
-      },
-      "correctness": {
-        "noEmptyPattern": "off",
-        "noUnusedVariables": "warn",
-        "noUnusedImports": "warn",
-        "useExhaustiveDependencies": "warn"
-      },
-      "nursery": {
-        "useSortedClasses": {
-          "level": "error",
-          "fix": "safe",
-          "options": {
-            "attributes": ["className"],
-            "functions": ["cx", "clsx", "cva", "cn"]
-          }
-        }
-      }
-    }
-  },
-  "css": {
-    "formatter": {
-      "enabled": true
-    },
-    "linter": {
-      "enabled": false
-    },
-    "parser": {
-      "tailwindDirectives": true
-    }
-  },
-  "files": {
-    "includes": [
-      "**",
-      "!**/drizzle/**/*",
-      "!**/.react-router/**/*",
-      "!**/worker-configuration.d.ts",
-      "!**/components/ui/**/*"
-    ]
-  }
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!**/.react-router/**/*",
+			"!**/drizzle/meta/**/*",
+			"!**/drizzle/migrations/**/*",
+			"!**/public/**/*",
+			"!**/docs/**/*"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noArrayIndexKey": "off"
+			},
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"fix": "safe",
+					"options": {
+						"attributes": ["className"],
+						"functions": ["cn", "cva", "tw", "clsx", "twMerge"]
+					}
+				}
+			},
+			"a11y": {
+				"noRedundantRoles": "off",
+				"useSemanticElements": "off",
+				"useKeyWithClickEvents": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		},
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	}
 }

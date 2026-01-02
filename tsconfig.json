@@ -1,37 +1,39 @@
 {
-  "include": [
-    "worker-configuration.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/.server/**/*.ts",
-    "**/.server/**/*.tsx",
-    "**/.client/**/*.ts",
-    "**/.client/**/*.tsx",
-    ".react-router/types/**/*"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
-    "rootDirs": [".", "./.react-router/types"],
-    "types": ["vite/client"],
-
-    "allowJs": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "noUncheckedIndexedAccess": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "verbatimModuleSyntax": true
-  }
+	"include": [
+		"worker-configuration.d.ts",
+		"drizzle.config.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/.server/**/*.ts",
+		"**/.server/**/*.tsx",
+		"**/.client/**/*.ts",
+		"**/.client/**/*.tsx",
+		".react-router/types/**/*",
+		"./drizzle/seed/**/*.ts",
+		"./drizzle/schema/**/*.ts"
+	],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"target": "ES2022",
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["./app/*"],
+			"~/drizzle/*": ["./drizzle/*"]
+		},
+		"rootDirs": [".", "./.react-router/types"],
+		"types": ["vite/client"],
+		"allowJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"noUncheckedIndexedAccess": true,
+		"noEmit": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"verbatimModuleSyntax": true
+	}
 }
