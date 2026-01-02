@@ -9,11 +9,6 @@
     "nodejs_compat_populate_process_env"
   ],
 
-  // Assets configuration.
-  "assets": {
-    "directory": "./build/client/"
-  },
-
   // Configures automatic observability settings for telemetry data emitted from your Worker.
   "observability": {
     "enabled": true
@@ -35,7 +30,7 @@
       "database_name": "rr7-better-auth",
       "database_id": "d1_db_id",
       "preview_database_id": "d1_db_preview_id",
-      "migrations_dir": "drizzle"
+      "migrations_dir": "./drizzle/migrations"
     }
   ],
 
@@ -49,11 +44,13 @@
 
   // Environment Variables.
   "vars": {
-    "ENVIRONMENT": "development",
+    "APP_URL": "http://localhost:5173",
+    "APP_ENV": "development", // development | production
+		"SESSION_SECRET": "...",
 
-    // BetterAuth configuration
-    "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // https://generate-secret.vercel.app/32
-    "BETTER_AUTH_URL": "http://localhost:5173",
+    // Better Auth configuration
+    "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // `pnpm auth:secret` or https://generate-secret.vercel.app/32
+    "BETTER_AUTH_ADMIN_USER_ID": "F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS",
     "GITHUB_CLIENT_ID": "...",
     "GITHUB_CLIENT_SECRET": "...",
     "GOOGLE_CLIENT_ID": "...",

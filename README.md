@@ -60,10 +60,10 @@ pnpm install
 Run an initial database migration:
 
 ```bash
-cp .dev.vars.example .dev.vars
+cp .env.example .env
 cp wrangler.jsonc.example wrangler.jsonc
-pnpm db:apply
-pnpm db:seed
+pnpm db:migrate:local
+pnpm db:seed:local
 ```
 
 If you modify the Drizzle ORM schema, please run `pnpm db:generate` first. If you need to delete the generated SQL migrations, execute `pnpm db:drop` and select the SQL migration you wish to remove.
@@ -76,18 +76,51 @@ pnpm dev
 
 Your application will be available at `http://localhost:5173`.
 
+#### Default Users (from seed)
+
+After running `pnpm db:seed:local`, you can use the following default user to sign in:
+
+- **Admin User**: `admin@example.com` / `admin@8899`
+
+#### Troubleshooting
+
+If you encounter errors after pulling updates from GitHub, try cleaning the cache and dependencies:
+
+```bash
+# Clean build cache and restart
+rm -rf .wrangler .react-router node_modules/.vite
+pnpm dev
+
+# If the above doesn't work, clean all dependencies and reinstall
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+pnpm dev
+```
+
 ### Database Commands
 
 - `pnpm db:generate` - Generate new database migration files
-- `pnpm db:apply` - Apply migrations to local database
-- `pnpm db:apply-prod` - Apply migrations to production database
+- `pnpm db:migrate:local` - Apply migrations to local database
+- `pnpm db:migrate:remote` - Apply migrations to production database
 - `pnpm db:drop` - Remove generated SQL migrations (interactive)
-- `pnpm db:seed` - Seed local database with initial data from `app/lib/database/seed.sql`
-- `pnpm db:seed-prod` - Seed production database with initial data from `app/lib/database/seed.sql`
+- `pnpm db:seed:local` - Seed local database with initial data from `drizzle/seed/seed.ts`
+- `pnpm db:seed:remote` - Seed production database with initial data from `drizzle/seed/seed.sql`
+- `pnpm db:studio` - Open Drizzle Studio to view and manage database
+- `pnpm db:reset:local` - Reset local database (drop and recreate)
+- `pnpm db:delete:local` - Delete local database files
 
-#### Default Users (from seed.sql)
-- **Regular User**: `john@example.com` / `user@9900`
-- **Admin User**: `admin@example.com` / `admin@8899`
+### Authentication Commands
+
+- `pnpm auth:secret` - Generate a new Better Auth secret key. Use this when setting up authentication for the first time or when rotating secrets. The generated secret should be added to your `.dev.vars` file as `BETTER_AUTH_SECRET`.
+- `pnpm auth:generate` - Generate Better Auth database schema from your auth configuration. This command reads `app/services/auth/auth.server.ts` and generates the corresponding schema file at `drizzle/schema/auth.ts`. Run this after modifying your Better Auth configuration.
+
+### Other Useful Commands
+
+- `pnpm typecheck` - Run TypeScript type checking
+- `pnpm check` - Run Biome linter to check code quality
+- `pnpm check:fix` - Run Biome linter and auto-fix issues
+- `pnpm format` - Format code with Biome
+- `pnpm preview` - Preview production build locally
 
 ## Building for Production
 
@@ -111,7 +144,7 @@ npx wrangler kv namespace create APP_KV
 To deploy directly to production:
 
 ```sh
-pnpm db:apply-prod
+pnpm db:migrate:remote
 pnpm deploy
 ```
 
