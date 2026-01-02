@@ -1,55 +1,83 @@
-import { ArrowRightIcon } from "lucide-react";
+import {
+	ArrowRightIcon,
+	CircleFadingPlusIcon,
+	UserCogIcon,
+} from "lucide-react";
 import { href, Link } from "react-router";
-
-import { AppLogo } from "~/components/app-logo";
-import { ColorSchemeToggle } from "~/components/color-scheme-toggle";
 import { GithubIcon } from "~/components/icons";
-import { Button, buttonVariants } from "~/components/ui/button";
-import { AppInfo } from "~/lib/config";
+import { ThemeSwitcher } from "~/components/theme";
+import { buttonVariants } from "~/components/ui/button";
+import { useOptionalAuthUser } from "~/hooks/use-auth-user";
+import { appDescription, appName } from "~/lib/config";
 import { cn } from "~/lib/utils";
-import type { Route } from "./+types";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: AppInfo.name }];
-};
+export function meta() {
+	return [{ title: appName, description: appDescription }];
+}
 
-export default function HomeRoute() {
-  return (
-    <div className="relative flex h-dvh w-full flex-col bg-background">
-      <div className="absolute top-4 right-4 sm:right-10">
-        <ColorSchemeToggle />
-      </div>
-      <main className="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center px-6 sm:px-10">
-        <section className="flex flex-col items-center gap-4">
-          <AppLogo />
+export default function IndexRoute() {
+	const user = useOptionalAuthUser();
 
-          <div className="font-extrabold text-4xl text-primary leading-8 tracking-tight sm:text-5xl sm:leading-10">
-            React Router v7 <br /> with Better auth.
-          </div>
+	return (
+		<>
+			<div className="flex h-[calc(100vh-300px)] flex-col items-center justify-center">
+				<section className="flex flex-col items-center gap-6">
+					<div className="bg-linear-to-b from-primary to-primary/60 bg-clip-text text-center font-extrabold font-serif text-5xl text-transparent italic leading-12 tracking-tight">
+						React Router <br /> with Better Auth.
+					</div>
 
-          <p className="text-center font-normal text-base opacity-80">
-            {AppInfo.description}
-          </p>
+					<p className="text-center font-mono text-base text-muted-foreground">
+						{appDescription}
+					</p>
 
-          <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
-              <Link
-                to="https://github.com/foxlau/react-router-v7-better-auth"
-                reloadDocument
-              >
-                <GithubIcon />
-                Star on Github
-              </Link>
-            </Button>
-            <Link
-              to={href("/auth/sign-in")}
-              className={cn(buttonVariants({ variant: "outline" }))}
-            >
-              Get Started <ArrowRightIcon className="size-4" />
-            </Link>
-          </div>
-        </section>
-      </main>
-    </div>
-  );
+					<div className="flex items-center gap-2">
+						{user ? (
+							<>
+								<Link
+									to={href("/todos")}
+									className={cn(buttonVariants({ variant: "secondary" }))}
+									reloadDocument
+								>
+									<CircleFadingPlusIcon />
+									Create Todo
+								</Link>
+
+								<Link
+									to={href("/settings/account")}
+									className={cn(buttonVariants({ variant: "secondary" }))}
+								>
+									<UserCogIcon />
+									Account Settings
+								</Link>
+							</>
+						) : (
+							<>
+								<Link
+									to="https://github.com/foxlau/react-router-v7-better-auth"
+									className={cn(buttonVariants({ variant: "secondary" }))}
+									reloadDocument
+								>
+									<GithubIcon />
+									Star on Github
+								</Link>
+
+								<Link
+									to={href("/auth/sign-in")}
+									className={cn(buttonVariants({ variant: "secondary" }))}
+								>
+									Get Started <ArrowRightIcon className="size-4" />
+								</Link>
+							</>
+						)}
+					</div>
+				</section>
+			</div>
+
+			<div className="fixed inset-x-0 bottom-4 space-y-2 md:bottom-8">
+				<div className="flex justify-center gap-x-2">
+					<ThemeSwitcher />
+				</div>
+			</div>
+		</>
+	);
 }

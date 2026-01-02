@@ -1,25 +1,27 @@
-import { ErrorDisplay } from "~/components/error-boundary";
-import type { Route } from "./+types/not-found";
+import { ErrorPage } from "~/components/error-boundary";
+import { getPageTitle } from "~/lib/utils";
 
-export const meta: Route.MetaFunction = () => [{ title: "Not Found" }];
+export function meta() {
+	return [{ title: getPageTitle("Not Found") }];
+}
 
 export async function loader() {
-  throw new Response("Not found", { status: 404 });
+	throw new Response("Page not found", { status: 404 });
 }
 
 export async function action() {
-  throw new Response("Not found", { status: 404 });
+	throw new Response("Page not found", { status: 404 });
 }
 
 export default function NotFound() {
-  return <ErrorBoundary />;
+	return <ErrorBoundary />;
 }
 
 export function ErrorBoundary() {
-  return (
-    <ErrorDisplay
-      message="Oops! Page Not Found."
-      detail="It seems like the page you're looking for does not exist or might have been removed."
-    />
-  );
+	return (
+		<ErrorPage
+			title="Not Found"
+			description="The page you are looking for does not exist."
+		/>
+	);
 }

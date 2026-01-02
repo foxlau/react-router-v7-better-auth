@@ -1,121 +1,136 @@
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
-import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link, redirect } from "react-router";
+import { useForm } from "@conform-to/react/future";
+import { getZodConstraint } from "@conform-to/zod/v4";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { AuthLayout } from "~/components/auth-layout";
-import { InputField, LoadingButton, PasswordField } from "~/components/forms";
-import { useIsPending } from "~/hooks/use-is-pending";
-import { authClient } from "~/lib/auth/auth.client";
-import { AppInfo } from "~/lib/config";
+import { Form, LoadingButton } from "~/components/forms";
+import { Field, FieldError, FieldLabel } from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
+import { getPageTitle } from "~/lib/utils";
 import { signUpSchema } from "~/lib/validations/auth";
-import type { Route } from "./+types/sign-up";
+import { authClient } from "~/services/auth/auth.client";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: `Sign Up - ${AppInfo.name}` }];
-};
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-  const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: signUpSchema });
-
-  if (submission.status !== "success") {
-    return submission.reply();
-  }
-
-  const { error } = await authClient.signUp.email({
-    callbackURL: "/home",
-    ...submission.value,
-  });
-
-  if (error) {
-    return toast.error(error.message || "An unexpected error occurred.");
-  }
-
-  toast.success(
-    "Sign up successful! Please check your email for a verification link.",
-  );
-  return redirect("/auth/sign-in");
+export function meta() {
+	return [{ title: getPageTitle("Sign Up") }];
 }
 
 export default function SignUpRoute() {
-  const [form, fields] = useForm({
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: signUpSchema });
-    },
-    constraint: getZodConstraint(signUpSchema),
-    shouldRevalidate: "onInput",
-  });
+	const [isPending, setIsPending] = useState(false);
+	const navigate = useNavigate();
 
-  const isPending = useIsPending({
-    formMethod: "POST",
-  });
+	const { form, fields } = useForm(signUpSchema, {
+		constraint: getZodConstraint(signUpSchema),
+		onSubmit: async (e, { value }) => {
+			e.preventDefault();
 
-  return (
-    <AuthLayout
-      title="Create your account"
-      description="Welcome! Please fill in the details to get started."
-    >
-      {/* Sign up form */}
-      <Form method="post" className="grid gap-4" {...getFormProps(form)}>
-        <InputField
-          labelProps={{ children: "Name" }}
-          inputProps={{
-            ...getInputProps(fields.name, { type: "text" }),
-            placeholder: "John Doe",
-            autoComplete: "name",
-            enterKeyHint: "next",
-            required: true,
-          }}
-          errors={fields.name.errors}
-        />
-        <InputField
-          labelProps={{ children: "Email" }}
-          inputProps={{
-            ...getInputProps(fields.email, { type: "email" }),
-            placeholder: "johndoe@example.com",
-            autoComplete: "email",
-            enterKeyHint: "next",
-          }}
-          errors={fields.email.errors}
-        />
-        <PasswordField
-          labelProps={{ children: "Password" }}
-          inputProps={{
-            ...getInputProps(fields.password, { type: "password" }),
-            placeholder: "Enter a unique password",
-            autoComplete: "password",
-            enterKeyHint: "done",
-          }}
-          errors={fields.password.errors}
-        />
-        <LoadingButton
-          buttonText="Sign Up"
-          loadingText="Signing up..."
-          isPending={isPending}
-        />
-      </Form>
+			if (isPending) return;
+			setIsPending(true);
 
-      {/* Terms of service */}
-      <div className="text-balance text-center text-muted-foreground text-xs">
-        By clicking continue, you agree to our{" "}
-        <a href="/" className="text-primary hover:underline">
-          Terms of Service
-        </a>
-        {" and "}
-        <a href="/" className="text-primary hover:underline">
-          Privacy Policy
-        </a>
-        .
-      </div>
+			const { error } = await authClient.signUp.email({
+				callbackURL: "/",
+				...value,
+			});
 
-      {/* Sign in */}
-      <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/auth/sign-in" className="text-primary hover:underline">
-          Sign in
-        </Link>
-      </div>
-    </AuthLayout>
-  );
+			if (error) {
+				toast.error(error.message || "An unexpected error occurred.");
+				setIsPending(false);
+				return;
+			}
+
+			toast.success(
+				"Sign up successful! Please check your email for a verification link.",
+			);
+			navigate("/auth/sign-in");
+		},
+	});
+
+	return (
+		<AuthLayout
+			title="Create your account"
+			description="Welcome! Please fill in the details to get started."
+		>
+			{/* Sign up form */}
+			<Form
+				className="grid gap-4"
+				method="POST"
+				context={form.context}
+				{...form.props}
+			>
+				<Field>
+					<FieldLabel htmlFor={fields.name.id}>Name</FieldLabel>
+					<Input
+						{...fields.name.inputProps}
+						placeholder="John Doe"
+						autoComplete="name"
+						enterKeyHint="next"
+						type="text"
+						required
+					/>
+					<FieldError
+						errors={fields.name.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<Field>
+					<FieldLabel htmlFor={fields.email.id}>Email</FieldLabel>
+					<Input
+						{...fields.email.inputProps}
+						placeholder="johndoe@example.com"
+						autoComplete="email"
+						enterKeyHint="next"
+						type="email"
+					/>
+					<FieldError
+						errors={fields.email.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<Field>
+					<FieldLabel htmlFor={fields.password.id}>Password</FieldLabel>
+					<Input
+						{...fields.password.inputProps}
+						placeholder="Enter a unique password"
+						autoComplete="password"
+						enterKeyHint="done"
+						type="password"
+					/>
+					<FieldError
+						errors={fields.password.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<LoadingButton
+					buttonText="Sign Up"
+					loadingText="Signing up..."
+					isPending={isPending}
+				/>
+			</Form>
+
+			{/* Terms of service */}
+			<div className="text-balance text-center text-muted-foreground text-xs">
+				By clicking continue, you agree to our{" "}
+				<a href="/" className="text-primary hover:underline">
+					Terms of Service
+				</a>
+				{" and "}
+				<a href="/" className="text-primary hover:underline">
+					Privacy Policy
+				</a>
+				.
+			</div>
+
+			{/* Sign in */}
+			<div className="text-center text-sm">
+				Already have an account?{" "}
+				<Link to="/auth/sign-in" className="text-primary hover:underline">
+					Sign in
+				</Link>
+			</div>
+		</AuthLayout>
+	);
 }

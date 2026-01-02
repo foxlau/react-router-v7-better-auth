@@ -1,54 +1,53 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-
-import { authClient } from "~/lib/auth/auth.client";
 import type { AllowedProvider } from "~/lib/config";
+import { authClient } from "~/services/auth/auth.client";
 import { LoadingButton } from "../forms";
 
 export function ConnectionAction({
-  provider,
-  isConnected,
+	provider,
+	isConnected,
 }: {
-  provider: AllowedProvider;
-  isConnected: boolean;
+	provider: AllowedProvider;
+	isConnected: boolean;
 }) {
-  const navigate = useNavigate();
-  const [isConnecting, setIsConnecting] = useState(false);
-  const variant = isConnected ? "secondary" : "outline";
-  const label = isConnected ? "Disconnect" : "Connect";
+	const navigate = useNavigate();
+	const [isConnecting, setIsConnecting] = useState(false);
+	const variant = isConnected ? "secondary" : "outline";
+	const label = isConnected ? "Disconnect" : "Connect";
 
-  const handleLinkSocial = async () => {
-    setIsConnecting(true);
-    const { error } = await authClient.linkSocial({
-      provider,
-      callbackURL: "/settings/connections",
-    });
-    if (error) {
-      toast.error(error.message || "Failed to connect.");
-    }
-  };
+	const handleLinkSocial = async () => {
+		setIsConnecting(true);
+		const { error } = await authClient.linkSocial({
+			provider,
+			callbackURL: "/settings/connections",
+		});
+		if (error) {
+			toast.error(error.message || "Failed to connect.");
+		}
+	};
 
-  const handleUnlinkSocial = async () => {
-    setIsConnecting(true);
-    const { error } = await authClient.unlinkAccount({
-      providerId: provider,
-    });
-    if (error) {
-      toast.error(error.message || "Failed to disconnect.");
-    }
-    setIsConnecting(false);
-    navigate(".");
-  };
+	const handleUnlinkSocial = async () => {
+		setIsConnecting(true);
+		const { error } = await authClient.unlinkAccount({
+			providerId: provider,
+		});
+		if (error) {
+			toast.error(error.message || "Failed to disconnect.");
+		}
+		setIsConnecting(false);
+		navigate(".");
+	};
 
-  return (
-    <LoadingButton
-      size="sm"
-      variant={variant}
-      buttonText={label}
-      loadingText={isConnecting ? "Connecting..." : "Disconnecting..."}
-      isPending={isConnecting}
-      onClick={isConnected ? handleUnlinkSocial : handleLinkSocial}
-    />
-  );
+	return (
+		<LoadingButton
+			size="sm"
+			variant={variant}
+			buttonText={label}
+			loadingText={isConnecting ? "Connecting..." : "Disconnecting..."}
+			isPending={isConnecting}
+			onClick={isConnected ? handleUnlinkSocial : handleLinkSocial}
+		/>
+	);
 }

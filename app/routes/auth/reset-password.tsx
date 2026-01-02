@@ -1,96 +1,112 @@
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
-import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { data, Form, Link, redirect } from "react-router";
+import { useForm } from "@conform-to/react/future";
+import { getZodConstraint } from "@conform-to/zod/v4";
+import { useState } from "react";
+import { data, href, Link, redirect, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { AuthLayout } from "~/components/auth-layout";
-import { LoadingButton, PasswordField } from "~/components/forms";
-import { useIsPending } from "~/hooks/use-is-pending";
-import { authClient } from "~/lib/auth/auth.client";
-import { AppInfo } from "~/lib/config";
+import { Form as CustomForm, LoadingButton } from "~/components/forms";
+import { Field, FieldError, FieldLabel } from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
+import { getPageTitle } from "~/lib/utils";
 import { resetPasswordSchema } from "~/lib/validations/auth";
+import { authClient } from "~/services/auth/auth.client";
 import type { Route } from "./+types/reset-password";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: `Password Reset - ${AppInfo.name}` }];
-};
-
-export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const token = url.searchParams.get("token");
-  if (!token) return redirect("/auth/sign-in");
-  return data({ token });
+export function meta() {
+	return [{ title: getPageTitle("Reset Password") }];
 }
 
-export async function clientAction({ request }: Route.ClientActionArgs) {
-  const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: resetPasswordSchema });
-
-  if (submission.status !== "success") {
-    return submission.reply();
-  }
-
-  const { error } = await authClient.resetPassword({
-    newPassword: submission.value.newPassword,
-    token: submission.value.token,
-  });
-
-  if (error) {
-    return toast.error(error.message || "An unexpected error occurred.");
-  }
-
-  toast.success("Password reset successfully! Please sign in again.");
-  return redirect("/auth/sign-in");
+export async function loader({ request }: Route.LoaderArgs) {
+	const url = new URL(request.url);
+	const token = url.searchParams.get("token");
+	if (!token) return redirect("/auth/sign-in");
+	return data({ token });
 }
 
 export default function ResetPasswordRoute({
-  loaderData: { token },
+	loaderData: { token },
 }: Route.ComponentProps) {
-  const [form, fields] = useForm({
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: resetPasswordSchema });
-    },
-    constraint: getZodConstraint(resetPasswordSchema),
-    shouldRevalidate: "onInput",
-  });
+	const [isPending, setIsPending] = useState(false);
+	const navigate = useNavigate();
 
-  const isPending = useIsPending({
-    formMethod: "POST",
-  });
+	const { form, fields } = useForm(resetPasswordSchema, {
+		constraint: getZodConstraint(resetPasswordSchema),
+		defaultValue: { token },
+		onSubmit: async (e, { value }) => {
+			e.preventDefault();
 
-  return (
-    <AuthLayout
-      title="Reset your password"
-      description="Enter your new password below, minimum 8 characters, maximum 32 characters."
-    >
-      <Form method="post" className="grid gap-4" {...getFormProps(form)}>
-        <input type="hidden" name="token" value={token} />
-        <PasswordField
-          labelProps={{ children: "New Password" }}
-          inputProps={{
-            ...getInputProps(fields.newPassword, { type: "password" }),
-          }}
-          errors={fields.newPassword.errors}
-        />
-        <PasswordField
-          labelProps={{ children: "Confirm New Password" }}
-          inputProps={{
-            ...getInputProps(fields.confirmPassword, { type: "password" }),
-          }}
-          errors={fields.confirmPassword.errors}
-        />
-        <LoadingButton
-          buttonText="Reset Password"
-          loadingText="Resetting password..."
-          isPending={isPending}
-        />
-      </Form>
+			if (isPending) return;
+			setIsPending(true);
 
-      <div className="text-center text-sm">
-        <Link to="/auth/sign-in" className="text-primary hover:underline">
-          ← Back to sign in
-        </Link>
-      </div>
-    </AuthLayout>
-  );
+			const { error } = await authClient.resetPassword({
+				newPassword: value.newPassword,
+				token: value.token,
+			});
+
+			if (error) {
+				toast.error(error.message || "An unexpected error occurred.");
+				setIsPending(false);
+				return;
+			}
+
+			toast.success("Password reset successfully! Please sign in again.");
+			navigate(href("/auth/sign-in"));
+		},
+	});
+
+	return (
+		<AuthLayout
+			title="Reset your password"
+			description="Enter your new password below, minimum 8 characters, maximum 32 characters."
+		>
+			<CustomForm
+				className="grid gap-4"
+				method="POST"
+				context={form.context}
+				{...form.props}
+			>
+				<input type="hidden" name="token" value={token} />
+				<Field>
+					<FieldLabel htmlFor={fields.newPassword.id}>New Password</FieldLabel>
+					<Input
+						{...fields.newPassword.inputProps}
+						type="password"
+						autoComplete="new-password"
+					/>
+					<FieldError
+						errors={fields.newPassword.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<Field>
+					<FieldLabel htmlFor={fields.confirmPassword.id}>
+						Confirm New Password
+					</FieldLabel>
+					<Input
+						{...fields.confirmPassword.inputProps}
+						type="password"
+						autoComplete="confirm-password"
+					/>
+					<FieldError
+						errors={fields.confirmPassword.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<LoadingButton
+					buttonText="Reset Password"
+					loadingText="Resetting password..."
+					isPending={isPending}
+				/>
+			</CustomForm>
+
+			<div className="text-center text-sm">
+				<Link to="/auth/sign-in" className="text-primary hover:underline">
+					← Back to sign in
+				</Link>
+			</div>
+		</AuthLayout>
+	);
 }

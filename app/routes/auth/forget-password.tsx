@@ -1,77 +1,83 @@
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
-import { getZodConstraint, parseWithZod } from "@conform-to/zod";
-import { Form, Link } from "react-router";
+import { useForm } from "@conform-to/react/future";
+import { getZodConstraint } from "@conform-to/zod/v4";
+import { useState } from "react";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { AuthLayout } from "~/components/auth-layout";
-import { InputField, LoadingButton } from "~/components/forms";
-import { useIsPending } from "~/hooks/use-is-pending";
-import { authClient } from "~/lib/auth/auth.client";
-import { AppInfo } from "~/lib/config";
+import { Form, LoadingButton } from "~/components/forms";
+import { Field, FieldError } from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
+import { getPageTitle } from "~/lib/utils";
 import { forgetPasswordSchema } from "~/lib/validations/auth";
-import type { Route } from "./+types/forget-password";
+import { authClient } from "~/services/auth/auth.client";
 
-export const meta: Route.MetaFunction = () => {
-  return [{ title: `Forgot your password? - ${AppInfo.name}` }];
-};
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-  const formData = await request.formData();
-  const submission = parseWithZod(formData, { schema: forgetPasswordSchema });
-
-  if (submission.status !== "success") {
-    return submission.reply();
-  }
-
-  const { error } = await authClient.requestPasswordReset({
-    email: submission.value.email,
-    redirectTo: "/auth/reset-password",
-  });
-
-  return error
-    ? toast.error(error.message || "An unexpected error occurred.")
-    : toast.success("Password reset link sent to your email!");
+export function meta() {
+	return [{ title: getPageTitle("Forgot your password?") }];
 }
 
 export default function ForgetPasswordRoute() {
-  const [form, fields] = useForm({
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: forgetPasswordSchema });
-    },
-    constraint: getZodConstraint(forgetPasswordSchema),
-    shouldRevalidate: "onInput",
-  });
+	const [isPending, setIsPending] = useState(false);
 
-  const isPending = useIsPending({
-    formMethod: "POST",
-  });
+	const { form, fields } = useForm(forgetPasswordSchema, {
+		constraint: getZodConstraint(forgetPasswordSchema),
+		onSubmit: async (e, { value }) => {
+			e.preventDefault();
 
-  return (
-    <AuthLayout
-      title="Forgot your password?"
-      description="Enter your email address and we will send you a password reset link."
-    >
-      <Form method="post" className="grid gap-4" {...getFormProps(form)}>
-        <InputField
-          inputProps={{
-            ...getInputProps(fields.email, { type: "email" }),
-            placeholder: "Enter your email",
-            autoComplete: "email",
-          }}
-          errors={fields.email.errors}
-        />
-        <LoadingButton
-          buttonText="Send reset link"
-          loadingText="Sending reset link..."
-          isPending={isPending}
-        />
-      </Form>
+			if (isPending) return;
+			setIsPending(true);
 
-      <div className="text-center text-sm">
-        <Link to="/auth/sign-in" className="text-primary hover:underline">
-          ← Back to sign in
-        </Link>
-      </div>
-    </AuthLayout>
-  );
+			const { error } = await authClient.requestPasswordReset({
+				email: value.email,
+				redirectTo: "/auth/reset-password",
+			});
+
+			if (error) {
+				toast.error(error.message || "An unexpected error occurred.");
+			} else {
+				toast.success("Password reset link sent to your email!");
+			}
+
+			setIsPending(false);
+		},
+	});
+
+	return (
+		<AuthLayout
+			title="Forgot your password?"
+			description="Enter your email address and we will send you a password reset link."
+		>
+			<Form
+				className="grid gap-4"
+				method="POST"
+				context={form.context}
+				{...form.props}
+			>
+				<Field>
+					<Input
+						{...fields.email.inputProps}
+						placeholder="Enter your email"
+						autoComplete="email"
+						type="email"
+					/>
+					<FieldError
+						errors={fields.email.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
+				</Field>
+				<LoadingButton
+					buttonText="Send reset link"
+					loadingText="Sending reset link..."
+					isPending={isPending}
+				/>
+			</Form>
+
+			<div className="text-center text-sm">
+				<Link to="/auth/sign-in" className="text-primary hover:underline">
+					← Back to sign in
+				</Link>
+			</div>
+		</AuthLayout>
+	);
 }
