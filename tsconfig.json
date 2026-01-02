@@ -21,11 +21,7 @@
       "~/*": ["./app/*"]
     },
     "rootDirs": [".", "./.react-router/types"],
-    "types": [
-      "@react-router/cloudflare",
-      "@cloudflare/workers-types",
-      "vite/client"
-    ],
+    "types": ["vite/client"],
 
     "allowJs": true,
     "esModuleInterop": true,
