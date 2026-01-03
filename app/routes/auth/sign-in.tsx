@@ -3,9 +3,9 @@ import { getZodConstraint } from "@conform-to/zod/v4";
 import { useEffect, useState } from "react";
 import { href, Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
-
-import { AuthLayout } from "~/components/auth-layout";
-import { Form, LoadingButton } from "~/components/forms";
+import { AuthLayout } from "~/components/auth/auth-layout";
+import { LastUsedBadge } from "~/components/auth/last-used-badge";
+import { Form, LoadingButton, PasswordField } from "~/components/forms";
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { Button } from "~/components/ui/button";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
@@ -102,16 +102,7 @@ export default function SignInRoute() {
 							Forgot your password?
 						</Link>
 					</div>
-					<Input
-						{...fields.password.inputProps}
-						placeholder="••••••••••"
-						type="password"
-					/>
-					<FieldError
-						errors={fields.password.errors?.map((error) => ({
-							message: error,
-						}))}
-					/>
+					<PasswordField name="password" placeholder="••••••••••" />
 				</Field>
 				<input type="hidden" name="provider" value="Email" />
 				<div className="relative overflow-hidden rounded-lg">
@@ -122,11 +113,7 @@ export default function SignInRoute() {
 						isPending={isSignInPending}
 						disabled={isSocialSignInPending || isSignInPending}
 					/>
-					{lastUsedMethod === "email" && (
-						<span className="absolute top-0 right-0 rounded-bl-md bg-blue-400 px-2 py-0.5 text-[10px] text-white capitalize">
-							Last used
-						</span>
-					)}
+					{lastUsedMethod === "email" && <LastUsedBadge />}
 				</div>
 			</Form>
 
@@ -145,11 +132,7 @@ export default function SignInRoute() {
 				>
 					<GithubIcon className="size-4" />
 					<span>Login with GitHub</span>
-					{lastUsedMethod === "github" && (
-						<span className="absolute top-0 right-0 rounded-bl-md bg-blue-50 px-2 py-0.5 text-[10px] text-blue-500 capitalize dark:bg-muted dark:text-white">
-							Last used
-						</span>
-					)}
+					{lastUsedMethod === "github" && <LastUsedBadge />}
 				</Button>
 				<Button
 					onClick={() => handleSocialSignIn("google")}
@@ -159,11 +142,7 @@ export default function SignInRoute() {
 				>
 					<GoogleIcon className="size-4" />
 					<span>Login with Google</span>
-					{lastUsedMethod === "google" && (
-						<span className="absolute top-0 right-0 rounded-bl-md bg-blue-50 px-2 py-0.5 text-[10px] text-blue-500 capitalize dark:bg-muted dark:text-white">
-							Last used
-						</span>
-					)}
+					{lastUsedMethod === "google" && <LastUsedBadge />}
 				</Button>
 			</div>
 

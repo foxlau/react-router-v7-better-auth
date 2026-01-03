@@ -14,10 +14,9 @@ import {
 	DialogTrigger,
 } from "~/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
-import { Input } from "~/components/ui/input";
 import { changePasswordSchema } from "~/lib/validations/auth";
 import { authClient } from "~/services/auth/auth.client";
-import { Form, LoadingButton } from "../forms";
+import { Form, LoadingButton, PasswordField } from "../forms";
 
 export function ChangePassword() {
 	const [isPending, setIsPending] = useState(false);
@@ -74,12 +73,7 @@ export function ChangePassword() {
 						<FieldLabel htmlFor={fields.currentPassword.id}>
 							Current Password
 						</FieldLabel>
-						<Input
-							{...fields.currentPassword.inputProps}
-							type="password"
-							autoComplete="current-password"
-							enterKeyHint="next"
-						/>
+						<PasswordField name="currentPassword" />
 						<FieldError
 							errors={fields.currentPassword.errors?.map((error) => ({
 								message: error,
@@ -90,12 +84,7 @@ export function ChangePassword() {
 						<FieldLabel htmlFor={fields.newPassword.id}>
 							New Password
 						</FieldLabel>
-						<Input
-							{...fields.newPassword.inputProps}
-							type="password"
-							autoComplete="new-password"
-							enterKeyHint="next"
-						/>
+						<PasswordField name="newPassword" />
 						<FieldError
 							errors={fields.newPassword.errors?.map((error) => ({
 								message: error,
@@ -106,12 +95,7 @@ export function ChangePassword() {
 						<FieldLabel htmlFor={fields.confirmPassword.id}>
 							Confirm New Password
 						</FieldLabel>
-						<Input
-							{...fields.confirmPassword.inputProps}
-							type="password"
-							autoComplete="confirm-password"
-							enterKeyHint="done"
-						/>
+						<PasswordField name="confirmPassword" />
 						<FieldError
 							errors={fields.confirmPassword.errors?.map((error) => ({
 								message: error,

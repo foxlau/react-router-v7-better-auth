@@ -4,10 +4,13 @@ import { useState } from "react";
 import { data, href, Link, redirect, useNavigate } from "react-router";
 import { toast } from "sonner";
 
-import { AuthLayout } from "~/components/auth-layout";
-import { Form as CustomForm, LoadingButton } from "~/components/forms";
+import { AuthLayout } from "~/components/auth/auth-layout";
+import {
+	Form as CustomForm,
+	LoadingButton,
+	PasswordField,
+} from "~/components/forms";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
-import { Input } from "~/components/ui/input";
 import { getPageTitle } from "~/lib/utils";
 import { resetPasswordSchema } from "~/lib/validations/auth";
 import { authClient } from "~/services/auth/auth.client";
@@ -69,31 +72,27 @@ export default function ResetPasswordRoute({
 				<input type="hidden" name="token" value={token} />
 				<Field>
 					<FieldLabel htmlFor={fields.newPassword.id}>New Password</FieldLabel>
-					<Input
-						{...fields.newPassword.inputProps}
-						type="password"
-						autoComplete="new-password"
-					/>
-					<FieldError
-						errors={fields.newPassword.errors?.map((error) => ({
-							message: error,
-						}))}
-					/>
+					<PasswordField name="newPassword" />
+					{fields.newPassword.errors && (
+						<FieldError
+							errors={fields.newPassword.errors.map((error) => ({
+								message: typeof error === "string" ? error : String(error),
+							}))}
+						/>
+					)}
 				</Field>
 				<Field>
 					<FieldLabel htmlFor={fields.confirmPassword.id}>
 						Confirm New Password
 					</FieldLabel>
-					<Input
-						{...fields.confirmPassword.inputProps}
-						type="password"
-						autoComplete="confirm-password"
-					/>
-					<FieldError
-						errors={fields.confirmPassword.errors?.map((error) => ({
-							message: error,
-						}))}
-					/>
+					<PasswordField name="confirmPassword" />
+					{fields.confirmPassword.errors && (
+						<FieldError
+							errors={fields.confirmPassword.errors.map((error) => ({
+								message: typeof error === "string" ? error : String(error),
+							}))}
+						/>
+					)}
 				</Field>
 				<LoadingButton
 					buttonText="Reset Password"

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
-import { AuthLayout } from "~/components/auth-layout";
-import { Form, LoadingButton } from "~/components/forms";
+import { AuthLayout } from "~/components/auth/auth-layout";
+import { Form, LoadingButton, PasswordField } from "~/components/forms";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { getPageTitle } from "~/lib/utils";
@@ -91,12 +91,9 @@ export default function SignUpRoute() {
 				</Field>
 				<Field>
 					<FieldLabel htmlFor={fields.password.id}>Password</FieldLabel>
-					<Input
-						{...fields.password.inputProps}
+					<PasswordField
+						name="password"
 						placeholder="Enter a unique password"
-						autoComplete="password"
-						enterKeyHint="done"
-						type="password"
 					/>
 					<FieldError
 						errors={fields.password.errors?.map((error) => ({

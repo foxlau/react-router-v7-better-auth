@@ -1,14 +1,21 @@
 import {
 	type FormContext,
 	FormProvider,
+	useField,
 	useFormMetadata,
 } from "@conform-to/react/future";
 import type { VariantProps } from "class-variance-authority";
-import { CircleAlertIcon } from "lucide-react";
-import type { ComponentProps } from "react";
+import { CircleAlertIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { type ComponentProps, useState } from "react";
 import type { FetcherWithComponents } from "react-router";
 import { Form as RouterForm } from "react-router";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+} from "~/components/ui/input-group";
 import { cn } from "~/lib/utils";
 import { Button, type buttonVariants } from "./ui/button";
 import { Spinner } from "./ui/spinner";
@@ -89,5 +96,47 @@ export function LoadingButton({
 				buttonText
 			)}
 		</Button>
+	);
+}
+
+/**
+ * PasswordField component using Conform's useField hook
+ * Provides a password input with visibility toggle functionality
+ *
+ * @example
+ * ```tsx
+ * <PasswordField name="password" placeholder="Enter your password" />
+ * ```
+ */
+export function PasswordField({
+	name,
+	placeholder = "••••••••••",
+}: {
+	name: string;
+	placeholder?: string;
+}) {
+	const [isVisible, setIsVisible] = useState(false);
+	const field = useField(name);
+
+	return (
+		<InputGroup>
+			<InputGroupInput
+				type={isVisible ? "text" : "password"}
+				placeholder={placeholder}
+				aria-label={isVisible ? "Hide password" : "Show password"}
+				{...field.inputProps}
+			/>
+			<InputGroupAddon align="inline-end">
+				<InputGroupButton
+					type="button"
+					aria-label={isVisible ? "Hide password" : "Show password"}
+					title={isVisible ? "Hide password" : "Show password"}
+					size="icon-xs"
+					onClick={() => setIsVisible(!isVisible)}
+				>
+					{isVisible ? <EyeOffIcon /> : <EyeIcon />}
+				</InputGroupButton>
+			</InputGroupAddon>
+		</InputGroup>
 	);
 }
