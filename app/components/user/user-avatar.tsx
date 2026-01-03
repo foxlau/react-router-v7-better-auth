@@ -28,25 +28,12 @@ export function UserAvatar({
 	className,
 	size = 24,
 }: UserAvatarProps) {
-	const initials = name.charAt(0).toUpperCase();
 	const sizeClass = getSizeClass(size);
 
-	// If image exists, use Avatar component with fallback
-	if (image) {
-		return (
-			<Avatar className={cn(sizeClass, className)}>
-				<AvatarImage src={image} alt={name} />
-				<AvatarFallback className="rounded-lg font-semibold uppercase">
-					{initials}
-				</AvatarFallback>
-			</Avatar>
-		);
-	}
-
-	// If no image, use BoringAvatar wrapped in Avatar for consistent styling
 	return (
 		<Avatar className={cn(sizeClass, className)}>
-			<AvatarFallback className="rounded-lg p-0">
+			<AvatarImage src={image ?? undefined} alt={name} />
+			<AvatarFallback className="rounded-lg p-0" delayMs={0}>
 				<BoringAvatar
 					size={size}
 					name={name}

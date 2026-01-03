@@ -1,7 +1,6 @@
-import { data } from "react-router";
-import { ConnectionItem } from "~/components/settings/connection-item";
+import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { SettingsLayout } from "~/components/settings/settings-layout";
-import { SOCIAL_PROVIDER_CONFIGS } from "~/lib/config";
+import { SocialConnection } from "~/components/settings/social-connection";
 import { getPageTitle } from "~/lib/utils";
 import { auth } from "~/services/auth/auth.server";
 import type { Route } from "./+types/connections";
@@ -14,23 +13,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const accounts = await auth.api.listUserAccounts({
 		headers: request.headers,
 	});
-	return data({ accounts });
+
+	return { accounts };
 }
 
 export default function ConnectionsRoute({
 	loaderData: { accounts },
 }: Route.ComponentProps) {
-	const connections = SOCIAL_PROVIDER_CONFIGS.map((config) => {
-		const account = accounts.find((acc) => acc.providerId === config.id);
-		return {
-			provider: config.id,
-			displayName: config.name,
-			icon: config.icon,
-			isConnected: !!account,
-			createdAt: account?.createdAt,
-		};
-	});
-
 	return (
 		<SettingsLayout
 			title="Connections"
@@ -38,9 +27,24 @@ export default function ConnectionsRoute({
 		>
 			<div className="py-4">
 				<div className="divide-y overflow-hidden rounded-lg border shadow-xs">
-					{connections.map((connection) => (
-						<ConnectionItem key={connection.provider} connection={connection} />
-					))}
+					<SocialConnection
+						connection={{
+							provider: "github",
+							displayName: "GitHub",
+							icon: GithubIcon,
+							isConnected: accounts.some((acc) => acc.providerId === "github"),
+							createdAt: new Date(),
+						}}
+					/>
+					<SocialConnection
+						connection={{
+							provider: "google",
+							displayName: "Google",
+							icon: GoogleIcon,
+							isConnected: accounts.some((acc) => acc.providerId === "google"),
+							createdAt: new Date(),
+						}}
+					/>
 				</div>
 			</div>
 		</SettingsLayout>

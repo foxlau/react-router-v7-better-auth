@@ -22,6 +22,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 	const listSessions = auth.api.listSessions({
 		headers: request.headers,
 	});
+
 	return { listSessions, session };
 }
 
