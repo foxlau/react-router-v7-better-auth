@@ -46,7 +46,7 @@
   "vars": {
     "APP_URL": "http://localhost:5173",
     "APP_ENV": "development", // development | production
-		"SESSION_SECRET": "...",
+    "SESSION_SECRET": "...",
 
     // Better Auth configuration
     "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // `pnpm auth:secret` or https://generate-secret.vercel.app/32

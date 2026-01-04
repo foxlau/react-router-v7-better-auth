@@ -103,6 +103,11 @@ export default function SignInRoute() {
 						</Link>
 					</div>
 					<PasswordField name="password" placeholder="••••••••••" />
+					<FieldError
+						errors={fields.password.errors?.map((error) => ({
+							message: error,
+						}))}
+					/>
 				</Field>
 				<input type="hidden" name="provider" value="Email" />
 				<div className="relative overflow-hidden rounded-lg">
