@@ -12,7 +12,7 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { getPageTitle } from "~/lib/utils";
 import { signInSchema } from "~/lib/validations/auth";
-import { authClient } from "~/services/auth/auth.client";
+import { authClient } from "~/services/auth/client";
 
 export function meta() {
 	return [{ title: getPageTitle("Sign In") }];

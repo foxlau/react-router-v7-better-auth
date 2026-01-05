@@ -15,7 +15,7 @@ import {
 } from "~/components/ui/input-group";
 import { getPageTitle } from "~/lib/utils";
 import { forgetPasswordSchema } from "~/lib/validations/auth";
-import { authClient } from "~/services/auth/auth.client";
+import { authClient } from "~/services/auth/client";
 
 export function meta() {
 	return [{ title: getPageTitle("Forgot your password?") }];

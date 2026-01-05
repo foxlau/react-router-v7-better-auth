@@ -15,7 +15,7 @@ import {
 } from "~/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { changePasswordSchema } from "~/lib/validations/auth";
-import { authClient } from "~/services/auth/auth.client";
+import { authClient } from "~/services/auth/client";
 import { Form, LoadingButton, PasswordField } from "../forms";
 
 export function ChangePassword() {

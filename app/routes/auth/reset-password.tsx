@@ -13,7 +13,7 @@ import {
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { getPageTitle } from "~/lib/utils";
 import { resetPasswordSchema } from "~/lib/validations/auth";
-import { authClient } from "~/services/auth/auth.client";
+import { authClient } from "~/services/auth/client";
 import type { Route } from "./+types/reset-password";
 
 export function meta() {
