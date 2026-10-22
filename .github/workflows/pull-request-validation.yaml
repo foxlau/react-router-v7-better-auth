@@ -49,6 +49,9 @@ jobs:
       - name: 📎 Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: 🔐 Dependency security audit
+        run: bun audit
+
       # typecheck runs typegen (cf-typegen + react-router typegen) then tsc — see package.json
       - name: 📝 Typegen + typecheck
         run: bun run typecheck

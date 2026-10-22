@@ -54,7 +54,9 @@ git clone https://github.com/foxlau/react-router-v7-better-auth.git
 bun install
 ```
 
-Bun is the package manager for this project. Commit `bun.lock` when dependencies change.
+Bun is the package manager for this project. Commit `bun.lock` when dependencies change. The Shadcn CLI is not a runtime dependency; use `bunx shadcn@latest add <component>` when scaffolding UI components.
+
+CI runs `bun audit` before type checks, tests, and the production build. The dependency overrides select patched Browserslist, fast-uri, and js-yaml releases, and replace the vulnerable esbuild version in Drizzle Kit's legacy loader without changing Wrangler's esbuild. Review and remove these overrides when the upstream dependency chains are patched.
 
 ### Development
 
