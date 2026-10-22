@@ -174,6 +174,9 @@ Repository setup:
 - Enable **Settings → General → Pull Requests → Allow auto-merge** and squash merging.
 - Protect `main` with the required GitHub Actions checks **⬣ Biome lint** and **🔎 Type check**, and require branches to be up to date. The type-check job also runs regression tests and the production build.
 - Keep any required reviews enabled; auto-merge waits for them and does not automatically approve PRs. No personal access token is required.
+- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow requests write permissions; PR validation does not retain checkout credentials.
+
+The automation only enables auto-merge for Dependabot. Maintainers with write access may still manually enable GitHub's native auto-merge on other PRs, subject to the same branch protection rules.
 
 ## Questions
 

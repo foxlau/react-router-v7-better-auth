@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: biomejs/setup-biome@v2
       - run: biome ci . --reporter=github
 
@@ -28,6 +30,8 @@ jobs:
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: 📦 Setup Bun
         uses: oven-sh/setup-bun@v2
