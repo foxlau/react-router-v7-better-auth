@@ -32,8 +32,7 @@ export default function ConnectionsRoute({
 							provider: "github",
 							displayName: "GitHub",
 							icon: GithubIcon,
-							isConnected: accounts.some((acc) => acc.providerId === "github"),
-							createdAt: new Date(),
+							account: accounts.find((acc) => acc.providerId === "github"),
 						}}
 					/>
 					<SocialConnection
@@ -41,8 +40,7 @@ export default function ConnectionsRoute({
 							provider: "google",
 							displayName: "Google",
 							icon: GoogleIcon,
-							isConnected: accounts.some((acc) => acc.providerId === "google"),
-							createdAt: new Date(),
+							account: accounts.find((acc) => acc.providerId === "google"),
 						}}
 					/>
 				</div>

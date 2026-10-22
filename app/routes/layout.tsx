@@ -11,7 +11,7 @@ export default function AuthenticatedLayout() {
 
 	return (
 		<>
-			<header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md">
+			<header className="bg-background/80 sticky top-0 z-40 backdrop-blur-md">
 				<div className="flex w-full items-center justify-between p-4 sm:px-10">
 					<Link to={href("/")} className="flex items-center gap-2">
 						<AppLogo />

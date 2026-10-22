@@ -15,6 +15,27 @@
       "when": 1767339827403,
       "tag": "0001_slow_silver_surfer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792680546901,
+      "tag": "0002_auth_rate_limits",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1792681739966,
+      "tag": "0003_database_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1792682228414,
+      "tag": "0004_normalize_credential_account_ids",
+      "breakpoints": true
     }
   ]
 }

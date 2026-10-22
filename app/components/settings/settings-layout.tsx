@@ -12,10 +12,10 @@ export function SettingsLayout({
 	return (
 		<div className="flex flex-col">
 			<div className="space-y-1">
-				<h1 className="font-semibold text-base">{title}</h1>
+				<h1 className="text-base font-semibold">{title}</h1>
 				{description && <p className="text-muted-foreground">{description}</p>}
 			</div>
-			<div className="divide-y divide-border/50">{children}</div>
+			<div className="divide-border/50 divide-y">{children}</div>
 		</div>
 	);
 }

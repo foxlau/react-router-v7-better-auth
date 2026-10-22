@@ -9,6 +9,7 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
+			"!**/.agents/**/*",
 			"!**/.react-router/**/*",
 			"!**/drizzle/meta/**/*",
 			"!**/drizzle/migrations/**/*",
@@ -29,13 +30,9 @@
 				"noArrayIndexKey": "off"
 			},
 			"nursery": {
-				"useSortedClasses": {
+				"useTailwindSortedClasses": {
 					"level": "error",
-					"fix": "safe",
-					"options": {
-						"attributes": ["className"],
-						"functions": ["cn", "cva", "tw", "clsx", "twMerge"]
-					}
+					"fix": "safe"
 				}
 			},
 			"a11y": {
@@ -68,5 +65,10 @@
 				"organizeImports": "on"
 			}
 		}
+	},
+	"tailwind": {
+		"attributes": ["class", "className"],
+		"mergeFunctions": ["cn", "tw", "clsx", "twMerge"],
+		"variantFunctions": ["cva"]
 	}
 }

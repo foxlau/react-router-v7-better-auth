@@ -16,7 +16,7 @@ export function TodoItem({ todo }: { todo: Todo }) {
 	return (
 		<li
 			key={todo.id}
-			className="flex items-center gap-2 p-2 pl-3 hover:bg-accent"
+			className="hover:bg-accent flex items-center gap-2 p-2 pl-3"
 		>
 			<label htmlFor={id} className="flex items-center gap-2">
 				<Checkbox
@@ -45,7 +45,7 @@ export function TodoItem({ todo }: { todo: Todo }) {
 			</label>
 			<Button
 				type="submit"
-				className="ml-auto size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+				className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive ml-auto size-8"
 				size="icon"
 				variant="ghost"
 				disabled={isSubmitting}

@@ -2,7 +2,7 @@
 
 -- Remote D1 database can be seeded using:
 -- ```sh
--- pnpm db:seed:remote
+-- bun run db:seed:remote
 -- ```
 
 -- Seed users table
@@ -34,7 +34,7 @@ INSERT INTO users (
   NULL,
   1727874220520,
   1733186807616
-);
+) ON CONFLICT(id) DO NOTHING;
 
 -- Seed accounts table
 INSERT INTO accounts (
@@ -53,7 +53,7 @@ INSERT INTO accounts (
   updated_at
 ) VALUES (
   'W8Oa8UCI6sKswFaF8uzIKkmRfP3HRIaD',
-  'account_F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS',
+  'F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS',
   'credential',
   'F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS',
   NULL,
@@ -65,4 +65,4 @@ INSERT INTO accounts (
   NULL,
   1757142908247,
   1721505018863
-);
+) ON CONFLICT(id) DO NOTHING;

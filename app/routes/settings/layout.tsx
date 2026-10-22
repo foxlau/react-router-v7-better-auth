@@ -6,7 +6,7 @@ export default function Layout(_: Route.ComponentProps) {
 	return (
 		<>
 			<div className="flex flex-col gap-4">
-				<h2 className="font-bold text-xl">Settings</h2>
+				<h2 className="text-xl font-bold">Settings</h2>
 				<Menu />
 			</div>
 			<Outlet />

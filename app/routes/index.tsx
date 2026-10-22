@@ -22,11 +22,11 @@ export default function IndexRoute() {
 		<>
 			<div className="flex h-[calc(100vh-300px)] flex-col items-center justify-center">
 				<section className="flex flex-col items-center gap-6">
-					<div className="bg-linear-to-b from-primary to-primary/60 bg-clip-text text-center font-extrabold font-serif text-5xl text-transparent italic leading-12 tracking-tight">
+					<div className="from-primary to-primary/60 bg-linear-to-b bg-clip-text text-center font-serif text-5xl leading-12 font-extrabold tracking-tight text-transparent italic">
 						React Router <br /> with Better Auth.
 					</div>
 
-					<p className="text-center font-mono text-base text-muted-foreground">
+					<p className="text-muted-foreground text-center font-mono text-base">
 						{appDescription}
 					</p>
 

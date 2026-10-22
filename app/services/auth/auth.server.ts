@@ -29,6 +29,9 @@ const options = {
 
 	advanced: {
 		cookiePrefix,
+		database: {
+			joins: true,
+		},
 		ipAddress: {
 			ipAddressHeaders: ["cf-connecting-ip", "x-forwarded-for", "x-real-ip"],
 		},
@@ -62,10 +65,6 @@ const options = {
 		},
 	},
 
-	experimental: {
-		joins: true,
-	},
-
 	socialProviders: {
 		github: {
 			clientId: env.GITHUB_CLIENT_ID || "",
@@ -96,16 +95,9 @@ const options = {
 		},
 	},
 
-	secondaryStorage: {
-		get: async (key) => await env.APP_KV.get(`auth:${key}`, "json"),
-		set: async (key, value) =>
-			await env.APP_KV.put(`auth:${key}`, JSON.stringify(value)),
-		delete: async (key) => await env.APP_KV.delete(`auth:${key}`),
-	},
-
 	rateLimit: {
 		enabled: true,
-		storage: "secondary-storage",
+		storage: "database",
 		window: 60,
 		max: 10,
 	},

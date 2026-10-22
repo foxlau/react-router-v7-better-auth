@@ -117,7 +117,7 @@ export default function SignUpRoute() {
 			</Form>
 
 			{/* Terms of service */}
-			<div className="text-balance text-center text-muted-foreground text-xs">
+			<div className="text-muted-foreground text-center text-xs text-balance">
 				By clicking continue, you agree to our{" "}
 				<a href="/" className="text-primary hover:underline">
 					Terms of Service

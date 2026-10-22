@@ -1,5 +1,8 @@
 name: 🔍 PR Code Validation
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -8,14 +11,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "app/**"
-      - "workers/**"
-      - "*.js"
-      - "*.ts"
-      - "*.tsx"
-      - "package.json"
-      - "pnpm-lock.yaml"
 
 jobs:
   lint:
@@ -23,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: biomejs/setup-biome@v2
       - run: biome ci . --reporter=github
 
@@ -33,24 +30,34 @@ jobs:
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v7
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
         with:
-          version: 9.15.5
+          persist-credentials: false
+
+      - name: 📦 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
 
       - name: 🟢 Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 20
-          cache: "pnpm"
+          node-version: 24
 
       - name: ⚙️ Prepare Wrangler config
         run: cp -f wrangler.jsonc.example wrangler.jsonc
 
       - name: 📎 Install dependencies
-        run: pnpm install
+        run: bun install --frozen-lockfile
+
+      - name: 🔐 Dependency security audit
+        run: bun audit
 
       # typecheck runs typegen (cf-typegen + react-router typegen) then tsc — see package.json
       - name: 📝 Typegen + typecheck
-        run: pnpm typecheck
+        run: bun run typecheck
+
+      - name: 🧪 Authentication regression tests
+        run: bun run test
+
+      - name: 🏗️ Production build
+        run: bun run build

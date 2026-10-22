@@ -5,11 +5,10 @@ This template features React Router v8, Better auth, Drizzle ORM, and D1, design
 ## 🔐 Authentication Features
 
 This template implements a complete authentication system using Better Auth with the following features:
-
 - 📧 **Email and Password Authentication** - Secure login with email and password
 - 🔑 **Password Recovery** - Forgot password and reset password functionality
 - 🔄 **Social Login** - Sign in with Google and GitHub accounts
-- 👤 **Session Management** - Secure session handling with Cloudflare KV storage
+- 👤 **Session Management** - Secure session handling with Cloudflare D1 storage
 - 🗑️ **Account Management** - Including account deletion functionality
 - 👑 **Admin Panel** - Complete admin dashboard with user management, role-based access control
 
@@ -24,7 +23,6 @@ This template implements a complete authentication system using Better Auth with
 - 🔑 [Better Auth](https://better-auth.com/) for authentication
 - 🌧️ [Drizzle ORM](https://orm.drizzle.team/) for database
 - 🛢️ Cloudflare D1 for database
-- 📁 Cloudflare KV for caching
 - 📖 [React Router docs](https://reactrouter.com/)
 
 ## Demo
@@ -49,12 +47,16 @@ React Router v7 Authentication Demo Series:
 
 ### Installation
 
-Install the dependencies:
+Use Bun 1.4.2+ and Node.js 24 (Node.js 22.22+ is the minimum supported by React Router's tooling), then install the dependencies:
 
 ```bash
 git clone https://github.com/foxlau/react-router-v7-better-auth.git
-pnpm install
+bun install
 ```
+
+Bun is the package manager for this project. Commit `bun.lock` when dependencies change. The Shadcn CLI is not a runtime dependency; use `bunx shadcn@latest add <component>` when scaffolding UI components.
+
+CI runs `bun audit` before type checks, tests, and the production build. The dependency overrides select patched Browserslist, fast-uri, and js-yaml releases, and replace the vulnerable esbuild version in Drizzle Kit's legacy loader without changing Wrangler's esbuild. Review and remove these overrides when the upstream dependency chains are patched.
 
 ### Development
 
@@ -63,24 +65,27 @@ Run an initial database migration:
 ```bash
 cp .env.example .env
 cp wrangler.jsonc.example wrangler.jsonc
-pnpm db:migrate:local
-pnpm db:seed:local
+bun run db:migrate:local
+bun run db:seed:local
 ```
 
-If you modify the Drizzle ORM schema, please run `pnpm db:generate` first. If you need to delete the generated SQL migrations, execute `pnpm db:drop` and select the SQL migration you wish to remove.
+If you modify the Drizzle ORM schema, please run `bun run db:generate` first. If you need to delete the generated SQL migrations, execute `bun run db:drop` and select the SQL migration you wish to remove.
+
+Better Auth uses its built-in D1 database storage for rate limiting (`rate_limits`), sessions (`sessions`), and verification records (`verifications`). No KV namespace is required. After pulling schema updates, run `bun run db:migrate:local` before starting development, and `bun run db:migrate:remote` before deploying to production. Database joins are enabled with `advanced.database.joins`.
+
+When upgrading from KV-backed authentication, existing sessions and pending verification/reset flows are not migrated. Users must sign in again or request a new verification/reset link.
 
 Start the development server with HMR:
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
 
 #### Default Users (from seed)
 
-After running `pnpm db:seed:local`, you can use the following default user to sign in:
-
+After running `bun run db:seed:local`, you can use the following default user to sign in:
 - **Admin User**: `admin@example.com` / `admin@8899`
 
 #### Troubleshooting
@@ -88,78 +93,92 @@ After running `pnpm db:seed:local`, you can use the following default user to si
 If you encounter errors after pulling updates from GitHub, try cleaning the cache and dependencies:
 
 ```bash
-# Clean build cache and restart
-rm -rf .wrangler .react-router node_modules/.vite
-pnpm dev
+# Clean build cache and restart (preserve .wrangler local database data)
+rm -rf .react-router node_modules/.vite
+bun run dev
 
-# If the above doesn't work, clean all dependencies and reinstall
-rm -rf node_modules pnpm-lock.yaml
-pnpm install
-pnpm dev
+# If the above doesn't work, reinstall dependencies using the existing lockfile
+rm -rf node_modules
+bun install --frozen-lockfile
+bun run dev
 ```
 
 ### Database Commands
 
-- `pnpm db:generate` - Generate new database migration files
-- `pnpm db:migrate:local` - Apply migrations to local database
-- `pnpm db:migrate:remote` - Apply migrations to production database
-- `pnpm db:drop` - Remove generated SQL migrations (interactive)
-- `pnpm db:seed:local` - Seed local database with initial data from `drizzle/seed/seed.ts`
-- `pnpm db:seed:remote` - Seed production database with initial data from `drizzle/seed/seed.sql`
-- `pnpm db:studio` - Open Drizzle Studio to view and manage database
-- `pnpm db:reset:local` - Reset local database (drop and recreate)
-- `pnpm db:delete:local` - Delete local database files
+- `bun run db:generate` - Generate new database migration files
+- `bun run db:migrate:local` - Apply migrations to local database
+- `bun run db:migrate:remote` - Apply migrations to production database
+- `bun run db:drop` - Remove generated SQL migrations (interactive)
+- `bun run db:seed:local` - Seed local database with initial data from `drizzle/seed/seed.sql` (safe to repeat)
+- `bun run db:seed:remote` - Seed production database with initial data from `drizzle/seed/seed.sql`
+- `bun run db:reset:local` - Delete all local application/auth data while preserving tables and migration history
+- `bun run db:delete:local` - Delete local database files
 
 ### Authentication Commands
 
-- `pnpm auth:secret` - Generate a new Better Auth secret key. Use this when setting up authentication for the first time or when rotating secrets. The generated secret should be added to your `.dev.vars` file as `BETTER_AUTH_SECRET`.
-- `pnpm auth:generate` - Generate Better Auth database schema from your auth configuration. This command reads `app/services/auth/auth.server.ts` and generates the corresponding schema file at `drizzle/schema/auth.ts`. Run this after modifying your Better Auth configuration.
+- `bun run auth:secret` - Generate a new Better Auth secret key. Use this when setting up authentication for the first time or when rotating secrets. The generated secret should be added to your `.env` file as `BETTER_AUTH_SECRET`.
+- `bun run auth:generate` - Generate Better Auth database schema from your auth configuration. This command reads `app/services/auth/auth.server.ts` and generates the corresponding schema file at `app/services/db/schema/auth.ts`. Run this after modifying your Better Auth configuration.
 
 ### Other Useful Commands
 
-- `pnpm typecheck` - Run TypeScript type checking
-- `pnpm check` - Run Biome linter to check code quality
-- `pnpm check:fix` - Run Biome linter and auto-fix issues
-- `pnpm format` - Format code with Biome
-- `pnpm preview` - Preview production build locally
+- `bun run typecheck` - Run TypeScript type checking
+- `bun run test` - Run authentication regression tests against an isolated in-memory database
+- `bun run check` - Run Biome linter to check code quality
+- `bun run check:fix` - Run Biome linter and auto-fix issues
+- `bun run format` - Format code with Biome
+- `bun run preview` - Preview production build locally
 
 ## Building for Production
 
 Create a production build:
 
 ```bash
-pnpm build
+bun run build
 ```
 
 ## Deployment
 
 Deployment is done using the Wrangler CLI.
 
-Use the following commands to create the D1 database and KV cache for Better Auth sessions. Remember to replace the `db` and `kv` configurations in the `wrangler.toml` file with the data generated by these commands:
+Create the D1 database and R2 bucket, then update `d1_databases` and `r2_buckets` in `wrangler.jsonc` with the generated resource details:
 
 ```bash
-npx wrangler d1 create rr7-better-auth
-npx wrangler kv namespace create APP_KV
+bunx wrangler d1 create rr7-better-auth
+bunx wrangler r2 bucket create rr7-better-auth
 ```
 
 To deploy directly to production:
 
 ```sh
-pnpm db:migrate:remote
-pnpm deploy
+bun run db:migrate:remote
+bun run deploy
 ```
 
 To deploy a preview URL:
 
 ```sh
-pnpm deploy:version
+bun run deploy:version
 ```
 
 You can then promote a version to production after verification or roll it out progressively.
 
 ```sh
-pnpm deploy:promote
+bun run deploy:promote
 ```
+
+## Dependency Updates and Auto-Merge
+
+Dependabot checks Bun dependencies (`package.json` and `bun.lock`) and GitHub Actions every Monday at 09:00 Asia/Shanghai. Minor and patch updates are grouped; major updates remain separate for manual review.
+
+`.github/workflows/dependabot-auto-merge.yml` enables squash auto-merge only for verified Dependabot minor/patch PRs without maintainer changes. It never checks out or executes PR code with its write-capable token. Other PRs are not auto-merged.
+
+Repository setup:
+- Enable **Settings → General → Pull Requests → Allow auto-merge** and squash merging.
+- Protect `main` with the required GitHub Actions checks **⬣ Biome lint** and **🔎 Type check**, and require branches to be up to date. The type-check job also runs regression tests and the production build.
+- Keep any required reviews enabled; auto-merge waits for them and does not automatically approve PRs. No personal access token is required.
+- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow requests write permissions; PR validation does not retain checkout credentials.
+
+The automation only enables auto-merge for Dependabot. Maintainers with write access may still manually enable GitHub's native auto-merge on other PRs, subject to the same branch protection rules.
 
 ## Questions
 
