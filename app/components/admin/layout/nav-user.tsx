@@ -40,7 +40,7 @@ export function NavUser() {
 								<span className="truncate font-medium capitalize">
 									{user.name}
 								</span>
-								<span className="truncate text-muted-foreground text-xs">
+								<span className="text-muted-foreground truncate text-xs">
 									{user.email}
 								</span>
 							</div>
@@ -60,7 +60,7 @@ export function NavUser() {
 									<span className="truncate font-medium capitalize">
 										{user.name}
 									</span>
-									<span className="truncate text-muted-foreground text-xs">
+									<span className="text-muted-foreground truncate text-xs">
 										{user.email}
 									</span>
 								</div>

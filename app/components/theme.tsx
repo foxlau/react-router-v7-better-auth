@@ -58,7 +58,7 @@ export function ThemeSwitcher() {
 		<fetcher.Form
 			method="POST"
 			action={themeSwitcherAction}
-			className="isolate flex h-8 rounded-full bg-background p-1 shadow-xs ring-1 ring-border"
+			className="bg-background ring-border isolate flex h-8 rounded-full p-1 shadow-xs ring-1"
 		>
 			{themes.map(({ key, icon: Icon, label }) => {
 				const isActive = key === theme;
@@ -181,9 +181,9 @@ export function ThemeRadioGroup() {
 						alt={value}
 						width={220}
 						height={160}
-						className="relative cursor-pointer overflow-hidden rounded-lg border border-input shadow-xs outline-none transition-[color,box-shadow] peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-data-disabled:cursor-not-allowed peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent peer-data-disabled:opacity-50"
+						className="border-input peer-focus-visible:ring-ring/50 peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent relative cursor-pointer overflow-hidden rounded-lg border shadow-xs transition-[color,box-shadow] outline-none peer-focus-visible:ring-[3px] peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-50"
 					/>
-					<span className="group mt-2 flex items-center gap-1 peer-data-[state=unchecked]:text-muted-foreground/70">
+					<span className="group peer-data-[state=unchecked]:text-muted-foreground/70 mt-2 flex items-center gap-1">
 						<CheckIcon
 							size={16}
 							className="group-peer-data-[state=unchecked]:hidden"
@@ -194,7 +194,7 @@ export function ThemeRadioGroup() {
 							className="group-peer-data-[state=checked]:hidden"
 							aria-hidden="true"
 						/>
-						<span className="font-medium text-xs">{value}</span>
+						<span className="text-xs font-medium">{value}</span>
 					</span>
 				</label>
 			))}

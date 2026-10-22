@@ -1,6 +1,6 @@
 import type { FC, SVGProps } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useRevalidator } from "react-router";
 import { toast } from "sonner";
 import { authClient } from "~/services/auth/auth.client";
 import { DateTimeDisplay } from "../datetime-display";
@@ -13,53 +13,63 @@ export function SocialConnection({
 		provider: "github" | "google";
 		displayName: string;
 		icon: FC<SVGProps<SVGSVGElement>>;
-		isConnected: boolean;
-		createdAt?: Date | null;
+		account?: {
+			id: string;
+			createdAt: Date;
+		};
 	};
 }) {
-	const navigate = useNavigate();
-	const [isConnecting, setIsConnecting] = useState(false);
-	const variant = connection.isConnected ? "secondary" : "outline";
-	const label = connection.isConnected ? "Disconnect" : "Connect";
+	const revalidator = useRevalidator();
+	const [isPending, setIsPending] = useState(false);
+	const isConnected = Boolean(connection.account);
+	const variant = isConnected ? "secondary" : "outline";
+	const label = isConnected ? "Disconnect" : "Connect";
+	const errorMessage = isConnected
+		? "Failed to disconnect."
+		: "Failed to connect.";
 
-	const handleLinkSocial = async () => {
-		setIsConnecting(true);
-		const { error } = await authClient.linkSocial({
-			provider: connection.provider,
-			callbackURL: "/settings/connections",
-		});
-		if (error) {
-			toast.error(error.message || "Failed to connect.");
-		}
-	};
+	const handleConnection = async () => {
+		if (isPending) return;
+		setIsPending(true);
 
-	const handleUnlinkSocial = async () => {
-		setIsConnecting(true);
-		const { error } = await authClient.unlinkAccount({
-			providerId: connection.provider,
-		});
-		if (error) {
-			toast.error(error.message || "Failed to disconnect.");
+		try {
+			const { error } = connection.account
+				? await authClient.unlinkAccount({ accountId: connection.account.id })
+				: await authClient.linkSocial({
+						provider: connection.provider,
+						callbackURL: "/settings/connections",
+					});
+
+			if (error) {
+				toast.error(error.message || errorMessage);
+				return;
+			}
+
+			if (connection.account) {
+				await revalidator.revalidate();
+			}
+		} catch {
+			toast.error(errorMessage);
+		} finally {
+			setIsPending(false);
 		}
-		setIsConnecting(false);
-		navigate(".");
 	};
 
 	return (
-		<div className="flex flex-col gap-2 px-4 py-3 hover:bg-accent">
+		<div className="hover:bg-accent flex flex-col gap-2 px-4 py-3">
 			<div className="flex items-center gap-2">
-				<div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+				<div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
 					<connection.icon className="size-5" />
 				</div>
 				<div className="flex flex-col gap-0.5">
-					<p className="font-medium text-sm">{connection.displayName}</p>
+					<p className="text-sm font-medium">{connection.displayName}</p>
 					<p className="text-muted-foreground text-xs">
-						{connection.isConnected && connection.createdAt ? (
+						{connection.account ? (
 							<>
 								Connected on{" "}
 								<DateTimeDisplay
 									className="text-xs"
-									date={connection.createdAt}
+									date={connection.account.createdAt}
 								/>
 							</>
 						) : (
@@ -72,11 +82,9 @@ export function SocialConnection({
 						size="sm"
 						variant={variant}
 						buttonText={label}
-						loadingText={isConnecting ? "Connecting..." : "Disconnecting..."}
-						isPending={isConnecting}
-						onClick={
-							connection.isConnected ? handleUnlinkSocial : handleLinkSocial
-						}
+						loadingText={isConnected ? "Disconnecting..." : "Connecting..."}
+						isPending={isPending}
+						onClick={handleConnection}
 					/>
 				</div>
 			</div>

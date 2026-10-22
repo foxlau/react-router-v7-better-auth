@@ -21,8 +21,8 @@ export function AuthLayout({
 			<div className="mx-auto w-[300px] sm:w-[360px]">
 				<div className="flex flex-col gap-6">
 					<div className="flex flex-col gap-2 text-center">
-						<h1 className="font-semibold text-xl">{title}</h1>
-						<p className="text-balance text-muted-foreground text-sm">
+						<h1 className="text-xl font-semibold">{title}</h1>
+						<p className="text-muted-foreground text-sm text-balance">
 							{description}
 						</p>
 					</div>

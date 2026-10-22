@@ -226,7 +226,7 @@ export default function AvatarCropper({
 				{/* Drop area - uses finalImageUrl */}
 				<button
 					type="button"
-					className="relative flex size-24 items-center justify-center overflow-hidden rounded-full border border-input border-dashed outline-none transition-colors hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-disabled:pointer-events-none has-[img]:border-none has-disabled:opacity-50 data-[dragging=true]:bg-accent/50"
+					className="border-input hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 data-[dragging=true]:bg-accent/50 relative flex size-24 items-center justify-center overflow-hidden rounded-full border border-dashed transition-colors outline-none focus-visible:ring-[3px] has-disabled:pointer-events-none has-disabled:opacity-50 has-[img]:border-none"
 					onClick={openFileDialog}
 					onDragEnter={handleDragEnter}
 					onDragLeave={handleDragLeave}
@@ -263,7 +263,7 @@ export default function AvatarCropper({
 					<Button
 						onClick={handleRemoveFinalImage}
 						size="icon"
-						className="absolute -top-0.5 -right-0.5 size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background"
+						className="border-background focus-visible:border-background absolute -top-0.5 -right-0.5 size-6 rounded-full border-2 shadow-none"
 						aria-label="Remove image"
 						disabled={isUploading}
 					>

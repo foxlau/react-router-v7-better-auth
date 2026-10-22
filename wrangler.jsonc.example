@@ -14,15 +14,6 @@
     "enabled": true
   },
 
-  // KV namespaces configuration.
-  "kv_namespaces": [
-    {
-      "binding": "APP_KV",
-      "id": "app_kv_id",
-      "preview_id": "app_kv_preview_id"
-    }
-  ],
-
   // D1 databases configuration.
   "d1_databases": [
     {
@@ -48,7 +39,7 @@
     "SESSION_SECRET": "...",
 
     // Better Auth configuration
-    "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // `pnpm auth:secret` or https://generate-secret.vercel.app/32
+    "BETTER_AUTH_SECRET": "3ebc25b381e87193f29ffea6b6d380dd", // `bun run auth:secret` or https://generate-secret.vercel.app/32
     "BETTER_AUTH_ADMIN_USER_ID": "F9CgW4v5USKvUNTIGBiafa6xrgDjaOhS",
     "GITHUB_CLIENT_ID": "...",
     "GITHUB_CLIENT_SECRET": "...",

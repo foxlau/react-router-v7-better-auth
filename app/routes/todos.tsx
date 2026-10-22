@@ -94,7 +94,7 @@ export default function TodosRoute({
 
 	return (
 		<div className="space-y-6">
-			<h1 className="font-bold text-xl">Todo List</h1>
+			<h1 className="text-xl font-bold">Todo List</h1>
 
 			<Form method="POST" context={form.context} {...form.props}>
 				<div className="flex gap-2">

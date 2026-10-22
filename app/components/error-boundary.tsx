@@ -39,8 +39,8 @@ function DevErrorPage({
 	return (
 		<main className="container mx-auto space-y-2 p-4 sm:p-8">
 			<div>
-				<h1 className="font-semibold text-xl">{title}</h1>
-				<p className="wrap-break-word max-h-96 overflow-y-auto text-base text-muted-foreground">
+				<h1 className="text-xl font-semibold">{title}</h1>
+				<p className="text-muted-foreground max-h-96 overflow-y-auto text-base wrap-break-word">
 					{description}
 				</p>
 			</div>
@@ -51,7 +51,7 @@ function DevErrorPage({
 					</pre>
 				</div>
 			)}
-			<small className="font-light font-mono text-muted-foreground/80">
+			<small className="text-muted-foreground/80 font-mono font-light">
 				Application Error only visible in development environment.
 			</small>
 		</main>
@@ -81,7 +81,7 @@ export function ErrorPage({
 					<EmptyMedia variant="icon">
 						<AlertCircleIcon />
 					</EmptyMedia>
-					<EmptyTitle className="font-semibold text-xl">{title}</EmptyTitle>
+					<EmptyTitle className="text-xl font-semibold">{title}</EmptyTitle>
 					<EmptyDescription>{description}</EmptyDescription>
 				</EmptyHeader>
 				<EmptyContent>
@@ -93,7 +93,7 @@ export function ErrorPage({
 				</EmptyContent>
 				<Button
 					variant="link"
-					className="cursor-pointer text-muted-foreground text-xs"
+					className="text-muted-foreground cursor-pointer text-xs"
 					size="sm"
 					onClick={() => navigate(-1)}
 				>

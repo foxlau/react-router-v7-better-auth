@@ -54,9 +54,9 @@ export function Menu() {
 						to={item.url}
 						className={({ isActive }) =>
 							cn(
-								"relative flex items-center justify-start gap-1.5 py-4 text-muted-foreground",
+								"text-muted-foreground relative flex items-center justify-start gap-1.5 py-4",
 								{
-									"font-medium text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-foreground after:content-['']":
+									"text-foreground after:bg-foreground font-medium after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:content-['']":
 										isActive,
 								},
 							)
@@ -66,7 +66,7 @@ export function Menu() {
 						<span>{item.title}</span>
 					</NavLink>
 				))}
-				<div className="absolute inset-x-0 bottom-0 -z-10 h-0.5 bg-muted" />
+				<div className="bg-muted absolute inset-x-0 bottom-0 -z-10 h-0.5" />
 			</div>
 		</div>
 	);

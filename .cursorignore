@@ -11,7 +11,7 @@ build/
 
 # Files
 LICENSE
-pnpm-lock.yaml
+bun.lock
 package-lock.json
 wrangler.toml
 wrangler.jsonc

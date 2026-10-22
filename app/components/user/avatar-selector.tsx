@@ -74,7 +74,7 @@ export function AvatarSelector({
 	}, [previewUrl]);
 
 	return (
-		<div className="relative flex size-24 overflow-hidden rounded-full bg-muted">
+		<div className="bg-muted relative flex size-24 overflow-hidden rounded-full">
 			<img
 				src={previewUrl || placeholderUrl}
 				alt="Current avatar"
@@ -105,7 +105,7 @@ export function AvatarSelector({
 								<button
 									type="button"
 									aria-label="Change avatar"
-									className="grid font-medium text-white/60 text-xs hover:bg-black/10 hover:text-white"
+									className="grid text-xs font-medium text-white/60 hover:bg-black/10 hover:text-white"
 									onClick={triggerFileInput}
 								>
 									<span className="mb-3 self-end">Change</span>
@@ -113,7 +113,7 @@ export function AvatarSelector({
 								<button
 									type="button"
 									aria-label="Delete avatar"
-									className="grid font-medium text-white/60 text-xs hover:bg-black/10 hover:text-white"
+									className="grid text-xs font-medium text-white/60 hover:bg-black/10 hover:text-white"
 									onClick={handleDeleteAvatar}
 								>
 									<span className="mt-3 self-start">Delete</span>
@@ -123,7 +123,7 @@ export function AvatarSelector({
 							<button
 								type="button"
 								aria-label="Add avatar"
-								className="font-medium text-white/60 text-xs hover:bg-black/20 hover:text-white"
+								className="text-xs font-medium text-white/60 hover:bg-black/20 hover:text-white"
 								onClick={triggerFileInput}
 							>
 								Add avatar

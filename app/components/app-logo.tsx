@@ -6,7 +6,7 @@ export function AppLogo() {
 		<div className="flex items-center gap-3">
 			<ReactRouterIcon theme="light" className="block w-6 dark:hidden" />
 			<ReactRouterIcon theme="dark" className="hidden w-6 dark:block" />
-			<XIcon className="size-3 text-muted-foreground" />
+			<XIcon className="text-muted-foreground size-3" />
 			<BetterAuthIcon className="size-5" />
 		</div>
 	);

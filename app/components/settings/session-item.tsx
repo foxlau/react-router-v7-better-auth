@@ -17,27 +17,27 @@ export function SessionItem({
 		<div className="flex w-full items-center justify-between gap-4 px-4 py-3">
 			<div className="shrink-0">
 				{isMobile ? (
-					<SmartphoneIcon className="size-4 text-muted-foreground" />
+					<SmartphoneIcon className="text-muted-foreground size-4" />
 				) : (
-					<MonitorIcon className="size-4 text-muted-foreground" />
+					<MonitorIcon className="text-muted-foreground size-4" />
 				)}
 			</div>
 			<div className="flex flex-1 flex-col gap-1">
 				<div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
 					<span className="font-mono">
 						{system}
-						<small className="mx-1 text-muted-foreground">•</small>
+						<small className="text-muted-foreground mx-1">•</small>
 						{browser}
 					</span>
 					{isCurrentSession && (
-						<span className="flex h-3 shrink-0 items-center gap-1 rounded-md border border-emerald-600 px-0.5 text-emerald-600 text-xs sm:h-auto sm:px-1.5 dark:border-emerald-500 dark:text-emerald-400">
+						<span className="flex h-3 shrink-0 items-center gap-1 rounded-md border border-emerald-600 px-0.5 text-xs text-emerald-600 sm:h-auto sm:px-1.5 dark:border-emerald-500 dark:text-emerald-400">
 							<span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-500" />
 							<span className="hidden sm:inline">Current device</span>
 						</span>
 					)}
 				</div>
 
-				<div className="space-x-2 text-muted-foreground text-xs">
+				<div className="text-muted-foreground space-x-2 text-xs">
 					<span>IP Address: {session.ipAddress || "unknown"}</span>
 					<span>
 						Expires at:{" "}

@@ -1,5 +1,8 @@
 name: 🔍 PR Code Validation
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -8,14 +11,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "app/**"
-      - "workers/**"
-      - "*.js"
-      - "*.ts"
-      - "*.tsx"
-      - "package.json"
-      - "pnpm-lock.yaml"
 
 jobs:
   lint:
@@ -34,23 +29,28 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v7
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: 📦 Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 9.15.5
+          bun-version: 1.4.2
 
       - name: 🟢 Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 20
-          cache: "pnpm"
+          node-version: 24
 
       - name: ⚙️ Prepare Wrangler config
         run: cp -f wrangler.jsonc.example wrangler.jsonc
 
       - name: 📎 Install dependencies
-        run: pnpm install
+        run: bun install --frozen-lockfile
 
       # typecheck runs typegen (cf-typegen + react-router typegen) then tsc — see package.json
       - name: 📝 Typegen + typecheck
-        run: pnpm typecheck
+        run: bun run typecheck
+
+      - name: 🧪 Authentication regression tests
+        run: bun run test
+
+      - name: 🏗️ Production build
+        run: bun run build

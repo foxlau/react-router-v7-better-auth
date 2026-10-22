@@ -24,6 +24,28 @@ export const users = sqliteTable("users", {
 	banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
 });
 
+export const sessions = sqliteTable(
+	"sessions",
+	{
+		id: text("id").primaryKey(),
+		expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+		token: text("token").notNull().unique(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+			.$onUpdate(() => new Date())
+			.notNull(),
+		ipAddress: text("ip_address"),
+		userAgent: text("user_agent"),
+		userId: text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		impersonatedBy: text("impersonated_by"),
+	},
+	(table) => [index("sessions_user_id_idx").on(table.userId)],
+);
+
 export const accounts = sqliteTable(
 	"accounts",
 	{
@@ -72,8 +94,27 @@ export const verifications = sqliteTable(
 	(table) => [index("verifications_identifier_idx").on(table.identifier)],
 );
 
+export const rateLimits = sqliteTable(
+	"rate_limits",
+	{
+		id: text("id").primaryKey(),
+		key: text("key").notNull().unique(),
+		count: integer("count").notNull(),
+		lastRequest: integer("last_request").notNull(),
+	},
+	(table) => [index("rate_limits_last_request_idx").on(table.lastRequest)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
 	accounts: many(accounts),
+	sessions: many(sessions),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+	users: one(users, {
+		fields: [sessions.userId],
+		references: [users.id],
+	}),
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({

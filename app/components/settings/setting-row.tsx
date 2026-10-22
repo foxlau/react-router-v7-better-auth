@@ -10,8 +10,8 @@ export function SettingRow({ title, description, action }: SettingRowProps) {
 	return (
 		<div className="flex items-center gap-4 py-6 sm:gap-16">
 			<div className="flex-1">
-				<div className="font-medium text-sm leading-none">{title}</div>
-				<div className="mt-1.5 text-muted-foreground text-sm">
+				<div className="text-sm leading-none font-medium">{title}</div>
+				<div className="text-muted-foreground mt-1.5 text-sm">
 					{description}
 				</div>
 			</div>
