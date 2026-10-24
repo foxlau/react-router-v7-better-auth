@@ -1,0 +1,40 @@
+name: 📦 Bun dependency graph
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: bun-dependency-submission
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      # Validate lockfile consistency without installing or executing dependencies.
+      - name: Validate frozen lockfile
+        run: bun install --frozen-lockfile --lockfile-only --ignore-scripts
+
+      - name: Publish current dependency graph
+        run: bun scripts/submit-dependencies.ts
+        env:
+          GH_TOKEN: ${{ github.token }}
