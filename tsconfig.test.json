@@ -2,6 +2,7 @@
 	"extends": "./tsconfig.cloudflare.json",
 	"include": [
 		"tests/**/*.ts",
+		"scripts/**/*.ts",
 		".react-router/types/**/*",
 		"worker-configuration.d.ts"
 	],

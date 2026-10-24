@@ -56,7 +56,7 @@ bun install
 
 Bun is the package manager for this project. Commit `bun.lock` when dependencies change. The Shadcn CLI is not a runtime dependency; use `bunx shadcn@latest add <component>` when scaffolding UI components.
 
-CI runs `bun audit` before type checks, tests, and the production build. The dependency overrides select patched Browserslist, fast-uri, and js-yaml releases, and replace the vulnerable esbuild version in Drizzle Kit's legacy loader without changing Wrangler's esbuild. Review and remove these overrides when the upstream dependency chains are patched.
+CI runs `bun audit` before type checks, tests, and the production build. The dependency overrides select patched Browserslist, fast-uri, js-yaml, and Undici releases, and replace the vulnerable esbuild version in Drizzle Kit's legacy loader without changing Wrangler's esbuild. Review and remove these overrides when the upstream dependency chains are patched.
 
 ### Development
 
@@ -176,9 +176,17 @@ Repository setup:
 - Enable **Settings → General → Pull Requests → Allow auto-merge** and squash merging.
 - Protect `main` with the required GitHub Actions checks **⬣ Biome lint** and **🔎 Type check**, and require branches to be up to date. The type-check job also runs regression tests and the production build.
 - Keep any required reviews enabled; auto-merge waits for them and does not automatically approve PRs. No personal access token is required.
-- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow requests write permissions; PR validation does not retain checkout credentials.
+- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow and the main-only dependency submission workflow request scoped write permissions; PR validation does not retain checkout credentials.
 
 The automation only enables auto-merge for Dependabot. Maintainers with write access may still manually enable GitHub's native auto-merge on other PRs, subject to the same branch protection rules.
+
+### Bun Dependency Graph Synchronization
+
+Dependabot's Bun **version updates** and GitHub's **dependency graph/security alerts** are separate features. GitHub does not natively ingest `bun.lock` into the dependency graph, and Bun security-update PRs are not currently supported like npm's. Changing `dependabot.yml` alone does not refresh a stale pnpm graph.
+
+`.github/workflows/dependency-submission.yml` publishes the exact registry package inventory from `bun.lock` through GitHub's Dependency Submission API on each push to `main`, daily, or via **Run workflow**. It also replaces stale `package.json` data and explicitly retires the deleted `pnpm-lock.yaml` graph. The script refuses to retire that graph if the legacy file exists. It never dismisses alerts or disables scanning.
+
+This workflow runs only on reviewed `main` code, validates the frozen lockfile without installing/executing dependencies, and needs no custom secret. PR checks test the snapshot exporter and run `bun audit` independently. After a migration, verify the published SBOM/package versions and live alert details rather than relying on a briefly empty counter.
 
 ## Questions
 
