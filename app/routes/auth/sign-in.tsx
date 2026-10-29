@@ -12,10 +12,18 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { getPageTitle } from "~/lib/utils";
 import { signInSchema } from "~/lib/validations/auth";
+import { guestOnlyMiddleware } from "~/middlewares/auth";
 import { authClient } from "~/services/auth/auth.client";
+
+export const middleware = [guestOnlyMiddleware];
 
 export function meta() {
 	return [{ title: getPageTitle("Sign In") }];
+}
+
+// Force a server request so the guard also runs on client-side navigations.
+export function loader() {
+	return null;
 }
 
 export default function SignInRoute() {

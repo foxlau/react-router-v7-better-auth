@@ -2,8 +2,10 @@ import { Outlet, redirect } from "react-router";
 import { AppHeader } from "~/components/admin/layout/header";
 import { AppSidebar } from "~/components/admin/layout/sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
-import { requiredAuthContext } from "~/middlewares/auth";
+import { requireAuthMiddleware, requiredAuthContext } from "~/middlewares/auth";
 import type { Route } from "./+types/layout";
+
+export const middleware = [requireAuthMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
 	const { user } = context.get(requiredAuthContext);

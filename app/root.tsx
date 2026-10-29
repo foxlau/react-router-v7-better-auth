@@ -21,15 +21,15 @@ import {
 } from "./lib/client-hints";
 import { combineHeaders, getPageTitle } from "./lib/utils";
 import {
-	authMiddleware,
 	optionalAuthContext,
 	requestLogger,
+	sessionMiddleware,
 } from "./middlewares";
 import { getTheme } from "./services/theme.server";
 import { getToast } from "./services/toast.server";
 import stylesheet from "./styles/app.css?url";
 
-export const middleware = [authMiddleware, requestLogger];
+export const middleware = [sessionMiddleware, requestLogger];
 
 export const meta: Route.MetaFunction = ({ error }) => [
 	{ title: getPageTitle(error ? "Oops! " : "") },
