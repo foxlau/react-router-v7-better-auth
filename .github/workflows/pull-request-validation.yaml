@@ -14,14 +14,21 @@ on:
 
 jobs:
   lint:
-    name: ⬣ Biome lint
+    name: 🧹 Oxc lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: biomejs/setup-biome@v2
-      - run: biome ci . --reporter=github
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - run: bun run format:check
+      - run: bun run lint
 
   typecheck:
     needs: lint
@@ -56,7 +63,7 @@ jobs:
       - name: 📝 Typegen + typecheck
         run: bun run typecheck
 
-      - name: 🧪 Authentication regression tests
+      - name: 🧪 Vitest regression tests
         run: bun run test
 
       - name: 🏗️ Production build

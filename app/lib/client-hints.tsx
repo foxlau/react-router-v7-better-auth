@@ -6,58 +6,60 @@
  * the client-server gap and ensures SSR compatibility.
  */
 
-import { useEffect } from "react";
-import { useFetcher, useRevalidator } from "react-router";
-import { z } from "zod/v4";
+import { useEffect } from 'react'
+import { useFetcher, useRevalidator } from 'react-router'
+import { z } from 'zod/v4'
+
 import {
-	useOptionalRequestInfo,
-	useRequestInfo,
-} from "~/hooks/use-request-info";
-import { cookiePrefix } from "./config";
+  useOptionalRequestInfo,
+  useRequestInfo,
+} from '~/hooks/use-request-info'
+
+import { cookiePrefix } from './config'
 
 // ============================================================================
 // Types & Schemas
 // ============================================================================
 
 export const ThemeSchema = z.object({
-	theme: z.enum(["system", "light", "dark"]),
-	redirectTo: z.string().optional(),
-});
+  theme: z.enum(['system', 'light', 'dark']),
+  redirectTo: z.string().optional(),
+})
 
-export type Theme = z.infer<typeof ThemeSchema>["theme"];
+export type Theme = z.infer<typeof ThemeSchema>['theme']
 
 export interface ClientHint {
-	timeZone: string;
-	locale: string;
+  timeZone: string
+  locale: string
 }
 
 type ClientHintDefinition<T = string> = {
-	cookieName: string;
-	getValueCode: string;
-	fallback: T;
-	transform?: (value: string) => T;
-};
+  cookieName: string
+  getValueCode: string
+  fallback: T
+  transform?: (value: string) => T
+}
 
 // ============================================================================
 // Client Hints Configuration
 // ============================================================================
 
-const THEME_COOKIE_NAME = `${cookiePrefix}.CH-prefers-color-scheme`;
+const THEME_COOKIE_NAME = `${cookiePrefix}.CH-prefers-color-scheme`
 
 const clientHints: Record<string, ClientHintDefinition> = {
-	timeZone: {
-		cookieName: `${cookiePrefix}.CH-time-zone`,
-		getValueCode: "Intl.DateTimeFormat().resolvedOptions().timeZone",
-		fallback: "UTC",
-	},
-	theme: {
-		cookieName: THEME_COOKIE_NAME,
-		getValueCode: `window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'`,
-		fallback: "light",
-	},
-};
+  timeZone: {
+    cookieName: `${cookiePrefix}.CH-time-zone`,
+    getValueCode: 'Intl.DateTimeFormat().resolvedOptions().timeZone',
+    fallback: 'UTC',
+  },
+  theme: {
+    cookieName: THEME_COOKIE_NAME,
+    getValueCode: `window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'`,
+    fallback: 'light',
+  },
+}
 
-type ClientHintNames = keyof typeof clientHints;
+type ClientHintNames = keyof typeof clientHints
 
 // ============================================================================
 // Internal Utilities
@@ -68,36 +70,36 @@ type ClientHintNames = keyof typeof clientHints;
  * @internal
  */
 type ParseAcceptLanguageOptions = {
-	validate?: (locale: string) => string | string[] | null | undefined;
-	ignoreWildcard?: boolean;
-};
+  validate?: (locale: string) => string | string[] | null | undefined
+  ignoreWildcard?: boolean
+}
 
 function parseAcceptLanguage(
-	languageHeaderValue: string | null | undefined,
-	options: ParseAcceptLanguageOptions = {},
+  languageHeaderValue: string | null | undefined,
+  options: ParseAcceptLanguageOptions = {},
 ): string[] {
-	if (!languageHeaderValue) return [];
+  if (!languageHeaderValue) return []
 
-	const { ignoreWildcard = true, validate = (locale: string) => locale } =
-		options;
+  const { ignoreWildcard = true, validate = (locale: string) => locale } =
+    options
 
-	return languageHeaderValue
-		.split(",")
-		.map((lang): [number, string] => {
-			const [locale, q = "q=1"] = lang.split(";");
-			const trimmedLocale = locale?.trim() ?? "";
-			const numQ = Number(q.replace(/q ?=/, ""));
-			return [Number.isNaN(numQ) ? 0 : numQ, trimmedLocale];
-		})
-		.sort(([q1], [q2]) => q2 - q1)
-		.flatMap(([_, locale]) => {
-			if (locale === "*" && ignoreWildcard) return [];
-			try {
-				return validate(locale) || [];
-			} catch {
-				return [];
-			}
-		});
+  return languageHeaderValue
+    .split(',')
+    .map((lang): [number, string] => {
+      const [locale, q = 'q=1'] = lang.split(';')
+      const trimmedLocale = locale?.trim() ?? ''
+      const numQ = Number(q.replace(/q ?=/, ''))
+      return [Number.isNaN(numQ) ? 0 : numQ, trimmedLocale]
+    })
+    .sort(([q1], [q2]) => q2 - q1)
+    .flatMap(([_, locale]) => {
+      if (locale === '*' && ignoreWildcard) return []
+      try {
+        return validate(locale) || []
+      } catch {
+        return []
+      }
+    })
 }
 
 /**
@@ -105,18 +107,18 @@ function parseAcceptLanguage(
  * @internal
  */
 function getCookieValue(cookieString: string, name: ClientHintNames) {
-	const hint = clientHints[name];
-	if (!hint) {
-		throw new Error(`Unknown client hint: ${name}`);
-	}
+  const hint = clientHints[name]
+  if (!hint) {
+    throw new Error(`Unknown client hint: ${name}`)
+  }
 
-	const value = cookieString
-		.split(";")
-		.map((c) => c.trim())
-		.find((c) => c.startsWith(`${hint.cookieName}=`))
-		?.split("=")[1];
+  const value = cookieString
+    .split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${hint.cookieName}=`))
+    ?.split('=')[1]
 
-	return value ? decodeURIComponent(value) : null;
+  return value ? decodeURIComponent(value) : null
 }
 
 // ============================================================================
@@ -131,27 +133,27 @@ function getCookieValue(cookieString: string, name: ClientHintNames) {
  * @returns Object with all client hint values
  */
 export function getHints(request?: Request) {
-	const cookieString =
-		typeof document !== "undefined"
-			? document.cookie
-			: typeof request !== "undefined"
-				? (request.headers.get("Cookie") ?? "")
-				: "";
+  const cookieString =
+    typeof document !== 'undefined'
+      ? document.cookie
+      : typeof request !== 'undefined'
+        ? (request.headers.get('Cookie') ?? '')
+        : ''
 
-	return Object.entries(clientHints).reduce(
-		(acc, [name, hint]) => {
-			const hintName = name as ClientHintNames;
-			const cookieValue = getCookieValue(cookieString, hintName);
+  return Object.entries(clientHints).reduce(
+    (acc, [name, hint]) => {
+      const hintName = name as ClientHintNames
+      const cookieValue = getCookieValue(cookieString, hintName)
 
-			if (hint.transform) {
-				acc[hintName] = hint.transform(cookieValue ?? hint.fallback);
-			} else {
-				acc[hintName] = cookieValue ?? hint.fallback;
-			}
-			return acc;
-		},
-		{} as Record<ClientHintNames, string>,
-	);
+      if (hint.transform) {
+        acc[hintName] = hint.transform(cookieValue ?? hint.fallback)
+      } else {
+        acc[hintName] = cookieValue ?? hint.fallback
+      }
+      return acc
+    },
+    {} as Record<ClientHintNames, string>,
+  )
 }
 
 /**
@@ -162,11 +164,11 @@ export function getHints(request?: Request) {
  * @public
  */
 export function getLocale(request: Request): string {
-	const locales = parseAcceptLanguage(request.headers.get("accept-language"), {
-		validate: Intl.DateTimeFormat.supportedLocalesOf,
-	});
+  const locales = parseAcceptLanguage(request.headers.get('accept-language'), {
+    validate: Intl.DateTimeFormat.supportedLocalesOf,
+  })
 
-	return locales[0] ?? "en-US";
+  return locales[0] ?? 'en-US'
 }
 
 // ============================================================================
@@ -179,8 +181,8 @@ export function getLocale(request: Request): string {
  * @public
  */
 export function useHints() {
-	const requestInfo = useRequestInfo();
-	return requestInfo.hints;
+  const requestInfo = useRequestInfo()
+  return requestInfo.hints
 }
 
 /**
@@ -189,8 +191,8 @@ export function useHints() {
  * @public
  */
 export function useOptionalHints() {
-	const requestInfo = useOptionalRequestInfo();
-	return requestInfo?.hints;
+  const requestInfo = useOptionalRequestInfo()
+  return requestInfo?.hints
 }
 
 /**
@@ -199,15 +201,15 @@ export function useOptionalHints() {
  * @public
  */
 export function useTheme() {
-	const hints = useHints();
-	const requestInfo = useRequestInfo();
-	const optimisticMode = useOptimisticThemeMode();
+  const hints = useHints()
+  const requestInfo = useRequestInfo()
+  const optimisticMode = useOptimisticThemeMode()
 
-	if (optimisticMode) {
-		return optimisticMode === "system" ? hints.theme : optimisticMode;
-	}
+  if (optimisticMode) {
+    return optimisticMode === 'system' ? hints.theme : optimisticMode
+  }
 
-	return requestInfo.userPrefs.theme ?? hints.theme;
+  return requestInfo.userPrefs.theme ?? hints.theme
 }
 
 /**
@@ -216,31 +218,31 @@ export function useTheme() {
  * @public
  */
 export function useOptionalTheme(): Theme | undefined {
-	const hints = useOptionalHints();
-	const optionalRequestInfo = useOptionalRequestInfo();
-	const optimisticMode = useOptimisticThemeMode();
+  const hints = useOptionalHints()
+  const optionalRequestInfo = useOptionalRequestInfo()
+  const optimisticMode = useOptimisticThemeMode()
 
-	if (optimisticMode) {
-		if (optimisticMode === "system") {
-			// hints.theme is "light" | "dark" (system preference)
-			const systemTheme = hints?.theme;
-			return systemTheme === "light" || systemTheme === "dark"
-				? systemTheme
-				: undefined;
-		}
-		return optimisticMode;
-	}
+  if (optimisticMode) {
+    if (optimisticMode === 'system') {
+      // hints.theme is "light" | "dark" (system preference)
+      const systemTheme = hints?.theme
+      return systemTheme === 'light' || systemTheme === 'dark'
+        ? systemTheme
+        : undefined
+    }
+    return optimisticMode
+  }
 
-	const userPrefTheme = optionalRequestInfo?.userPrefs.theme;
-	if (userPrefTheme) {
-		return userPrefTheme;
-	}
+  const userPrefTheme = optionalRequestInfo?.userPrefs.theme
+  if (userPrefTheme) {
+    return userPrefTheme
+  }
 
-	// hints.theme is "light" | "dark" (system preference), not "system"
-	const systemTheme = hints?.theme;
-	return systemTheme === "light" || systemTheme === "dark"
-		? systemTheme
-		: undefined;
+  // hints.theme is "light" | "dark" (system preference), not "system"
+  const systemTheme = hints?.theme
+  return systemTheme === 'light' || systemTheme === 'dark'
+    ? systemTheme
+    : undefined
 }
 
 /**
@@ -250,13 +252,13 @@ export function useOptionalTheme(): Theme | undefined {
  * @public
  */
 export function useOptimisticThemeMode() {
-	const themeFetcher = useFetcher({ key: "theme-fetcher" });
+  const themeFetcher = useFetcher({ key: 'theme-fetcher' })
 
-	if (themeFetcher?.formData) {
-		const formData = Object.fromEntries(themeFetcher.formData);
-		const { theme } = ThemeSchema.parse(formData);
-		return theme;
-	}
+  if (themeFetcher?.formData) {
+    const formData = Object.fromEntries(themeFetcher.formData)
+    const { theme } = ThemeSchema.parse(formData)
+    return theme
+  }
 }
 
 /**
@@ -268,25 +270,24 @@ export function useOptimisticThemeMode() {
  * @public
  */
 export function subscribeToSchemeChange(
-	subscriber: (value: "dark" | "light") => void,
-	cookieName: string = THEME_COOKIE_NAME,
+  subscriber: (value: 'dark' | 'light') => void,
+  cookieName: string = THEME_COOKIE_NAME,
 ) {
-	if (typeof window === "undefined") return () => {};
+  if (typeof window === 'undefined') return () => {}
 
-	const schemaMatch = window.matchMedia("(prefers-color-scheme: dark)");
+  const schemaMatch = window.matchMedia('(prefers-color-scheme: dark)')
 
-	function handleThemeChange() {
-		const value = schemaMatch.matches ? "dark" : "light";
-		// biome-ignore lint/suspicious/noDocumentCookie: Direct cookie setting is required for client hints synchronization
-		document.cookie = `${cookieName}=${value}; Max-Age=31536000; SameSite=Lax; Path=/`;
-		subscriber(value);
-	}
+  function handleThemeChange() {
+    const value = schemaMatch.matches ? 'dark' : 'light'
+    document.cookie = `${cookieName}=${value}; Max-Age=31536000; SameSite=Lax; Path=/`
+    subscriber(value)
+  }
 
-	schemaMatch.addEventListener("change", handleThemeChange);
+  schemaMatch.addEventListener('change', handleThemeChange)
 
-	return function cleanupSchemaChange() {
-		schemaMatch.removeEventListener("change", handleThemeChange);
-	};
+  return function cleanupSchemaChange() {
+    schemaMatch.removeEventListener('change', handleThemeChange)
+  }
 }
 
 // ============================================================================
@@ -307,32 +308,32 @@ export function subscribeToSchemeChange(
  * @param nonce - CSP nonce for inline script
  */
 export function ClientHintCheck({ nonce }: { nonce?: string }) {
-	const { revalidate } = useRevalidator();
+  const { revalidate } = useRevalidator()
 
-	// Subscribe to system theme changes
-	useEffect(() => {
-		return subscribeToSchemeChange(() => {
-			// Revalidate to get fresh data with updated theme
-			void revalidate();
-		});
-	}, [revalidate]);
+  // Subscribe to system theme changes
+  useEffect(() => {
+    return subscribeToSchemeChange(() => {
+      // Revalidate to get fresh data with updated theme
+      void revalidate()
+    })
+  }, [revalidate])
 
-	const script = `!function(){if(navigator.cookieEnabled){document.cookie="canSetCookies=1; Max-Age=60; SameSite=Lax; path=/";const e=document.cookie.includes("canSetCookies=1");if(document.cookie="canSetCookies=; Max-Age=-1; path=/",e){const e=document.cookie.split(";").map(e=>e.trim()).reduce((e,t)=>{const[a,n]=t.split("=");return e[a]=n,e},{});let t=parseInt(sessionStorage.getItem("clientHintReloadAttempts")||"0");if(!(t>3)){const a=[${Object.values(
-		clientHints,
-	)
-		.map(
-			(hint) =>
-				`{name:${JSON.stringify(hint.cookieName)},actual:String(${hint.getValueCode}),value:e[${JSON.stringify(hint.cookieName)}]!=null?e[${JSON.stringify(hint.cookieName)}]:encodeURIComponent(${JSON.stringify(hint.fallback)})}`,
-		)
-		.join(
-			",",
-		)}];let n=!1;for(const t of a){document.cookie=encodeURIComponent(t.name)+"="+encodeURIComponent(t.actual)+"; Max-Age=31536000; SameSite=Lax; path=/";try{decodeURIComponent(t.value)!==t.actual&&(n=!0)}catch(e){n=!0}}n?(sessionStorage.setItem("clientHintReloadAttempts",String(t+1)),document.head.appendChild(Object.assign(document.createElement("style"),{textContent:"html { visibility: hidden !important; }"})),window.location.reload()):sessionStorage.removeItem("clientHintReloadAttempts")}}}}();`;
+  const script = `!function(){if(navigator.cookieEnabled){document.cookie="canSetCookies=1; Max-Age=60; SameSite=Lax; path=/";const e=document.cookie.includes("canSetCookies=1");if(document.cookie="canSetCookies=; Max-Age=-1; path=/",e){const e=document.cookie.split(";").map(e=>e.trim()).reduce((e,t)=>{const[a,n]=t.split("=");return e[a]=n,e},{});let t=parseInt(sessionStorage.getItem("clientHintReloadAttempts")||"0");if(!(t>3)){const a=[${Object.values(
+    clientHints,
+  )
+    .map(
+      (hint) =>
+        `{name:${JSON.stringify(hint.cookieName)},actual:String(${hint.getValueCode}),value:e[${JSON.stringify(hint.cookieName)}]!=null?e[${JSON.stringify(hint.cookieName)}]:encodeURIComponent(${JSON.stringify(hint.fallback)})}`,
+    )
+    .join(
+      ',',
+    )}];let n=!1;for(const t of a){document.cookie=encodeURIComponent(t.name)+"="+encodeURIComponent(t.actual)+"; Max-Age=31536000; SameSite=Lax; path=/";try{decodeURIComponent(t.value)!==t.actual&&(n=!0)}catch(e){n=!0}}n?(sessionStorage.setItem("clientHintReloadAttempts",String(t+1)),document.head.appendChild(Object.assign(document.createElement("style"),{textContent:"html { visibility: hidden !important; }"})),window.location.reload()):sessionStorage.removeItem("clientHintReloadAttempts")}}}}();`
 
-	return (
-		<script
-			nonce={nonce}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: We want to run this script on the client
-			dangerouslySetInnerHTML={{ __html: script }}
-		/>
-	);
+  return (
+    <script
+      nonce={nonce}
+      // oxlint-disable-next-line react/no-danger -- Static client-hint script protected by the CSP nonce.
+      dangerouslySetInnerHTML={{ __html: script }}
+    />
+  )
 }

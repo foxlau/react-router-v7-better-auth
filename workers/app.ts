@@ -1,20 +1,20 @@
-import { createRequestHandler } from "react-router";
+import { createRequestHandler } from 'react-router'
 
-import { trimTrailingSlash } from "./http";
+import { logRequest, trimTrailingSlash } from './http'
 
 const requestHandler = createRequestHandler(
-	() => import("virtual:react-router/server-build"),
-	import.meta.env.MODE,
-);
+  () => import('virtual:react-router/server-build'),
+  import.meta.env.MODE,
+)
 
 export default {
-	async fetch(request) {
-		const redirectResponse = trimTrailingSlash(request);
+  fetch(request, env) {
+    const handle = () => trimTrailingSlash(request) ?? requestHandler(request)
 
-		if (redirectResponse) {
-			return redirectResponse;
-		}
+    if (import.meta.env.DEV) {
+      return logRequest(request, handle, !('NO_COLOR' in env))
+    }
 
-		return requestHandler(request);
-	},
-} satisfies ExportedHandler<Env>;
+    return handle()
+  },
+} satisfies ExportedHandler<Env>

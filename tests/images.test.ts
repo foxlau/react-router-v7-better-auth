@@ -1,67 +1,60 @@
-import { beforeEach, describe, expect, mock, test } from "bun:test";
-import { createStaticHandler } from "react-router";
+import { env } from 'cloudflare:workers'
+import { createStaticHandler } from 'react-router'
+import { describe, expect, test } from 'vitest'
 
-const get =
-	mock<
-		(key: string) => Promise<{
-			httpMetadata?: { contentType?: string };
-			blob: () => Promise<Blob>;
-		} | null>
-	>();
-mock.module("cloudflare:workers", () => ({ env: { R2: { get } } }));
+import { loader } from '../app/routes/images'
 
-const { loader } = await import("../app/routes/images");
 const handler = createStaticHandler([
-	{
-		path: "images/*",
-		loader: (args) => {
-			const key = args.params["*"];
-			if (key === undefined) throw new Error("Missing image key");
-			return loader({ ...args, params: { "*": key } });
-		},
-	},
-]);
+  {
+    path: 'images/*',
+    loader: (args) => {
+      const key = args.params['*']
+      if (key === undefined) throw new Error('Missing image key')
+      return loader({ ...args, params: { '*': key } })
+    },
+  },
+])
 
-beforeEach(() => get.mockReset());
+describe('R2 image responses', () => {
+  test.each([
+    ['no metadata', undefined],
+    ['empty metadata', {}],
+    ['no content type', { contentType: undefined }],
+  ] as const)(
+    'uses application/octet-stream with %s',
+    async (_, httpMetadata) => {
+      await env.R2.put('user-avatar/test.png', 'binary data', { httpMetadata })
+      const response = await handler.queryRoute(
+        new Request('http://localhost/images/user-avatar/test.png'),
+      )
+      expect(response.status).toBe(200)
+      expect(response.headers.get('Content-Type')).toBe(
+        'application/octet-stream',
+      )
+      expect(new Uint8Array(await response.arrayBuffer())).toEqual(
+        new TextEncoder().encode('binary data'),
+      )
+    },
+  )
 
-describe("R2 image responses", () => {
-	test.each([undefined, {}, { contentType: undefined }])(
-		"uses application/octet-stream when stored content type is missing: %j",
-		async (httpMetadata) => {
-			get.mockResolvedValue({
-				httpMetadata,
-				blob: async () => new Blob(["binary data"]),
-			});
-			const response = await handler.queryRoute(
-				new Request("http://localhost/images/user-avatar/test.png"),
-			);
-			expect(response.status).toBe(200);
-			expect(response.headers.get("Content-Type")).toBe(
-				"application/octet-stream",
-			);
-			expect(await response.text()).toBe("binary data");
-			expect(get).toHaveBeenCalledWith("user-avatar/test.png");
-		},
-	);
+  test('preserves the stored content type', async () => {
+    await env.R2.put('avatar.png', 'image bytes', {
+      httpMetadata: { contentType: 'image/png' },
+    })
+    const response = await handler.queryRoute(
+      new Request('http://localhost/images/avatar.png'),
+    )
+    expect(response.headers.get('Content-Type')).toBe('image/png')
+    expect(new Uint8Array(await response.arrayBuffer())).toEqual(
+      new TextEncoder().encode('image bytes'),
+    )
+  })
 
-	test("preserves the stored content type", async () => {
-		get.mockResolvedValue({
-			httpMetadata: { contentType: "image/png" },
-			blob: async () => new Blob(["image bytes"]),
-		});
-		const response = await handler.queryRoute(
-			new Request("http://localhost/images/avatar.png"),
-		);
-		expect(response.headers.get("Content-Type")).toBe("image/png");
-		expect(await response.text()).toBe("image bytes");
-	});
-
-	test("missing objects still return an empty 404", async () => {
-		get.mockResolvedValue(null);
-		const response = await handler.queryRoute(
-			new Request("http://localhost/images/missing.png"),
-		);
-		expect(response.status).toBe(404);
-		expect(await response.text()).toBe("");
-	});
-});
+  test('missing objects still return an empty 404', async () => {
+    const response = await handler.queryRoute(
+      new Request('http://localhost/images/missing.png'),
+    )
+    expect(response.status).toBe(404)
+    expect(await response.text()).toBe('')
+  })
+})

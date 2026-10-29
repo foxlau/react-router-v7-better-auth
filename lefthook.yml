@@ -1,14 +1,16 @@
-# commit-msg runs commitlint (conventional commits); {1} is the message file path
+# Format and lint staged files; CI also checks types, tests, and the build.
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: '*.{ts,tsx,js,mjs,cjs,json,jsonc,css,md,yml,yaml}'
+      run: bunx oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    lint:
+      glob: '*.{ts,tsx,js,mjs,cjs}'
+      run: bunx oxlint --deny-warnings --no-error-on-unmatched-pattern {staged_files}
+
 commit-msg:
   commands:
     commitlint:
       run: bunx commitlint --edit {1}
-
-pre-commit:
-  parallel: true
-  commands:
-    check:
-      run: bun run check --fix --no-errors-on-unmatched
-      stage_fixed: true
-    typecheck:
-      run: bun run typecheck

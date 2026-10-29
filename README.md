@@ -1,10 +1,11 @@
-# React Router v8 with Better auth.
+# React Router v8+ with Better auth.
 
-This template features React Router v8, Better auth, Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
+This template features React Router v8+, Better auth, Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
 
 ## 🔐 Authentication Features
 
 This template implements a complete authentication system using Better Auth with the following features:
+
 - 📧 **Email and Password Authentication** - Secure login with email and password
 - 🔑 **Password Recovery** - Forgot password and reset password functionality
 - 🔄 **Social Login** - Sign in with Google and GitHub accounts
@@ -39,6 +40,7 @@ For more demo images, check the **.assets** directory.
 ## Links
 
 React Router v7 Authentication Demo Series:
+
 - [React Router v7 Cloudflare workers template](https://github.com/foxlau/react-router-v7-cloudflare-workers) - React Router v7 Cloudflare workers template.
 - [React Router v7 with Remix Auth](https://github.com/foxlau/react-router-v7-remix-auth) - Multi-strategy authentication demo using Remix Auth
 - [React Router v7 with Vite+](https://github.com/lukexlau/react-router-vite-plus) - React Router 7 + Vite+ full-stack template — Hono SSR, Drizzle/SQLite, Better Auth, Paraglide i18n.
@@ -86,6 +88,7 @@ Your application will be available at `http://localhost:5173`.
 #### Default Users (from seed)
 
 After running `bun run db:seed:local`, you can use the following default user to sign in:
+
 - **Admin User**: `admin@example.com` / `admin@8899`
 
 #### Troubleshooting
@@ -117,15 +120,21 @@ bun run dev
 ### Authentication Commands
 
 - `bun run auth:secret` - Generate a new Better Auth secret key. Use this when setting up authentication for the first time or when rotating secrets. The generated secret should be added to your `.env` file as `BETTER_AUTH_SECRET`.
-- `bun run auth:generate` - Generate Better Auth database schema from your auth configuration. This command reads `app/services/auth/auth.server.ts` and generates the corresponding schema file at `app/services/db/schema/auth.ts`. Run this after modifying your Better Auth configuration.
+- `bun run auth:generate` - Generate and format the Drizzle/SQLite schema from `app/services/auth/auth.server.ts` at `app/services/db/schema/auth.ts`, without connecting to D1. It uses the configured adapter so plural table names are preserved. Review changes before generating/applying migrations.
+
+These commands use the local `auth` CLI, pinned to match the installed Better Auth version. The old `@better-auth/cli` package is deprecated; update the CLI alongside Better Auth.
 
 ### Other Useful Commands
 
 - `bun run typecheck` - Run TypeScript type checking
-- `bun run test` - Run authentication regression tests against an isolated in-memory database
-- `bun run check` - Run Biome linter to check code quality
-- `bun run check:fix` - Run Biome linter and auto-fix issues
-- `bun run format` - Format code with Biome
+- `bun run test` - Run Vitest regression tests in the local Workers runtime with isolated D1/R2 storage
+- `bun run test:watch` - Run Vitest in watch mode
+- `bun run check` - Check formatting, lint rules, and TypeScript types
+- `bun run check:fix` - Format code and apply safe lint fixes
+- `bun run format` - Format code with Oxfmt
+- `bun run format:check` - Check formatting without changing files
+- `bun run lint` - Lint code with Oxlint
+- `bun run lint:fix` - Apply safe Oxlint fixes
 - `bun run preview` - Preview production build locally
 
 ## Building for Production
@@ -173,20 +182,13 @@ Dependabot checks Bun dependencies (`package.json` and `bun.lock`) and GitHub Ac
 `.github/workflows/dependabot-auto-merge.yml` enables squash auto-merge only for verified Dependabot minor/patch PRs without maintainer changes. It never checks out or executes PR code with its write-capable token. Other PRs are not auto-merged.
 
 Repository setup:
+
 - Enable **Settings → General → Pull Requests → Allow auto-merge** and squash merging.
-- Protect `main` with the required GitHub Actions checks **⬣ Biome lint** and **🔎 Type check**, and require branches to be up to date. The type-check job also runs regression tests and the production build.
+- Protect `main` with the required GitHub Actions checks **🧹 Oxc lint** and **🔎 Type check**, and require branches to be up to date. The type-check job also runs regression tests and the production build.
 - Keep any required reviews enabled; auto-merge waits for them and does not automatically approve PRs. No personal access token is required.
-- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow and the main-only dependency submission workflow request scoped write permissions; PR validation does not retain checkout credentials.
+- For public repositories, require workflow approval for **all outside collaborators**, keep default workflow permissions **read-only**, and leave **Allow GitHub Actions to create and approve pull requests** disabled. Only the isolated Dependabot metadata workflow requests scoped write permissions; PR validation does not retain checkout credentials.
 
 The automation only enables auto-merge for Dependabot. Maintainers with write access may still manually enable GitHub's native auto-merge on other PRs, subject to the same branch protection rules.
-
-### Bun Dependency Graph Synchronization
-
-Dependabot's Bun **version updates** and GitHub's **dependency graph/security alerts** are separate features. GitHub does not natively ingest `bun.lock` into the dependency graph, and Bun security-update PRs are not currently supported like npm's. Changing `dependabot.yml` alone does not refresh a stale pnpm graph.
-
-`.github/workflows/dependency-submission.yml` publishes the exact registry package inventory from `bun.lock` through GitHub's Dependency Submission API on each push to `main`, daily, or via **Run workflow**. It also replaces stale `package.json` data and explicitly retires the deleted `pnpm-lock.yaml` graph. The script refuses to retire that graph if the legacy file exists. It never dismisses alerts or disables scanning.
-
-This workflow runs only on reviewed `main` code, validates the frozen lockfile without installing/executing dependencies, and needs no custom secret. PR checks test the snapshot exporter and run `bun audit` independently. After a migration, verify the published SBOM/package versions and live alert details rather than relying on a briefly empty counter.
 
 ## Questions
 

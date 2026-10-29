@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/no-danger": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "fix": { "imports": "safe-fix" }
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/build/**",
+    ".agents/**",
+    ".react-router/**",
+    "app/components/ui/**",
+    "**/worker-configuration.d.ts"
+  ]
+}

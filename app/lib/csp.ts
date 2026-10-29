@@ -4,48 +4,48 @@
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
  */
 
-type DirectiveValue = ReadonlyArray<string> | string | boolean;
+type DirectiveValue = ReadonlyArray<string> | string | boolean
 
 interface ContentSecurityPolicyDirectives {
-	// Fetch directives
-	defaultSrc?: DirectiveValue;
-	childSrc?: DirectiveValue;
-	connectSrc?: DirectiveValue;
-	fontSrc?: DirectiveValue;
-	frameSrc?: DirectiveValue;
-	imgSrc?: DirectiveValue;
-	manifestSrc?: DirectiveValue;
-	mediaSrc?: DirectiveValue;
-	objectSrc?: DirectiveValue;
-	prefetchSrc?: DirectiveValue;
-	scriptSrc?: DirectiveValue;
-	scriptSrcElem?: DirectiveValue;
-	scriptSrcAttr?: DirectiveValue;
-	styleSrc?: DirectiveValue;
-	styleSrcElem?: DirectiveValue;
-	styleSrcAttr?: DirectiveValue;
-	workerSrc?: DirectiveValue;
-	fencedFrameSrc?: DirectiveValue;
+  // Fetch directives
+  defaultSrc?: DirectiveValue
+  childSrc?: DirectiveValue
+  connectSrc?: DirectiveValue
+  fontSrc?: DirectiveValue
+  frameSrc?: DirectiveValue
+  imgSrc?: DirectiveValue
+  manifestSrc?: DirectiveValue
+  mediaSrc?: DirectiveValue
+  objectSrc?: DirectiveValue
+  prefetchSrc?: DirectiveValue
+  scriptSrc?: DirectiveValue
+  scriptSrcElem?: DirectiveValue
+  scriptSrcAttr?: DirectiveValue
+  styleSrc?: DirectiveValue
+  styleSrcElem?: DirectiveValue
+  styleSrcAttr?: DirectiveValue
+  workerSrc?: DirectiveValue
+  fencedFrameSrc?: DirectiveValue
 
-	// Document directives
-	baseUri?: DirectiveValue;
-	sandbox?: DirectiveValue;
+  // Document directives
+  baseUri?: DirectiveValue
+  sandbox?: DirectiveValue
 
-	// Navigation directives
-	formAction?: DirectiveValue;
-	frameAncestors?: DirectiveValue;
+  // Navigation directives
+  formAction?: DirectiveValue
+  frameAncestors?: DirectiveValue
 
-	// Reporting directives
-	reportTo?: DirectiveValue;
-	reportUri?: DirectiveValue;
+  // Reporting directives
+  reportTo?: DirectiveValue
+  reportUri?: DirectiveValue
 
-	// Other directives
-	requireTrustedTypesFor?: DirectiveValue;
-	trustedTypes?: DirectiveValue;
-	upgradeInsecureRequests?: DirectiveValue;
+  // Other directives
+  requireTrustedTypesFor?: DirectiveValue
+  trustedTypes?: DirectiveValue
+  upgradeInsecureRequests?: DirectiveValue
 
-	// Deprecated directives
-	blockAllMixedContent?: DirectiveValue;
+  // Deprecated directives
+  blockAllMixedContent?: DirectiveValue
 }
 
 /**
@@ -61,54 +61,54 @@ interface ContentSecurityPolicyDirectives {
  * ```
  */
 export function buildContentSecurityPolicy(
-	directives: Readonly<
-		| ContentSecurityPolicyDirectives
-		| Map<string, DirectiveValue>
-		| Record<string, DirectiveValue>
-	>,
+  directives: Readonly<
+    | ContentSecurityPolicyDirectives
+    | Map<string, DirectiveValue>
+    | Record<string, DirectiveValue>
+  >,
 ): string {
-	const result: string[] = [];
-	const entries: Iterable<[string, DirectiveValue]> =
-		directives instanceof Map
-			? directives.entries()
-			: Object.entries(directives);
-	const namesSeen = new Set<string>();
+  const result: string[] = []
+  const entries: Iterable<[string, DirectiveValue]> =
+    directives instanceof Map
+      ? directives.entries()
+      : Object.entries(directives)
+  const namesSeen = new Set<string>()
 
-	for (const [rawName, rawValue] of entries) {
-		const name = rawName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  for (const [rawName, rawValue] of entries) {
+    const name = rawName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 
-		if (namesSeen.has(name)) {
-			throw new Error(`Directive "${rawName}" is specified more than once`);
-		}
-		namesSeen.add(name);
+    if (namesSeen.has(name)) {
+      throw new Error(`Directive "${rawName}" is specified more than once`)
+    }
+    namesSeen.add(name)
 
-		if (rawValue === true) {
-			result.push(name);
-			continue;
-		}
-		if (rawValue === false || rawValue == null) {
-			continue;
-		}
+    if (rawValue === true) {
+      result.push(name)
+      continue
+    }
+    if (rawValue === false || rawValue == null) {
+      continue
+    }
 
-		let value: string;
-		if (typeof rawValue === "string") {
-			value = rawValue;
-		} else {
-			const filtered = rawValue.filter((v) => v != null && v !== "");
-			if (filtered.length === 0) {
-				continue;
-			}
-			value = filtered.join(" ");
-		}
+    let value: string
+    if (typeof rawValue === 'string') {
+      value = rawValue
+    } else {
+      const filtered = rawValue.filter((v) => v != null && v !== '')
+      if (filtered.length === 0) {
+        continue
+      }
+      value = filtered.join(' ')
+    }
 
-		if (/[;\r\n]/.test(value)) {
-			throw new Error(
-				`Directive "${rawName}" contains invalid characters (semicolon or newline)`,
-			);
-		}
+    if (/[;\r\n]/.test(value)) {
+      throw new Error(
+        `Directive "${rawName}" contains invalid characters (semicolon or newline)`,
+      )
+    }
 
-		result.push(value ? `${name} ${value}` : name);
-	}
+    result.push(value ? `${name} ${value}` : name)
+  }
 
-	return result.join("; ");
+  return result.join('; ')
 }
