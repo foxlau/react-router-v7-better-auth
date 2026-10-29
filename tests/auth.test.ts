@@ -1,9 +1,12 @@
 import { env } from 'cloudflare:workers'
+import { RouterContextProvider } from 'react-router'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 
 import { db } from '../app/db/index.server'
 import * as schema from '../app/db/schema'
+import { requiredAuthContext } from '../app/middlewares/auth'
+import { loader as sessionsLoader } from '../app/routes/settings/sessions'
 import { auth } from '../app/services/auth/auth.server'
 import {
   checkPermission,
@@ -85,6 +88,26 @@ async function verifiedUser() {
   return { id, cookie }
 }
 
+async function loadSessionsPage(cookie: string) {
+  const request = new Request(`${baseURL}/settings/sessions`, {
+    headers: { Cookie: cookie },
+  })
+  const session = await auth.api.getSession({
+    headers: request.headers,
+    query: { disableCookieCache: true },
+  })
+  if (!session) throw new Error('Expected a signed-in session')
+  const context = new RouterContextProvider()
+  context.set(requiredAuthContext, session)
+  return sessionsLoader({
+    request,
+    url: new URL(request.url),
+    pattern: '/settings/sessions',
+    params: {},
+    context,
+  })
+}
+
 beforeEach(async () => {
   await executeFixture('reset.sql')
   verificationURL = ''
@@ -127,6 +150,57 @@ describe('database-backed authentication', () => {
     )
     expect(await signedOut.json()).toBeNull()
     expect(await db.select().from(schema.sessions).all()).toHaveLength(1)
+  })
+
+  test('fresh sign-ins can list their active sessions', async () => {
+    const { id, cookie } = await verifiedUser()
+    const response = await request('/list-sessions', undefined, cookie)
+    expect(response.status).toBe(200)
+    expect(await response.json()).toMatchObject([{ userId: id }])
+    const page = await loadSessionsPage(cookie)
+    expect(page.listSessions).toMatchObject([{ userId: id }])
+  })
+
+  test('older valid sessions require reauthentication before listing sessions', async () => {
+    const { cookie } = await verifiedUser()
+    await db
+      .update(schema.sessions)
+      .set({ createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) })
+      .run()
+    const tokenCookie = cookie
+      .split('; ')
+      .filter((part) => part.includes('.session_token='))
+      .join('; ')
+    const current = await request(
+      '/get-session?disableCookieCache=true',
+      undefined,
+      tokenCookie,
+    )
+    expect(await current.json()).not.toBeNull()
+    const response = await request('/list-sessions', undefined, tokenCookie)
+    expect(response.status).toBe(403)
+    expect(await response.json()).toMatchObject({ code: 'SESSION_NOT_FRESH' })
+    const redirect = await loadSessionsPage(tokenCookie).catch(
+      (error: unknown) => error,
+    )
+    expect(redirect).toBeInstanceOf(Response)
+    if (!(redirect instanceof Response))
+      throw new Error('Expected a reauthentication redirect')
+    expect(redirect.status).toBe(302)
+    const location = new URL(redirect.headers.get('Location') ?? '', baseURL)
+    expect(location.pathname).toBe('/auth/sign-in')
+    expect(location.searchParams.get('reauth')).toBe('true')
+    expect(location.searchParams.get('redirectTo')).toBe('/settings/sessions')
+
+    const signedInAgain = await request(
+      '/sign-in/email',
+      { email, password },
+      tokenCookie,
+    )
+    expect(signedInAgain.status).toBe(200)
+    expect(
+      (await loadSessionsPage(cookies(signedInAgain))).listSessions,
+    ).toHaveLength(2)
   })
 
   test('password reset tokens are consumed only once under concurrent requests', async () => {

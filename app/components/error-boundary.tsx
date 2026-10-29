@@ -6,7 +6,7 @@ import {
   useRouteError,
 } from 'react-router'
 
-import { Button, buttonVariants } from '~/components/ui/button'
+import { Button } from '~/components/ui/button'
 import {
   Empty,
   EmptyContent,
@@ -87,9 +87,9 @@ export function ErrorPage({
         </EmptyHeader>
         <EmptyContent>
           <div className="flex gap-2">
-            <Link to="/" className={buttonVariants()}>
+            <Button render={<Link to="/" />} nativeButton={false}>
               Go to Home
-            </Link>
+            </Button>
           </div>
         </EmptyContent>
         <Button

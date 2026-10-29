@@ -34,7 +34,7 @@ export function UserAvatar({
   return (
     <Avatar className={cn(sizeClass, className)}>
       <AvatarImage src={image ?? undefined} alt={name} />
-      <AvatarFallback className="rounded-lg p-0" delayMs={0}>
+      <AvatarFallback className="rounded-lg p-0" delay={0}>
         <BoringAvatar
           size={size}
           name={name}

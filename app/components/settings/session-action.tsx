@@ -33,8 +33,8 @@ export function SignOutOfOtherSessions() {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">Sign out of other sessions</Button>
+      <AlertDialogTrigger render={<Button variant="outline" />}>
+        Sign out of other sessions
       </AlertDialogTrigger>
       <AlertDialogContent className="sm:max-w-md">
         <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">

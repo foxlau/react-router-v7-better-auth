@@ -11,6 +11,7 @@ import {
   optionalAuthContext,
   requireAuthMiddleware,
   requiredAuthContext,
+  signInMiddleware,
 } from '../app/middlewares/auth'
 
 const session: AuthSession = {
@@ -72,7 +73,9 @@ const handler = createStaticHandler([
       },
       ...['sign-in', 'sign-up'].map((path) => ({
         path: `auth/${path}`,
-        middleware: [guestOnlyMiddleware],
+        middleware: [
+          path === 'sign-in' ? signInMiddleware : guestOnlyMiddleware,
+        ],
         loader: guestHandler,
       })),
       { path: '*', loader: () => Response.json({ public: true }) },
@@ -218,6 +221,20 @@ describe('route-bound authentication', () => {
       expect(protectedHandler).not.toHaveBeenCalled()
     },
   )
+
+  test('signed-in users can explicitly reauthenticate without a redirect loop', async () => {
+    const response = await query(
+      '/auth/sign-in?reauth=true&redirectTo=%2Fsettings%2Fsessions',
+      session,
+    )
+    expect(response.status).toBe(200)
+    expect(guestHandler).toHaveBeenCalledTimes(1)
+  })
+
+  test('reauthentication does not bypass the sign-up guest-only guard', async () => {
+    expect((await query('/auth/sign-up?reauth=true', session)).status).toBe(302)
+    expect(guestHandler).not.toHaveBeenCalled()
+  })
 
   test.each(guestPaths)(
     '%s redirects authenticated users away from guest-only routes',

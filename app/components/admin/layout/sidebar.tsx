@@ -22,12 +22,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              asChild
+              render={<Link to="/" />}
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <Link to="/">
-                <AppLogo />
-              </Link>
+              <AppLogo />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

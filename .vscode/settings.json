@@ -1,6 +1,14 @@
 {
   "editor.tabSize": 2,
   "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.enable": true,
+  "biome.enabled": false,
+  "[css]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[tailwindcss]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
@@ -11,6 +19,10 @@
   },
   "files.associations": {
     "*.css": "tailwindcss"
+  },
+  "json.schemaDownload.enable": true,
+  "json.schemaDownload.trustedDomains": {
+    "https://ui.shadcn.com/schema.json": true
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,

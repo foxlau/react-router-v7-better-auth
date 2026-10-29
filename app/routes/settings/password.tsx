@@ -3,8 +3,8 @@ import { href, Link } from 'react-router'
 import { ChangePassword } from '~/components/settings/password-action'
 import { SettingRow } from '~/components/settings/setting-row'
 import { SettingsLayout } from '~/components/settings/settings-layout'
-import { buttonVariants } from '~/components/ui/button'
-import { cn, getPageTitle } from '~/lib/utils'
+import { Button } from '~/components/ui/button'
+import { getPageTitle } from '~/lib/utils'
 
 export function meta() {
   return [{ title: getPageTitle('Password') }]
@@ -22,13 +22,20 @@ export default function ChangePasswordRoute() {
         title="Reset your password"
         description="If you have forgotten your password, you can reset it here. Alternatively, if have signed up via Github / Google and more, you can set your password here too."
         action={
-          <Link
-            target="_blank"
-            to={href('/auth/forget-password')}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+          <Button
+            variant="outline"
+            size="sm"
+            render={
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                to={href('/auth/forget-password')}
+              />
+            }
+            nativeButton={false}
           >
             Reset password ↗
-          </Link>
+          </Button>
         }
       />
     </SettingsLayout>
