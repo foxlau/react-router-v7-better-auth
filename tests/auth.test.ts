@@ -2,13 +2,13 @@ import { env } from 'cloudflare:workers'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { z } from 'zod'
 
+import { db } from '../app/db/index.server'
+import * as schema from '../app/db/schema'
 import { auth } from '../app/services/auth/auth.server'
 import {
   checkPermission,
   requirePermission,
 } from '../app/services/auth/permissions.server'
-import { db } from '../app/services/db'
-import * as schema from '../app/services/db/schema'
 import normalizeAccountIDs from '../drizzle/migrations/0004_normalize_credential_account_ids.sql?raw'
 
 const baseURL = 'http://localhost:5173'

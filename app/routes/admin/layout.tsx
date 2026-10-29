@@ -1,20 +1,16 @@
-import { Outlet, redirect } from 'react-router'
+import { Outlet } from 'react-router'
 
 import { AppHeader } from '~/components/admin/layout/header'
 import { AppSidebar } from '~/components/admin/layout/sidebar'
 import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
-import { requireAuthMiddleware, requiredAuthContext } from '~/middlewares/auth'
+import { requireAdmin } from '~/middlewares/auth'
 
 import type { Route } from './+types/layout'
 
-export const middleware = [requireAuthMiddleware]
+export const middleware = [requireAdmin]
 
-export async function loader({ context }: Route.LoaderArgs) {
-  const { user } = context.get(requiredAuthContext)
-  if (user.role !== 'admin' && user.role !== 'editor') {
-    throw redirect('/')
-  }
-
+// Keep a server check on client navigations; authorization runs before handlers.
+export function loader() {
   return null
 }
 
