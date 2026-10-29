@@ -1,6 +1,6 @@
-# React Router v8+ with Better auth.
+# React Routers with Better auth.
 
-This template features React Router v8+, Better auth, Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
+This template features React Router, Better auth, Drizzle ORM, and D1, designed for deployment on Cloudflare Workers.
 
 ## 🔐 Authentication Features
 
