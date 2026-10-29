@@ -3,10 +3,9 @@ import { href, Link } from 'react-router'
 
 import { GithubIcon } from '~/components/icons'
 import { ThemeSwitcher } from '~/components/theme'
-import { buttonVariants } from '~/components/ui/button'
+import { Button } from '~/components/ui/button'
 import { useOptionalAuthUser } from '~/hooks/use-auth-user'
 import { appDescription, appName } from '~/lib/config'
-import { cn } from '~/lib/utils'
 
 export function meta() {
   return [{ title: appName, description: appDescription }]
@@ -30,40 +29,47 @@ export default function IndexRoute() {
           <div className="flex items-center gap-2">
             {user ? (
               <>
-                <Link
-                  to={href('/todos')}
-                  className={cn(buttonVariants({ variant: 'secondary' }))}
-                  reloadDocument
+                <Button
+                  variant="secondary"
+                  render={<Link to={href('/todos')} reloadDocument />}
+                  nativeButton={false}
                 >
                   <CircleFadingPlusIcon />
                   Create Todo
-                </Link>
+                </Button>
 
-                <Link
-                  to={href('/settings/account')}
-                  className={cn(buttonVariants({ variant: 'outline' }))}
+                <Button
+                  variant="outline"
+                  render={<Link to={href('/settings/account')} />}
+                  nativeButton={false}
                 >
                   <UserCogIcon />
                   Account Settings
-                </Link>
+                </Button>
               </>
             ) : (
               <>
-                <Link
-                  to="https://github.com/foxlau/react-router-better-auth"
-                  className={cn(buttonVariants({ variant: 'outline' }))}
-                  reloadDocument
+                <Button
+                  variant="outline"
+                  render={
+                    <Link
+                      to="https://github.com/foxlau/react-router-better-auth"
+                      reloadDocument
+                    />
+                  }
+                  nativeButton={false}
                 >
                   <GithubIcon />
                   Star on Github
-                </Link>
+                </Button>
 
-                <Link
-                  to={href('/auth/sign-in')}
-                  className={cn(buttonVariants({ variant: 'outline' }))}
+                <Button
+                  variant="outline"
+                  render={<Link to={href('/auth/sign-in')} />}
+                  nativeButton={false}
                 >
                   Get Started <ArrowRightIcon className="size-4" />
-                </Link>
+                </Button>
               </>
             )}
           </div>

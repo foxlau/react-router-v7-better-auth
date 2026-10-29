@@ -1,13 +1,11 @@
 const DEFAULT_REDIRECT = '/'
 
 /**
- * 安全重定向路径
- * - 支持表单值、字符串
- * - 自动去除空格
- * - 拒绝完整 URL
- * - 拒绝包含 .. 或 \ 的路径
- * @param to 用户提供的重定向路径
- * @param defaultRedirect 默认路径
+ * Validate a user-provided redirect path.
+ * - Accept string or form-data values and trim whitespace.
+ * - Reject absolute URLs, unsafe prefixes, and path traversal.
+ * @param to The user-provided redirect path.
+ * @param defaultRedirect The fallback for invalid paths.
  */
 export function safeRedirectPath(
   to: FormDataEntryValue | string | null | undefined,
@@ -17,26 +15,26 @@ export function safeRedirectPath(
 
   const trimmedTo = to.trim()
 
-  // 基本检查
+  // Reject unsafe prefixes and path traversal.
   if (
-    !trimmedTo.startsWith('/') || // 必须以 / 开头
-    trimmedTo.startsWith('//') || // 禁止 //
-    trimmedTo.startsWith('/\\') || // 禁止 /\
-    trimmedTo.includes('..') // 禁止相对路径穿越
+    !trimmedTo.startsWith('/') || // Require a leading slash.
+    trimmedTo.startsWith('//') || // Reject protocol-relative URLs.
+    trimmedTo.startsWith('/\\') || // Reject backslash-prefixed URLs.
+    trimmedTo.includes('..') // Reject relative path traversal.
   ) {
     return defaultRedirect
   }
 
-  // 尝试解析为完整 URL，禁止跳转到外部域
+  // Reject values that parse as absolute URLs.
   try {
     new URL(trimmedTo)
-    // 如果没有抛异常，说明是完整 URL，直接返回默认
+    // A successful parse identifies an absolute URL.
     return defaultRedirect
   } catch {
-    // 如果解析失败，则是相对路径，继续验证
+    // Relative paths need a base URL; validate them below.
   }
 
-  // 解析为相对路径确保安全
+  // Resolve against a fixed origin and verify it cannot change.
   try {
     const url = new URL(trimmedTo, 'https://example.com')
     if (url.hostname !== 'example.com') return defaultRedirect

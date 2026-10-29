@@ -6,7 +6,7 @@ import {
   useSearchParams,
 } from 'react-router'
 
-import { buttonVariants } from '~/components/ui/button'
+import { Button } from '~/components/ui/button'
 import { getPageTitle } from '~/lib/utils'
 import { auth } from '~/services/auth/auth.server'
 
@@ -42,19 +42,21 @@ export default function BetterError() {
         </p>
 
         <div className="mt-6 flex w-full shrink-0 items-center justify-center space-x-3">
-          <Link
-            to={href('/auth/sign-in')}
-            className={buttonVariants({ variant: 'outline' })}
+          <Button
+            variant="outline"
+            render={<Link to={href('/auth/sign-in')} />}
+            nativeButton={false}
           >
             <ArrowLeftIcon className="size-4" />
             Go to Login
-          </Link>
-          <Link
-            to={href('/')}
-            className={buttonVariants({ variant: 'outline' })}
+          </Button>
+          <Button
+            variant="outline"
+            render={<Link to={href('/')} />}
+            nativeButton={false}
           >
             Take me home
-          </Link>
+          </Button>
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground underline decoration-muted-foreground/30 decoration-wavy decoration-1 underline-offset-2">

@@ -2,10 +2,9 @@ import { CircleFadingPlusIcon, UserIcon } from 'lucide-react'
 import { href, Link, Outlet } from 'react-router'
 
 import { AppLogo } from '~/components/app-logo'
-import { buttonVariants } from '~/components/ui/button'
+import { Button } from '~/components/ui/button'
 import { UserNav } from '~/components/user/user-nav'
 import { useOptionalAuthUser } from '~/hooks/use-auth-user'
-import { cn } from '~/lib/utils'
 
 export default function AuthenticatedLayout() {
   const user = useOptionalAuthUser()
@@ -20,25 +19,26 @@ export default function AuthenticatedLayout() {
           <div className="flex items-center gap-4">
             {user ? (
               <>
-                <Link
-                  to="/todos"
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'icon',
-                  })}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  render={<Link to="/todos" />}
+                  nativeButton={false}
+                  aria-label="Create todo"
                 >
                   <CircleFadingPlusIcon />
-                </Link>
+                </Button>
                 <UserNav />
               </>
             ) : (
-              <Link
-                to={href('/auth/sign-in')}
-                className={cn(buttonVariants({ variant: 'outline' }))}
+              <Button
+                variant="outline"
+                render={<Link to={href('/auth/sign-in')} />}
+                nativeButton={false}
               >
                 <UserIcon className="size-4" />
                 Sign In
-              </Link>
+              </Button>
             )}
           </div>
         </div>

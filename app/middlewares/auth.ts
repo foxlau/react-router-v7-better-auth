@@ -33,3 +33,8 @@ export const guestOnlyMiddleware: MiddlewareFunction = ({ context }) => {
     throw redirect(href('/'))
   }
 }
+
+export const signInMiddleware: MiddlewareFunction = (args, next) => {
+  if (args.url.searchParams.get('reauth') === 'true') return
+  return guestOnlyMiddleware(args, next)
+}

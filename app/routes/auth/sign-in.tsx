@@ -13,10 +13,10 @@ import { Field, FieldError, FieldLabel } from '~/components/ui/field'
 import { Input } from '~/components/ui/input'
 import { getPageTitle } from '~/lib/utils'
 import { signInSchema } from '~/lib/validations/auth'
-import { guestOnlyMiddleware } from '~/middlewares/auth'
+import { signInMiddleware } from '~/middlewares/auth'
 import { authClient } from '~/services/auth/auth.client'
 
-export const middleware = [guestOnlyMiddleware]
+export const middleware = [signInMiddleware]
 
 export function meta() {
   return [{ title: getPageTitle('Sign In') }]
@@ -32,6 +32,7 @@ export default function SignInRoute() {
   const [isSignInPending, setIsSignInPending] = useState(false)
   const [isSocialSignInPending, setIsSocialSignInPending] = useState(false)
   const [searchParams] = useSearchParams()
+  const isReauthentication = searchParams.get('reauth') === 'true'
   const redirectTo = searchParams.get('redirectTo')
   const callbackURL = redirectTo ? decodeURIComponent(redirectTo) : '/'
 
@@ -79,8 +80,12 @@ export default function SignInRoute() {
 
   return (
     <AuthLayout
-      title="Sign in to your account"
-      description="Welcome back! Please sign in to continue."
+      title={isReauthentication ? 'Sign in again' : 'Sign in to your account'}
+      description={
+        isReauthentication
+          ? 'For your security, sign in again to continue.'
+          : 'Welcome back! Please sign in to continue.'
+      }
     >
       {/* Sign in form */}
       <Form

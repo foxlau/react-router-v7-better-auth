@@ -130,17 +130,15 @@ export function ThemeSelector() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">
-          {mode === 'light' ? (
-            <SunIcon className="size-4" />
-          ) : mode === 'dark' ? (
-            <MoonIcon className="size-4" />
-          ) : (
-            <MonitorIcon className="size-4" />
-          )}
-          <span>{mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>
+        {mode === 'light' ? (
+          <SunIcon className="size-4" />
+        ) : mode === 'dark' ? (
+          <MoonIcon className="size-4" />
+        ) : (
+          <MonitorIcon className="size-4" />
+        )}
+        <span>{mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <ThemeSelectorRadioGroup />
@@ -183,17 +181,17 @@ export function ThemeRadioGroup() {
             alt={value}
             width={220}
             height={160}
-            className="relative cursor-pointer overflow-hidden rounded-lg border border-input shadow-xs transition-[color,box-shadow] outline-none peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-50 peer-data-[state=checked]:border-ring peer-data-[state=checked]:bg-accent"
+            className="relative cursor-pointer overflow-hidden rounded-lg border border-input shadow-xs transition-[color,box-shadow] outline-none peer-focus-visible:ring-[3px] peer-focus-visible:ring-ring/50 peer-data-checked:border-ring peer-data-checked:bg-accent peer-data-disabled:cursor-not-allowed peer-data-disabled:opacity-50"
           />
-          <span className="group mt-2 flex items-center gap-1 peer-data-[state=unchecked]:text-muted-foreground/70">
+          <span className="group mt-2 flex items-center gap-1 peer-data-unchecked:text-muted-foreground/70">
             <CheckIcon
               size={16}
-              className="group-peer-data-[state=unchecked]:hidden"
+              className="group-peer-data-unchecked:hidden"
               aria-hidden="true"
             />
             <MinusIcon
               size={16}
-              className="group-peer-data-[state=checked]:hidden"
+              className="group-peer-data-checked:hidden"
               aria-hidden="true"
             />
             <span className="text-xs font-medium">{value}</span>

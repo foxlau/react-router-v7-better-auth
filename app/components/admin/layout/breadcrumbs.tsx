@@ -72,8 +72,8 @@ export const Breadcrumbs: React.FC = () => {
             {idx > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem>
               {item.to && !item.isCurrentPage ? (
-                <BreadcrumbLink asChild>
-                  <Link to={item.to}>{item.label}</Link>
+                <BreadcrumbLink render={<Link to={item.to} />}>
+                  {item.label}
                 </BreadcrumbLink>
               ) : (
                 <BreadcrumbPage>{item.label}</BreadcrumbPage>

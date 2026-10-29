@@ -4,7 +4,6 @@ import { useFetcher } from 'react-router'
 import { toast } from 'sonner'
 
 import { Button } from '~/components/ui/button'
-import { CardFooter } from '~/components/ui/card'
 import {
   Cropper,
   CropperCropArea,
@@ -15,6 +14,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog'
@@ -279,7 +279,10 @@ export default function AvatarCropper({
 
       {/* Cropper Dialog - Use isDialogOpen for open prop */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-140 *:[button]:hidden">
+        <DialogContent
+          className="gap-0 overflow-hidden p-0 sm:max-w-140"
+          showCloseButton={false}
+        >
           <DialogHeader>
             <DialogTitle className="sr-only">Avatar cropper</DialogTitle>
             <DialogDescription className="sr-only">
@@ -308,15 +311,13 @@ export default function AvatarCropper({
               aria-hidden="true"
             />
             <Slider
-              defaultValue={[1]}
               value={[zoom]}
               min={1}
               max={3}
               step={0.1}
-              onValueChange={(values) => {
-                if (values[0] !== undefined) {
-                  setZoom(values[0])
-                }
+              onValueChange={(value) => {
+                const nextZoom = typeof value === 'number' ? value : value[0]
+                if (nextZoom !== undefined) setZoom(nextZoom)
               }}
               aria-label="Zoom slider"
             />
@@ -327,8 +328,7 @@ export default function AvatarCropper({
             />
           </div>
 
-          {/* Match CardFooter: full-bleed bar with border-t, no DialogFooter -mx margins (parent uses p-0). */}
-          <CardFooter className="justify-end gap-2">
+          <DialogFooter className="mx-0 mb-0 flex-row justify-end gap-2 p-4">
             <Button
               type="button"
               variant="outline"
@@ -346,7 +346,7 @@ export default function AvatarCropper({
             >
               Set avatar
             </Button>
-          </CardFooter>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

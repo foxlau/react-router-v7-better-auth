@@ -9,6 +9,7 @@ import { href, useNavigate, useSubmit } from 'react-router'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -34,39 +35,41 @@ export function UserNav() {
       <DropdownMenuTrigger className="cursor-pointer rounded-full">
         <UserAvatar image={avatarUrl} name={user.name} size={32} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" forceMount className="min-w-40">
-        <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <UserAvatar image={avatarUrl} name={user.name} size={32} />
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold text-primary">
-                {user.name}
-              </span>
-              <span className="truncate text-xs text-muted-foreground">
-                {user.email}
-              </span>
+      <DropdownMenuContent align="end" className="min-w-40">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="p-0 font-normal">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <UserAvatar image={avatarUrl} name={user.name} size={32} />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold text-primary">
+                  {user.name}
+                </span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {user.email}
+                </span>
+              </div>
             </div>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {user.role === 'admin' && (
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {user.role === 'admin' && (
+            <DropdownMenuItem
+              onClick={() => {
+                navigate(href('/admin'))
+              }}
+            >
+              <CircleGaugeIcon />
+              Admin Panel
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() => {
-              navigate(href('/admin'))
+              navigate(href('/settings/account'))
             }}
           >
-            <CircleGaugeIcon />
-            Admin Panel
+            <UserCogIcon />
+            Settings
           </DropdownMenuItem>
-        )}
-        <DropdownMenuItem
-          onClick={() => {
-            navigate(href('/settings/account'))
-          }}
-        >
-          <UserCogIcon />
-          Settings
-        </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <SwatchBookIcon className="size-4" />

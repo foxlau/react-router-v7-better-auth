@@ -1,4 +1,10 @@
-import { GaugeIcon, SettingsIcon, ShieldIcon, UserCogIcon } from 'lucide-react'
+import {
+  GaugeIcon,
+  SettingsIcon,
+  ShieldIcon,
+  UserCogIcon,
+  UsersIcon,
+} from 'lucide-react'
 import type { ComponentType } from 'react'
 import { href } from 'react-router'
 
@@ -11,6 +17,7 @@ export interface BaseNavItem {
   title: string
   icon?: IconType
   badge?: string | number
+  adminOnly?: boolean
 }
 
 export interface NavItemLink extends BaseNavItem {
@@ -46,6 +53,12 @@ export const navigationGroups: NavGroupData[] = [
     id: 'nav-b',
     title: 'System Settings',
     items: [
+      {
+        icon: UsersIcon,
+        title: 'Users',
+        url: href('/admin/users'),
+        adminOnly: true,
+      },
       {
         icon: UserCogIcon,
         title: 'Roles',
