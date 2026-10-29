@@ -1,18 +1,18 @@
-import { unstable_useRoute as useRoute } from "react-router";
+import { unstable_useRoute as useRoute } from 'react-router'
 
 export function useAuthUser() {
-	const data = useRoute("root");
+  const data = useRoute('root')
 
-	if (!data?.loaderData?.user) {
-		throw new Error(
-			"Authentication data not available. Make sure you're using this hook within the root route.",
-		);
-	}
+  if (!data?.loaderData?.user) {
+    throw new Error(
+      "Authentication data not available. Make sure you're using this hook within the root route.",
+    )
+  }
 
-	return data.loaderData.user;
+  return data.loaderData.user
 }
 
 export function useOptionalAuthUser() {
-	const data = useRoute("root");
-	return data?.loaderData?.user;
+  const data = useRoute('root')
+  return data?.loaderData?.user
 }
