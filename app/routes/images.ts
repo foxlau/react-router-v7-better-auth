@@ -12,7 +12,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 	return new Response(blob.stream(), {
 		headers: {
 			"Content-Type":
-				object.httpMetadata?.contentType ?? "application/octed-stream",
+				object.httpMetadata?.contentType ?? "application/octet-stream",
 		},
 	});
 };
