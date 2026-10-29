@@ -10,10 +10,10 @@ import {
   CardTitle,
 } from '~/components/ui/card'
 import { Skeleton } from '~/components/ui/skeleton'
+import { db } from '~/db/index.server'
+import { users } from '~/db/schema'
 import { useAuthUser } from '~/hooks/use-auth-user'
 import { getPageTitle } from '~/lib/utils'
-import { db } from '~/services/db'
-import { users } from '~/services/db/schema'
 
 import type { Route } from './+types/dashboard'
 

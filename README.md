@@ -52,7 +52,7 @@ React Router v7 Authentication Demo Series:
 Use Bun 1.4.2+ and Node.js 24 (Node.js 22.22+ is the minimum supported by React Router's tooling), then install the dependencies:
 
 ```bash
-git clone https://github.com/foxlau/react-router-v7-better-auth.git
+git clone https://github.com/foxlau/react-router-better-auth.git
 bun install
 ```
 
@@ -76,6 +76,8 @@ If you modify the Drizzle ORM schema, please run `bun run db:generate` first. If
 Better Auth uses its built-in D1 database storage for rate limiting (`rate_limits`), sessions (`sessions`), and verification records (`verifications`). No KV namespace is required. After pulling schema updates, run `bun run db:migrate:local` before starting development, and `bun run db:migrate:remote` before deploying to production. Database joins are enabled with `advanced.database.joins`.
 
 When upgrading from KV-backed authentication, existing sessions and pending verification/reset flows are not migrated. Users must sign in again or request a new verification/reset link.
+
+Server-side authorization reads fresh sessions rather than trusting the cookie cache. The admin layout checks the configured `dashboard: read` permission in middleware before child loaders/actions; both admin and editor roles can access the dashboard.
 
 Start the development server with HMR:
 
@@ -120,7 +122,7 @@ bun run dev
 ### Authentication Commands
 
 - `bun run auth:secret` - Generate a new Better Auth secret key. Use this when setting up authentication for the first time or when rotating secrets. The generated secret should be added to your `.env` file as `BETTER_AUTH_SECRET`.
-- `bun run auth:generate` - Generate and format the Drizzle/SQLite schema from `app/services/auth/auth.server.ts` at `app/services/db/schema/auth.ts`, without connecting to D1. It uses the configured adapter so plural table names are preserved. Review changes before generating/applying migrations.
+- `bun run auth:generate` - Generate and format the Drizzle/SQLite schema from `app/services/auth/auth.server.ts` at `app/db/schema/auth.ts`, without connecting to D1. It uses the configured adapter so plural table names are preserved. Review changes before generating/applying migrations.
 
 These commands use the local `auth` CLI, pinned to match the installed Better Auth version. The old `@better-auth/cli` package is deprecated; update the CLI alongside Better Auth.
 

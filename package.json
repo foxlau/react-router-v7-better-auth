@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "auth:generate": "auth generate --config ./app/services/auth/auth.server.ts --output ./app/services/db/schema/auth.ts && oxfmt app/services/db/schema/auth.ts",
+    "auth:generate": "auth generate --config ./app/services/auth/auth.server.ts --output ./app/db/schema/auth.ts && oxfmt app/db/schema/auth.ts",
     "auth:secret": "auth secret",
     "build": "react-router build",
     "cf-typegen": "wrangler types",

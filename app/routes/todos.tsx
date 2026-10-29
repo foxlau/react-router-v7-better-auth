@@ -6,11 +6,11 @@ import { data, useNavigation } from 'react-router'
 import { Form, LoadingButton } from '~/components/forms'
 import { TodoItem } from '~/components/todos/todo-item'
 import { Input } from '~/components/ui/input'
+import { db } from '~/db/index.server'
+import { todos } from '~/db/schema'
 import { getPageTitle } from '~/lib/utils'
 import { todoSchema } from '~/lib/validations/todo'
 import { requireAuthMiddleware, requiredAuthContext } from '~/middlewares/auth'
-import { db } from '~/services/db'
-import { todos } from '~/services/db/schema'
 
 import type { Route } from './+types/todos'
 

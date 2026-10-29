@@ -50,7 +50,7 @@ export default function IndexRoute() {
             ) : (
               <>
                 <Link
-                  to="https://github.com/foxlau/react-router-v7-better-auth"
+                  to="https://github.com/foxlau/react-router-better-auth"
                   className={cn(buttonVariants({ variant: 'outline' }))}
                   reloadDocument
                 >

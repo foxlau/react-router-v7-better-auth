@@ -3,6 +3,7 @@ import { createContext, href, redirect } from 'react-router'
 
 import { safeRedirectPath } from '~/lib/safe-redirect'
 import type { auth } from '~/services/auth/auth.server'
+import { requirePermission } from '~/services/auth/permissions.server'
 
 export type AuthSession = typeof auth.$Infer.Session
 export const optionalAuthContext = createContext<AuthSession | null>(null)
@@ -19,6 +20,12 @@ export const requireAuthMiddleware: MiddlewareFunction = ({ url, context }) => {
   }
 
   context.set(requiredAuthContext, session)
+}
+
+export const requireAdmin: MiddlewareFunction = async (args, next) => {
+  await requireAuthMiddleware(args, next)
+  const { user } = args.context.get(requiredAuthContext)
+  await requirePermission(user.id, { dashboard: ['read'] })
 }
 
 export const guestOnlyMiddleware: MiddlewareFunction = ({ context }) => {

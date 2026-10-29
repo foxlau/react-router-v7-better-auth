@@ -8,9 +8,9 @@ import {
 } from 'better-auth/plugins'
 import { env } from 'cloudflare:workers'
 
+import { db } from '~/db/index.server'
 import { appName, cookiePrefix } from '~/lib/config'
 
-import { db } from '../db'
 import { deleteUserImageFromR2 } from '../r2.server'
 import { ac, admin, editor } from './permissions'
 
