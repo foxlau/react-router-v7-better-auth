@@ -7,10 +7,12 @@ import { TodoItem } from "~/components/todos/todo-item";
 import { Input } from "~/components/ui/input";
 import { getPageTitle } from "~/lib/utils";
 import { todoSchema } from "~/lib/validations/todo";
-import { requiredAuthContext } from "~/middlewares/auth";
+import { requireAuthMiddleware, requiredAuthContext } from "~/middlewares/auth";
 import { db } from "~/services/db";
 import { todos } from "~/services/db/schema";
 import type { Route } from "./+types/todos";
+
+export const middleware = [requireAuthMiddleware];
 
 export function meta() {
 	return [{ title: getPageTitle("Todo List") }];
